@@ -76,6 +76,7 @@ public class ThemeVariantsView extends VerticalLayout {
 		numberField.setMin(0);
 		numberField.setValue(10d);
 		numberField.setMax(20);
+		// https://github.com/vaadin/vaadin-text-field/issues/349
 //		numberField.setHasControls(true);
 		numberField.setSuffixComponent(new Span("€"));
 		numberField.addThemeVariants(TextFieldVariant.LUMO_ALIGN_RIGHT);

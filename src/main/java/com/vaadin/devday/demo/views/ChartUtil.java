@@ -4,7 +4,6 @@ import com.vaadin.flow.component.charts.Chart;
 import com.vaadin.flow.component.charts.model.ChartType;
 import com.vaadin.flow.component.charts.model.Configuration;
 import com.vaadin.flow.component.charts.model.Cursor;
-import com.vaadin.flow.component.charts.model.DataLabels;
 import com.vaadin.flow.component.charts.model.DataSeries;
 import com.vaadin.flow.component.charts.model.DataSeriesItem;
 import com.vaadin.flow.component.charts.model.HorizontalAlign;
@@ -56,6 +55,7 @@ public class ChartUtil {
         PlotOptionsColumn plot = new PlotOptionsColumn();
         plot.setPointPadding(0.2);
         plot.setShowInLegend(true);
+        conf.setPlotOptions(plot);
         
         conf.addSeries(new ListSeries("Tokyo", 49.9, 71.5, 106.4, 129.2, 144.0,
                 176.0, 135.6, 148.5, 216.4, 194.1, 95.6, 54.4));
