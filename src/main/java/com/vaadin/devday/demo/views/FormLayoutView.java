@@ -97,8 +97,7 @@ public class FormLayoutView extends VerticalLayout {
         title.setWidth("100%");
         formLayout.addFormItem(title, "Title");
         formLayout.getElement().appendChild(ElementFactory.createBr());
-        
-        
+                
         firstName.setWidth("100%");
         formLayout.addFormItem(firstName, "First Name");
 

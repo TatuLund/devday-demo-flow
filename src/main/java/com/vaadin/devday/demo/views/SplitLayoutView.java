@@ -27,7 +27,7 @@ public class SplitLayoutView extends SplitLayout {
         innerLayout.addThemeVariants(SplitLayoutVariant.LUMO_SMALL);
         innerLayout.addSplitterDragendListener(event -> {
         	// Charts do not reflow automatically in all cases even when wrapped in Div
-        	getUI().get().getPage().executeJavaScript("Array.from(window.document.getElementsByTagName('vaadin-chart')).forEach( el => el.__reflow());");        	        	
+        	getUI().ifPresent(ui -> ui.getPage().executeJavaScript("Array.from(window.document.getElementsByTagName('vaadin-chart')).forEach( el => el.__reflow());"));        	        	
         });
         innerLayout.setSplitterPosition(50);
         
@@ -43,7 +43,7 @@ public class SplitLayoutView extends SplitLayout {
 //        			columnChartsVisible = true;
 //        		}
 //        	}
-        	getUI().get().getPage().executeJavaScript("Array.from(window.document.getElementsByTagName('vaadin-chart')).forEach( el => el.__reflow());");
+        	getUI().ifPresent(ui -> ui.getPage().executeJavaScript("Array.from(window.document.getElementsByTagName('vaadin-chart')).forEach( el => el.__reflow());"));
         });
         addToSecondary(innerLayout);
         setSplitterPosition(50);
@@ -56,7 +56,7 @@ public class SplitLayoutView extends SplitLayout {
     @Override
     protected void onAttach(AttachEvent attachEvent) {
     	super.onAttach(attachEvent);
-        listener = getUI().get().getPage().addBrowserWindowResizeListener(event -> {
+        getUI().ifPresent(ui -> listener = ui.getPage().addBrowserWindowResizeListener(event -> {
         	if (event.getWidth() < 800) {
         		// Getting restore position would be nice https://github.com/vaadin/vaadin-split-layout-flow/issues/50
         		setSplitterPosition(0);
@@ -67,7 +67,7 @@ public class SplitLayoutView extends SplitLayout {
         			isNarrow = false;
         		}
         	}
-        });
+        }));
     }
 
     @Override

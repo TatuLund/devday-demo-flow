@@ -121,6 +121,5 @@ public class GridView extends VerticalLayout {
         }
         return Integer.parseInt(limit.getValue());
     }
-
     
 }
