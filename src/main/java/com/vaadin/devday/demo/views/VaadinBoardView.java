@@ -10,10 +10,12 @@ import com.vaadin.flow.component.charts.Chart;
 import com.vaadin.flow.component.charts.model.*;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.shared.Registration;
 
 @Route(value = VaadinBoardView.ROUTE, layout = MainLayout.class)
+@PageTitle(VaadinBoardView.TITLE)
 public class VaadinBoardView extends VerticalLayout {
     public static final String ROUTE = "board";
     public static final String TITLE = "Board";

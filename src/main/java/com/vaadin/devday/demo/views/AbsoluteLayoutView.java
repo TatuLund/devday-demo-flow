@@ -5,12 +5,15 @@ import com.vaadin.flow.component.AttachEvent;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.splitlayout.SplitLayout;
 import com.vaadin.flow.component.splitlayout.SplitLayoutVariant;
+import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 
 @Route(value = AbsoluteLayoutView.ROUTE, layout = MainLayout.class)
+@PageTitle(AbsoluteLayoutView.TITLE)
 public class AbsoluteLayoutView extends SplitLayout {
     public static final String ROUTE = "absolute";
     public static final String TITLE = "Absolute Layout";    

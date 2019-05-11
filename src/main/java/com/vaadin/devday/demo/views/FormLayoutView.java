@@ -19,9 +19,11 @@ import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.dom.ElementFactory;
 import com.vaadin.flow.router.AfterNavigationEvent;
 import com.vaadin.flow.router.AfterNavigationObserver;
+import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 
 @Route(value = FormLayoutView.ROUTE, layout = MainLayout.class)
+@PageTitle(FormLayoutView.TITLE)
 public class FormLayoutView extends VerticalLayout {
     public static final String ROUTE = "form";
     public static final String TITLE = "Form Layout";

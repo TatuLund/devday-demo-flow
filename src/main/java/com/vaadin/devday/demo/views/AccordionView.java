@@ -24,9 +24,11 @@ import com.vaadin.flow.component.radiobutton.RadioButtonGroup;
 import com.vaadin.flow.component.textfield.PasswordField;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.dom.Style;
+import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 
 @Route(value = AccordionView.ROUTE, layout = MainLayout.class)
+@PageTitle(AccordionView.TITLE)
 public class AccordionView extends VerticalLayout {
     public static final String ROUTE = "accordion";
     public static final String TITLE = "Accordion";

@@ -2,6 +2,7 @@ package com.vaadin.devday.demo.views;
 
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 
 import java.util.ArrayList;
@@ -21,6 +22,7 @@ import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.renderer.Renderer;
 
 @Route(value = GridView.ROUTE, layout = MainLayout.class)
+@PageTitle(GridView.TITLE)
 public class GridView extends VerticalLayout {
 	public static final String ROUTE = "grid";
 	public static final String TITLE = "Grid";

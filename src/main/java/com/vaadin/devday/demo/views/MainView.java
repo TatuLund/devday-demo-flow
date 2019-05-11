@@ -9,7 +9,7 @@ import com.vaadin.flow.router.*;
 
 @Route(value = MainView.ROUTE, layout = MainLayout.class)
 @RouteAlias(value = "", layout = MainLayout.class)
-public class MainView extends VerticalLayout implements HasUrlParameter<String> {
+public class MainView extends VerticalLayout implements HasUrlParameter<String>, HasDynamicTitle {
 
 	public static final String ROUTE = "layouts";
 	public static final String TITLE = "Layouts";
@@ -17,6 +17,7 @@ public class MainView extends VerticalLayout implements HasUrlParameter<String> 
 	private final HorizontalLayout layout;
 	private Div navigation;
 	private Div content;
+	private boolean scrollable;
 
 	public MainView() {
 		setPadding(false);
@@ -96,7 +97,8 @@ public class MainView extends VerticalLayout implements HasUrlParameter<String> 
 		content.setText(null);
 
 		navigation.add(add);
-
+		scrollable = true;
+		
 		makeContentScrollable();
 
 	}
@@ -104,5 +106,13 @@ public class MainView extends VerticalLayout implements HasUrlParameter<String> 
 	private void makeContentScrollable() {
 		content.getStyle().set("flexWrap", "wrap");
 		content.getStyle().set("overflowY", "auto");
+	}
+
+	@Override
+	public String getPageTitle() {
+		if (scrollable)
+			return "Scroll";
+		else
+			return TITLE;
 	}
 }

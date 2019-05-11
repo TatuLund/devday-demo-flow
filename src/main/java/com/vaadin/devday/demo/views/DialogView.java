@@ -19,9 +19,11 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.component.timepicker.TimePicker;
+import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 
 @Route(value = DialogView.ROUTE, layout = MainLayout.class)
+@PageTitle(DialogView.TITLE)
 public class DialogView extends VerticalLayout {
     public static final String ROUTE = "dialog";
     public static final String TITLE = "Dialog";    

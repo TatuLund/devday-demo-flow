@@ -6,10 +6,12 @@ import com.vaadin.flow.component.DetachEvent;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.splitlayout.SplitLayout;
 import com.vaadin.flow.component.splitlayout.SplitLayoutVariant;
+import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.shared.Registration;
 
 @Route(value = SplitLayoutView.ROUTE, layout = MainLayout.class)
+@PageTitle(SplitLayoutView.TITLE)
 public class SplitLayoutView extends SplitLayout {
     public static final String ROUTE = "split";
     public static final String TITLE = "Split layout";    
@@ -72,6 +74,8 @@ public class SplitLayoutView extends SplitLayout {
 
     @Override
     protected void onDetach(DetachEvent detachEvent) {
+    	// It is needed to remove the BrowserWindowResizeListener during detach
+    	// in order not to bloat browser resources
     	listener.remove();
     	super.onDetach(detachEvent);
     }

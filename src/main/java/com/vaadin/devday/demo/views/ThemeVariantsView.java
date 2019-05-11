@@ -14,9 +14,11 @@ import com.vaadin.flow.component.radiobutton.RadioGroupVariant;
 import com.vaadin.flow.component.textfield.NumberField;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.component.textfield.TextFieldVariant;
+import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 
 @Route(value = ThemeVariantsView.ROUTE, layout = MainLayout.class)
+@PageTitle(ThemeVariantsView.TITLE)
 public class ThemeVariantsView extends VerticalLayout {
 	public static final String ROUTE = "variants";
 	public static final String TITLE = "Theme Variants";

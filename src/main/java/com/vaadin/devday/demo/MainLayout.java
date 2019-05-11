@@ -25,6 +25,7 @@ import com.vaadin.flow.component.orderedlayout.FlexLayout;
 import com.vaadin.flow.component.page.Push;
 import com.vaadin.flow.router.AfterNavigationEvent;
 import com.vaadin.flow.router.AfterNavigationObserver;
+import com.vaadin.flow.router.HasDynamicTitle;
 import com.vaadin.flow.router.RouterLayout;
 import com.vaadin.flow.server.PWA;
 import com.vaadin.flow.theme.Theme;
@@ -38,7 +39,8 @@ public class MainLayout extends AppLayout implements RouterLayout, AfterNavigati
 
 	private FlexLayout childWrapper = new FlexLayout();
     private AppLayoutMenu menu = createMenu();
-
+    private int count = 0;
+    
 	public MainLayout() {
         Image img = new Image("https://vaadin.com/images/vaadin-logo.svg", "Vaadin Logo");
         img.setHeight("35px");
@@ -85,7 +87,8 @@ public class MainLayout extends AppLayout implements RouterLayout, AfterNavigati
 
 	@Override
 	public void afterNavigation(AfterNavigationEvent event) {
-		menu.getMenuItemTargetingRoute(event.getLocation().getPath()).ifPresent(menuItem -> menu.selectMenuItem(menuItem));		
+		menu.getMenuItemTargetingRoute(event.getLocation().getPath()).ifPresent(menuItem -> menu.selectMenuItem(menuItem));
+		count++;
 	}
 	
 }
