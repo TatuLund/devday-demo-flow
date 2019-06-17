@@ -8,8 +8,10 @@ import com.vaadin.devday.demo.views.AccordionView;
 import com.vaadin.devday.demo.views.DialogView;
 import com.vaadin.devday.demo.views.FormLayoutView;
 import com.vaadin.devday.demo.views.GridView;
+import com.vaadin.devday.demo.views.MainView;
 import com.vaadin.devday.demo.views.SplitLayoutView;
 import com.vaadin.devday.demo.views.ThemeVariantsView;
+import com.vaadin.devday.demo.views.UploadView;
 import com.vaadin.devday.demo.views.VaadinBoardView;
 import com.vaadin.flow.component.AttachEvent;
 import com.vaadin.flow.component.HasElement;
@@ -55,7 +57,8 @@ public class MainLayout extends AppLayout implements RouterLayout, AfterNavigati
                 new AppLayoutMenuItem(FormLayoutView.TITLE, FormLayoutView.ROUTE),
                 new AppLayoutMenuItem(ThemeVariantsView.TITLE, ThemeVariantsView.ROUTE),
                 new AppLayoutMenuItem(AbsoluteLayoutView.TITLE, AbsoluteLayoutView.ROUTE),
-                new AppLayoutMenuItem("Main", "scroll"));
+                new AppLayoutMenuItem(UploadView.TITLE, UploadView.ROUTE),
+                new AppLayoutMenuItem(MainView.TITLE, "scroll"));
 
         childWrapper.setSizeFull();
         setContent(childWrapper);
@@ -67,6 +70,7 @@ public class MainLayout extends AppLayout implements RouterLayout, AfterNavigati
     	Shortcuts.addShortcutListener(this, () -> getUI().ifPresent(ui -> ui.navigate(FormLayoutView.ROUTE)), Key.F6);
     	Shortcuts.addShortcutListener(this, () -> getUI().ifPresent(ui -> ui.navigate(ThemeVariantsView.ROUTE)), Key.F7);
     	Shortcuts.addShortcutListener(this, () -> getUI().ifPresent(ui -> ui.navigate(AbsoluteLayoutView.ROUTE)), Key.F8);
+    	Shortcuts.addShortcutListener(this, () -> getUI().ifPresent(ui -> ui.navigate(UploadView.ROUTE)), Key.F9);
     	Shortcuts.addShortcutListener(this, () -> getUI().ifPresent(ui -> ui.navigate("")), Key.F12);
 	}
 

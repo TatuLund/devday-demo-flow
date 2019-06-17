@@ -2,6 +2,7 @@ package com.vaadin.devday.demo.views;
 
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.component.splitlayout.SplitLayout;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 
@@ -12,6 +13,8 @@ import com.vaadin.devday.demo.MainLayout;
 import com.vaadin.flow.component.Text;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.datepicker.DatePicker;
+import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.GridVariant;
 import com.vaadin.flow.component.html.Label;
@@ -19,11 +22,12 @@ import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.component.timepicker.TimePicker;
 import com.vaadin.flow.data.renderer.Renderer;
 
 @Route(value = GridView.ROUTE, layout = MainLayout.class)
 @PageTitle(GridView.TITLE)
-public class GridView extends VerticalLayout {
+public class GridView extends SplitLayout {
 	public static final String ROUTE = "grid";
 	public static final String TITLE = "Grid";
 
@@ -32,10 +36,11 @@ public class GridView extends VerticalLayout {
     private int index = 0;
     
     public GridView() {
-        setSizeFull();
+    	VerticalLayout content = new VerticalLayout();
+        content.setSizeFull();
         Label label = new Label(TITLE);
         label.addClassName("title-label");
-        add(label);
+        content.add(label);
         
         expensesGrid = new Grid<>();
         limit = createLimitTextField();
@@ -67,14 +72,34 @@ public class GridView extends VerticalLayout {
    		});
    		tools.setWidth("100%");
    		tools.add(buttons);
-        add(tools);
+        content.add(tools);
         
-        add(expensesGrid);
-        expand(expensesGrid);
+        content.add(expensesGrid);
+        content.expand(expensesGrid);
 
+        this.setSizeFull();
+        this.setOrientation(Orientation.VERTICAL);
+        this.addToPrimary(content);
+        this.addToSecondary(createForm());
+        this.setSplitterPosition(80);
         initalizeAndPopulateGrid(expensesGrid);
     }
 
+	private FormLayout createForm() {
+		FormLayout form = new FormLayout();
+    	TimePicker timePicker = new TimePicker();
+    	TextField nameField = new TextField();
+    	DatePicker datePicker = new DatePicker();
+		timePicker.setWidth("100%");
+		datePicker.setWidth("100%");
+		nameField.setWidth("100%");
+		form.setSizeFull();
+		form.addFormItem(nameField,"Name: ").getElement().setAttribute("colspan", "2");
+		form.addFormItem(datePicker,"Birth date: ");
+		form.addFormItem(timePicker,"Birth time: ");
+		return form;
+	}
+	
     private TextField createLimitTextField() {
         TextField limit = new TextField("Limit for monthly expenses");
         limit.addClassName("limit-field");

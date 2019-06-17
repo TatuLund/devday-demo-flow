@@ -1,15 +1,19 @@
 package com.vaadin.devday.demo.views;
 
+import java.util.List;
+
 import com.vaadin.devday.demo.MainLayout;
+import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.*;
+import com.vaadin.flow.server.RouteRegistry;
 
 @Route(value = MainView.ROUTE, layout = MainLayout.class)
 @RouteAlias(value = "", layout = MainLayout.class)
-public class MainView extends VerticalLayout implements HasUrlParameter<String>, HasDynamicTitle {
+public class MainView extends VerticalLayout implements HasUrlParameter<String>, HasDynamicTitle, BeforeEnterObserver {
 
 	public static final String ROUTE = "layouts";
 	public static final String TITLE = "Layouts";
@@ -83,7 +87,6 @@ public class MainView extends VerticalLayout implements HasUrlParameter<String>,
 
 	@Override
 	public void setParameter(BeforeEvent event, @OptionalParameter String parameter) {
-		System.out.println(event.getLocation().getPath());
 		if ("scroll".equals(parameter)) {
 			updateUIForScroll();
 		}
@@ -115,4 +118,18 @@ public class MainView extends VerticalLayout implements HasUrlParameter<String>,
 		else
 			return TITLE;
 	}
+
+	@Override
+	public void beforeEnter(BeforeEnterEvent event) {
+        RouteRegistry registry = event.getUI().getRouter().getRegistry();
+        Class<? extends Component> target = (Class<? extends Component>) event.getNavigationTarget();
+        String path = null; 
+		for (RouteData route : registry.getRegisteredRoutes()) {
+        	if (route.getNavigationTarget() == target) path = route.getUrl();        			
+        }
+        System.out.println("Path: "+path);
+        List<Class<? extends RouterLayout>> layouts = registry.getRouteLayouts(path, target);
+        layouts.forEach(layout -> System.out.println(layout.toString()));
+	}
+
 }
