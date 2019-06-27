@@ -2,10 +2,10 @@ package com.vaadin.devday.demo.views;
 
 public class MonthlyExpense {
 	private String month;
-	private long expenses;
+	private Double expenses;
 	private int year;
 	
-	public MonthlyExpense(String month, int year, long expenses) {
+	public MonthlyExpense(String month, int year, Double expenses) {
 		setMonth(month);
 		setExpenses(expenses);
 		setYear(year);
@@ -19,11 +19,11 @@ public class MonthlyExpense {
 		this.month = month;
 	}
 
-	public long getExpenses() {
+	public Double getExpenses() {
 		return expenses;
 	}
 
-	public void setExpenses(long expenses) {
+	public void setExpenses(Double expenses) {
 		this.expenses = expenses;
 	}
 

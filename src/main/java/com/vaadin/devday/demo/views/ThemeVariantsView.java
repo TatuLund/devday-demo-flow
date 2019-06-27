@@ -5,6 +5,8 @@ import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.html.Span;
+import com.vaadin.flow.component.notification.Notification;
+import com.vaadin.flow.component.notification.Notification.Position;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.progressbar.ProgressBar;
@@ -83,5 +85,14 @@ public class ThemeVariantsView extends VerticalLayout {
 		numberField.setSuffixComponent(new Span("€"));
 		numberField.addThemeVariants(TextFieldVariant.LUMO_ALIGN_RIGHT);
 		add(new HorizontalLayout(alignCenterTextField, alignRightTextField,numberField));		
+		
+        RadioButtonGroup<String> buttons = new RadioButtonGroup<>();
+        buttons.addThemeVariants(RadioGroupVariant.LUMO_VERTICAL);
+        buttons.setItems("One","Two", "Three");
+        buttons.addValueChangeListener(event -> {
+        	Notification.show(event.getValue()).setPosition(Position.MIDDLE);;
+        });
+        add(buttons);
+		
 	}
 }

@@ -21,6 +21,7 @@ import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.component.radiobutton.RadioButtonGroup;
 import com.vaadin.flow.component.upload.Receiver;
 import com.vaadin.flow.component.upload.Upload;
 import com.vaadin.flow.component.upload.receivers.MultiFileMemoryBuffer;
@@ -37,10 +38,9 @@ public class UploadView extends VerticalLayout {
     
     public UploadView() {
         Div output = new Div();
-        Button button = new Button("Tämä upload button");
-        button.setVisible(false);
         
     	MultiFileMemoryBuffer buffer = new MultiFileMemoryBuffer();
+    	// Button is removed with style module, see styles.html
     	Upload upload = new Upload(buffer);
     	upload.setSizeFull();
     	
@@ -51,7 +51,6 @@ public class UploadView extends VerticalLayout {
     	    showOutput(event.getFileName(), component, output);
         	remove(upload);    	    
     	}); 
-    	upload.setUploadButton(button);
     	
     	add(upload,output);
     }

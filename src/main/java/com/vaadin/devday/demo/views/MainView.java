@@ -8,6 +8,7 @@ import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.router.*;
 import com.vaadin.flow.server.RouteRegistry;
 
@@ -69,18 +70,17 @@ public class MainView extends VerticalLayout implements HasUrlParameter<String>,
 		layout.setDefaultVerticalComponentAlignment(Alignment.STRETCH);
 	}
 
-	/**
-	 * Ignore this method for now.
-	 *
-	 * @return
-	 */
 	private Div createBlock() {
 		final Div button = new Div();
-		button.setText("Block");
 		button.getStyle().set("background", "var(--lumo-tint-10pct)");
 		button.setHeight("200px");
 		button.setWidth("200px");
 		button.getStyle().set("margin", "2px");
+		// Add scroll bar to Div if TextArea overgrows
+		button.getElement().getStyle().set("overflow", "auto");
+		TextArea area = new TextArea("Block");
+		area.setWidthFull();
+		button.add(area);
 		return button;
 	}
 

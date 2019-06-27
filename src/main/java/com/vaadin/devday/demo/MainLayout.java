@@ -24,7 +24,9 @@ import com.vaadin.flow.component.applayout.AppLayoutMenuItem;
 import com.vaadin.flow.component.dependency.HtmlImport;
 import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.orderedlayout.FlexLayout;
+import com.vaadin.flow.component.page.BodySize;
 import com.vaadin.flow.component.page.Push;
+import com.vaadin.flow.component.page.Viewport;
 import com.vaadin.flow.router.AfterNavigationEvent;
 import com.vaadin.flow.router.AfterNavigationObserver;
 import com.vaadin.flow.router.HasDynamicTitle;
@@ -37,6 +39,8 @@ import com.vaadin.flow.theme.lumo.Lumo;
 @PWA(name = "DevDay demo application", shortName = "DevDay")
 @Theme(value = Lumo.class, variant = Lumo.DARK)
 @HtmlImport("styles.html")
+//@Viewport("width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes")
+//@BodySize(height = "100vh", width = "100vw")
 public class MainLayout extends AppLayout implements RouterLayout, AfterNavigationObserver {
 
 	private FlexLayout childWrapper = new FlexLayout();

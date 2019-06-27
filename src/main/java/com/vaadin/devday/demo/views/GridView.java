@@ -13,16 +13,20 @@ import com.vaadin.devday.demo.MainLayout;
 import com.vaadin.flow.component.Text;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.checkbox.Checkbox;
 import com.vaadin.flow.component.datepicker.DatePicker;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.component.grid.Grid.SelectionMode;
 import com.vaadin.flow.component.grid.GridVariant;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
+import com.vaadin.flow.component.textfield.NumberField;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.component.timepicker.TimePicker;
+import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.data.renderer.Renderer;
 
 @Route(value = GridView.ROUTE, layout = MainLayout.class)
@@ -34,6 +38,9 @@ public class GridView extends SplitLayout {
     private Grid<MonthlyExpense> expensesGrid;
     private TextField limit;
     private int index = 0;
+    private FormLayout form = null;
+	NumberField expenseField = new NumberField();
+    MonthlyExpense currentExpense;
     
     public GridView() {
     	VerticalLayout content = new VerticalLayout();
@@ -80,7 +87,8 @@ public class GridView extends SplitLayout {
         this.setSizeFull();
         this.setOrientation(Orientation.VERTICAL);
         this.addToPrimary(content);
-        this.addToSecondary(createForm());
+        form = createForm();
+        this.addToSecondary(form);
         this.setSplitterPosition(80);
         initalizeAndPopulateGrid(expensesGrid);
     }
@@ -97,6 +105,10 @@ public class GridView extends SplitLayout {
 		form.addFormItem(nameField,"Name: ").getElement().setAttribute("colspan", "2");
 		form.addFormItem(datePicker,"Birth date: ");
 		form.addFormItem(timePicker,"Birth time: ");
+		form.addFormItem(expenseField, "Expenses");
+		expenseField.setStep(1d);
+		expenseField.setHasControls(true);
+		expenseField.setSuffixComponent(new Span("EUR"));
 		return form;
 	}
 	
@@ -118,12 +130,44 @@ public class GridView extends SplitLayout {
         grid.addColumn(MonthlyExpense::getMonth).setHeader("Month").setKey("month").setId("month-column");
 
         grid.addColumn(MonthlyExpense::getExpenses).setHeader("Expenses").setClassNameGenerator(monthlyExpense -> monthlyExpense.getExpenses() >= getMonthlyExpenseLimit() ? "warning-grid-cell" : "green-grid-cell");
-        grid.addThemeVariants(GridVariant.LUMO_ROW_STRIPES);
+		grid.addColumn(new ComponentRenderer<Checkbox,MonthlyExpense>(expense ->  {
+			Checkbox check = new Checkbox();
+			check.setEnabled(false);
+			grid.addSelectionListener(event -> {
+				if (event.getAllSelectedItems().contains(expense)) {
+					System.out.println("Selected "+expense.toString());
+					check.setValue(true);
+				} else {
+					check.setValue(false);
+				}
+			});
+			check.addValueChangeListener(event -> {
+				if (event.isFromClient()) {
+					System.out.println("Check box clicked");
+					grid.select(expense);
+				}
+			});
+			return check;		
+		})).setWidth("50px").setHeader("Select");
+		grid.setSelectionMode(SelectionMode.SINGLE);
+		grid.addThemeVariants(GridVariant.LUMO_ROW_STRIPES);
         List<MonthlyExpense> data = getData();
         grid.setItems(data);
-        grid.addItemClickListener(event -> {
-        	getUI().ifPresent(ui -> ui.navigate(MainView.ROUTE+"/scroll"));
+        grid.addSelectionListener(event -> {
+        	event.getFirstSelectedItem().ifPresent(expense -> {
+        		expenseField.setValue(expense.getExpenses());
+        		currentExpense = expense;
+        	});
         });
+        expenseField.addValueChangeListener(event -> {
+        	if (event.isFromClient() && currentExpense != null) {
+        		currentExpense.setExpenses(event.getValue());
+        		grid.getDataProvider().refreshItem(currentExpense);
+        	}
+        });
+        //        grid.addItemClickListener(event -> {
+//        	getUI().ifPresent(ui -> ui.navigate(MainView.ROUTE+"/scroll"));
+//        });        
     }
 
 	private List<MonthlyExpense> getData() {
@@ -138,8 +182,8 @@ public class GridView extends SplitLayout {
 	}
 
     // Randomize a value between 300 and 800
-    private long getExpenses() {
-        return Math.round((Math.random() * 1000) % 500 + 300);
+    private Double getExpenses() {
+        return Math.floor((Math.random() * 1000) % 500 + 300);
     }
 
     private int getMonthlyExpenseLimit() {
