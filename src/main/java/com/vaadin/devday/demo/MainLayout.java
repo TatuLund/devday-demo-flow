@@ -81,7 +81,7 @@ public class MainLayout extends AppLayout implements RouterLayout, AfterNavigati
     @Override
     protected void onAttach(AttachEvent attachEvent) {
         try {
-        	getUI().get().getSession().setAttribute("hostAddress",InetAddress.getLocalHost().getLocalHost().getHostAddress().toString());
+        	getUI().get().getSession().setAttribute("hostAddress",InetAddress.getLocalHost().getHostAddress().toString());
         } catch (UnknownHostException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
