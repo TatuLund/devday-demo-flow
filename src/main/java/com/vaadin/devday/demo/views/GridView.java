@@ -14,11 +14,15 @@ import com.vaadin.flow.component.Text;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.checkbox.Checkbox;
+import com.vaadin.flow.component.contextmenu.ContextMenu;
 import com.vaadin.flow.component.datepicker.DatePicker;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.component.grid.Grid.Column;
 import com.vaadin.flow.component.grid.Grid.SelectionMode;
 import com.vaadin.flow.component.grid.GridVariant;
+import com.vaadin.flow.component.grid.contextmenu.GridContextMenu;
+import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.icon.Icon;
@@ -126,7 +130,8 @@ public class GridView extends SplitLayout {
     
     private void initalizeAndPopulateGrid(Grid<MonthlyExpense> grid) {
     	grid.addClassName("my-grid");
-        grid.addColumn(MonthlyExpense::getYear).setHeader("Year").setKey("year").setId("year-column");
+    	grid.addColumn(MonthlyExpense::getYear).setHeader("Year").setKey("year").setId("year-column");
+    	addYearSelectorMenuToColumnHeader(grid);
         grid.addColumn(MonthlyExpense::getMonth).setHeader("Month").setKey("month").setId("month-column");
 
         grid.addColumn(MonthlyExpense::getExpenses).setHeader("Expenses").setClassNameGenerator(monthlyExpense -> monthlyExpense.getExpenses() >= getMonthlyExpenseLimit() ? "warning-grid-cell" : "green-grid-cell");
@@ -169,6 +174,27 @@ public class GridView extends SplitLayout {
 //        	getUI().ifPresent(ui -> ui.navigate(MainView.ROUTE+"/scroll"));
 //        });        
     }
+
+	private void addYearSelectorMenuToColumnHeader(Grid<MonthlyExpense> grid) {
+		Column<MonthlyExpense> column = grid.getColumnByKey("year-column");
+    	Div div = new Div();
+    	div.setSizeFull();
+    	div.add(new Text("Year"));
+    	grid.getHeaderRows().get(0).getCell(grid.getColumnByKey("year")).setComponent(div);
+    	ContextMenu menu = new ContextMenu(div);
+    	for (int i=0;i<10;i++) {
+    		final int index = i; 
+    		menu.addItem("200"+i, event -> {
+    			scrollTo(grid,index*12);
+    		});
+    	}
+    	for (int i=10;i<20;i++) {
+    		final int index = i; 
+    		menu.addItem("20"+i, event -> {
+    			scrollTo(grid,index*12);
+    		});
+    	}
+	}
 
 	private List<MonthlyExpense> getData() {
 		String[] monthNames = new java.text.DateFormatSymbols().getMonths();

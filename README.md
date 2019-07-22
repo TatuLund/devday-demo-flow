@@ -11,3 +11,7 @@ Setup
 Clone project, import it to your IDE and run it with
 
 mvn jetty:run
+
+Open project in Browser
+
+http://localhost:8080/myapp

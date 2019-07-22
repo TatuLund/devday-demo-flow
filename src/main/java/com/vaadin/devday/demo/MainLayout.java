@@ -3,6 +3,8 @@ package com.vaadin.devday.demo;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
+import javax.servlet.annotation.WebServlet;
+
 import com.vaadin.devday.demo.views.AbsoluteLayoutView;
 import com.vaadin.devday.demo.views.AccordionView;
 import com.vaadin.devday.demo.views.DialogView;
@@ -22,6 +24,7 @@ import com.vaadin.flow.component.applayout.AppLayout;
 import com.vaadin.flow.component.applayout.AppLayoutMenu;
 import com.vaadin.flow.component.applayout.AppLayoutMenuItem;
 import com.vaadin.flow.component.dependency.HtmlImport;
+import com.vaadin.flow.component.dependency.JavaScript;
 import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.orderedlayout.FlexLayout;
 import com.vaadin.flow.component.page.BodySize;
@@ -32,6 +35,8 @@ import com.vaadin.flow.router.AfterNavigationObserver;
 import com.vaadin.flow.router.HasDynamicTitle;
 import com.vaadin.flow.router.RouterLayout;
 import com.vaadin.flow.server.PWA;
+import com.vaadin.flow.server.VaadinServlet;
+import com.vaadin.flow.server.VaadinServletConfiguration;
 import com.vaadin.flow.theme.Theme;
 import com.vaadin.flow.theme.lumo.Lumo;
 
@@ -82,6 +87,7 @@ public class MainLayout extends AppLayout implements RouterLayout, AfterNavigati
     protected void onAttach(AttachEvent attachEvent) {
         try {
         	getUI().get().getSession().setAttribute("hostAddress",InetAddress.getLocalHost().getHostAddress().toString());
+        	System.out.println(InetAddress.getByName(InetAddress.getLocalHost().getHostAddress()).getHostName());
         } catch (UnknownHostException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -97,6 +103,12 @@ public class MainLayout extends AppLayout implements RouterLayout, AfterNavigati
 	public void afterNavigation(AfterNavigationEvent event) {
 		menu.getMenuItemTargetingRoute(event.getLocation().getPath()).ifPresent(menuItem -> menu.selectMenuItem(menuItem));
 		count++;
+	}
+
+	@WebServlet(urlPatterns = {"/myapp/*","/frontend/*"})
+	@VaadinServletConfiguration(productionMode = false)
+	public static class Servlet extends VaadinServlet {
+		
 	}
 	
 }
