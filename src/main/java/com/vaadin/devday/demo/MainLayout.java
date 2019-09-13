@@ -2,7 +2,10 @@ package com.vaadin.devday.demo;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.time.Instant;
 
+import javax.servlet.ServletConfig;
+import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 
 import com.vaadin.devday.demo.views.AbsoluteLayoutView;
@@ -108,7 +111,6 @@ public class MainLayout extends AppLayout implements RouterLayout, AfterNavigati
 	@WebServlet(urlPatterns = {"/myapp/*","/frontend/*"})
 	@VaadinServletConfiguration(productionMode = false)
 	public static class Servlet extends VaadinServlet {
-		
 	}
 	
 }

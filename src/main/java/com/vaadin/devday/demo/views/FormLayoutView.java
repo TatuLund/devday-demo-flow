@@ -1,11 +1,14 @@
 package com.vaadin.devday.demo.views;
 
+import java.util.Optional;
+
 import com.vaadin.devday.demo.MainLayout;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.checkbox.Checkbox;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.formlayout.FormLayout;
+import com.vaadin.flow.component.formlayout.FormLayout.FormItem;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.html.Hr;
 import com.vaadin.flow.component.notification.Notification;
@@ -16,6 +19,7 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.PasswordField;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.Binder;
+import com.vaadin.flow.data.binder.Binder.Binding;
 import com.vaadin.flow.dom.ElementFactory;
 import com.vaadin.flow.router.AfterNavigationEvent;
 import com.vaadin.flow.router.AfterNavigationObserver;
@@ -30,7 +34,7 @@ public class FormLayoutView extends VerticalLayout {
 
     public class Person {
     	private String title;
-    	private String firstName;
+    	private String firstName = "ewpotpoqwuteoiuwotiuowituoiwutoiuwtoiuwotu";
     	private String lastName;
     	private String email;
     	private String password;
@@ -97,7 +101,6 @@ public class FormLayoutView extends VerticalLayout {
         FormLayout formLayout = new FormLayout();
         title.setItems("Mr","Mrs","Miss");
         title.setWidth("100%");
-        formLayout.addFormItem(title, "Title");
         formLayout.getElement().appendChild(ElementFactory.createBr());
                 
         firstName.setWidth("100%");
@@ -130,7 +133,10 @@ public class FormLayoutView extends VerticalLayout {
         Person person = new Person();
         Binder<Person> binder = new Binder<>(Person.class);
         // https://github.com/vaadin/vaadin-form-layout-flow/issues/59
-        binder.forField(firstName).asRequired().bind("firstName");
+        binder.forField(firstName)
+    	.asRequired()
+        	.withValidator(pw -> pw.length() < 21, "Max 20 chars")
+        	.bind("firstName");
         binder.forField(lastName).asRequired().bind("lastName");
         binder.forField(email).asRequired().bind("email");
         binder.forField(password)

@@ -22,16 +22,20 @@ import com.vaadin.flow.component.grid.Grid.Column;
 import com.vaadin.flow.component.grid.Grid.SelectionMode;
 import com.vaadin.flow.component.grid.GridVariant;
 import com.vaadin.flow.component.grid.contextmenu.GridContextMenu;
+import com.vaadin.flow.component.grid.contextmenu.GridMenuItem;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
+import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.textfield.NumberField;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.component.timepicker.TimePicker;
+import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.data.renderer.Renderer;
+import com.vaadin.flow.data.renderer.TemplateRenderer;
 
 @Route(value = GridView.ROUTE, layout = MainLayout.class)
 @PageTitle(GridView.TITLE)
@@ -128,13 +132,29 @@ public class GridView extends SplitLayout {
         UI.getCurrent().getPage().executeJavaScript("$0._scrollToIndex(" + index + ")", grid.getElement());
     }
     
+    private String getStyles() {
+    	return "background:white";
+    }
+    
     private void initalizeAndPopulateGrid(Grid<MonthlyExpense> grid) {
     	grid.addClassName("my-grid");
-    	grid.addColumn(MonthlyExpense::getYear).setHeader("Year").setKey("year").setId("year-column");
+    	grid.addColumn(TemplateRenderer.<MonthlyExpense>of("<div style$=\"[[item.styles]]\">[[item.expenses]]</div>")
+    			.withProperty("styles", MonthlyExpense::getStyles)
+    			.withProperty("expenses", MonthlyExpense::getYear)
+    	).setHeader("Year").setKey("year").setId("year-column");
     	addYearSelectorMenuToColumnHeader(grid);
+    	GridContextMenu<MonthlyExpense> menu = new GridContextMenu<>(grid);
+    	populateGridContextMenu(grid,menu);    	
+//    	menu.getElement().setProperty("selector", "[part~=\"body-cell\"]");
         grid.addColumn(MonthlyExpense::getMonth).setHeader("Month").setKey("month").setId("month-column");
-
-        grid.addColumn(MonthlyExpense::getExpenses).setHeader("Expenses").setClassNameGenerator(monthlyExpense -> monthlyExpense.getExpenses() >= getMonthlyExpenseLimit() ? "warning-grid-cell" : "green-grid-cell");
+        NumberField numberField = new NumberField();
+        grid.addColumn(MonthlyExpense::getExpenses).setHeader("Expenses").setClassNameGenerator(monthlyExpense -> monthlyExpense.getExpenses() >= getMonthlyExpenseLimit() ? "warning-grid-cell" : "green-grid-cell").setEditorComponent(numberField);
+        grid.addItemDoubleClickListener(event -> {
+        	grid.getEditor().editItem(event.getItem());        	
+        });
+        Binder<MonthlyExpense> binder = new Binder<>();
+        binder.forField(numberField).bind(MonthlyExpense::getExpenses,MonthlyExpense::setExpenses);
+        grid.getEditor().setBinder(binder);
 		grid.addColumn(new ComponentRenderer<Checkbox,MonthlyExpense>(expense ->  {
 			Checkbox check = new Checkbox();
 			check.setEnabled(false);
@@ -172,8 +192,15 @@ public class GridView extends SplitLayout {
         });
         //        grid.addItemClickListener(event -> {
 //        	getUI().ifPresent(ui -> ui.navigate(MainView.ROUTE+"/scroll"));
-//        });        
+//        });
     }
+
+	private void populateGridContextMenu(Grid<MonthlyExpense> grid, GridContextMenu<MonthlyExpense> menu) {
+   		GridMenuItem<MonthlyExpense> menuItem = menu.addItem("Item", event -> {
+   			event.getItem().ifPresent(item -> Notification.show("This is "+item.getYear()+"/"+item.getMonth()));
+   			
+   		});
+	}
 
 	private void addYearSelectorMenuToColumnHeader(Grid<MonthlyExpense> grid) {
 		Column<MonthlyExpense> column = grid.getColumnByKey("year-column");
@@ -182,7 +209,11 @@ public class GridView extends SplitLayout {
     	div.add(new Text("Year"));
     	grid.getHeaderRows().get(0).getCell(grid.getColumnByKey("year")).setComponent(div);
     	ContextMenu menu = new ContextMenu(div);
-    	for (int i=0;i<10;i++) {
+    	populateContextMenu(grid, menu);
+	}
+
+	private void populateContextMenu(Grid<MonthlyExpense> grid, ContextMenu menu) {
+		for (int i=0;i<10;i++) {
     		final int index = i; 
     		menu.addItem("200"+i, event -> {
     			scrollTo(grid,index*12);

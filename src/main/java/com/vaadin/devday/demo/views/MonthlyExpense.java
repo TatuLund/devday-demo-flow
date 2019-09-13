@@ -31,6 +31,12 @@ public class MonthlyExpense {
 		return year;
 	}
 
+	public String getStyles() {
+		int color = (year - 2000) % 10;
+		String styles = "color:#"+color+"f"+color;
+		return styles;
+	}
+	
 	public void setYear(int year) {
 		this.year = year;
 	}

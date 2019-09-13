@@ -4,6 +4,7 @@ import com.vaadin.flow.component.charts.Chart;
 import com.vaadin.flow.component.charts.model.ChartType;
 import com.vaadin.flow.component.charts.model.Configuration;
 import com.vaadin.flow.component.charts.model.Cursor;
+import com.vaadin.flow.component.charts.model.DataLabels;
 import com.vaadin.flow.component.charts.model.DataSeries;
 import com.vaadin.flow.component.charts.model.DataSeriesItem;
 import com.vaadin.flow.component.charts.model.HorizontalAlign;
@@ -56,9 +57,17 @@ public class ChartUtil {
         plot.setPointPadding(0.2);
         plot.setShowInLegend(true);
         conf.setPlotOptions(plot);
-        
-        conf.addSeries(new ListSeries("Tokyo", 49.9, 71.5, 106.4, 129.2, 144.0,
-                176.0, 135.6, 148.5, 216.4, 194.1, 95.6, 54.4));
+
+        ListSeries tokyo = new ListSeries("Tokyo", 49.9, 71.5, 106.4, 129.2, 144.0,
+                176.0, 135.6, 148.5, 216.4, 194.1, 95.6, 54.4);
+        conf.addSeries(tokyo);
+        PlotOptionsColumn options = new PlotOptionsColumn();
+        options.setColorIndex(6);
+        options.setBorderRadius(4.0);
+        DataLabels labels = new DataLabels();
+        labels.setEnabled(true);
+        options.setDataLabels(labels);
+        tokyo.setPlotOptions(options);
         conf.addSeries(new ListSeries("New York", 83.6, 78.8, 98.5, 93.4,
                 106.0, 84.5, 105.0, 104.3, 91.2, 83.5, 106.6, 92.3));
         conf.addSeries(new ListSeries("London", 48.9, 38.8, 39.3, 41.4, 47.0,
