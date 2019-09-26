@@ -19,6 +19,9 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.component.timepicker.TimePicker;
+import com.vaadin.flow.data.binder.Binder;
+import com.vaadin.flow.data.binder.ValidationException;
+import com.vaadin.flow.data.validator.DateRangeValidator;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 
@@ -34,6 +37,33 @@ public class DialogView extends VerticalLayout {
     	DatePicker datePicker = new DatePicker();
     	Button saveBtn = new Button("save");
     	Button cancelBtn = new Button("cancel");
+private Person person;
+private Binder<Person> binder;
+    	
+    	public class Person {
+    		private String name;
+    		private LocalDate birthDate;
+    		private LocalTime birthTime;
+			public String getName() {
+				return name;
+			}
+			public void setName(String name) {
+				this.name = name;
+			}
+			public LocalDate getBirthDate() {
+				return birthDate;
+			}
+			public void setBirthDate(LocalDate birthDate) {
+				this.birthDate = birthDate;
+			}
+			public LocalTime getBirthTime() {
+				return birthTime;
+			}
+			public void setBirthTime(LocalTime birthTime) {
+				this.birthTime = birthTime;
+			}
+    		    	
+    	}
     	
     	private FormLayout createForm() {
     		FormLayout form = new FormLayout();
@@ -44,6 +74,15 @@ public class DialogView extends VerticalLayout {
     		form.addFormItem(nameField,"Name: ").getElement().setAttribute("colspan", "2");
     		form.addFormItem(datePicker,"Birth date: ");
     		form.addFormItem(timePicker,"Birth time: ");
+    		binder = new Binder<Person>();
+    		person = new Person();
+    		binder.readBean(person);
+    		binder.forField(nameField).bind(Person::getName, Person::setName);
+    		datePicker.setErrorMessage("Please provide valid date");
+    		binder.forField(datePicker)
+    		.withValidator(new DateRangeValidator("Birth date can't be in future",LocalDate.MIN,LocalDate.now()))
+    		.bind(Person::getBirthDate, Person::setBirthDate);
+    		binder.forField(timePicker).bind(Person::getBirthTime, Person::setBirthTime);
     		return form;
     	}
     	
@@ -59,9 +98,14 @@ public class DialogView extends VerticalLayout {
     		layout.setSizeFull();
     		add(layout);
     		saveBtn.addClickListener(event -> {
-    			close();
-    			Notification.show("Saved!",
-    	                2000, Position.MIDDLE);
+    			try {
+					binder.writeBean(person);
+	    			close();
+	    			Notification.show("Saved!",
+	    	                2000, Position.MIDDLE);
+				} catch (ValidationException e) {
+					// TODO Auto-generated catch block
+				}
     		});
     		cancelBtn.addClickListener(event -> {
     			close();
@@ -72,7 +116,7 @@ public class DialogView extends VerticalLayout {
     	public void open() {
     		super.open();
     		nameField.setValue("John Doe");
-    		timePicker.setValue(LocalTime.now());
+    		timePicker.setValue(null);
     		datePicker.setValue(LocalDate.now().minusYears(20));
     	}
     }
@@ -81,7 +125,7 @@ public class DialogView extends VerticalLayout {
     	setSizeFull(); 
 		getStyle().set("background", "var(--lumo-tint-40pct)");
     	MyDialog dialog = new MyDialog();
-    	Shortcuts.addShortcutListener(dialog, () -> dialog.close(), Key.BACKSPACE);
+//    	Shortcuts.addShortcutListener(dialog, () -> dialog.close(), Key.BACKSPACE);
     	Button button = new Button("Open Dialog");
     	button.addClickListener(event -> {
     		if (!dialog.isOpened()) {

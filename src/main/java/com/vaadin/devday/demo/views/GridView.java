@@ -9,6 +9,7 @@ import com.vaadin.flow.router.Route;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.vaadin.componentfactory.Popup;
 import com.vaadin.devday.demo.MainLayout;
 import com.vaadin.flow.component.Text;
 import com.vaadin.flow.component.UI;
@@ -49,6 +50,7 @@ public class GridView extends SplitLayout {
     private FormLayout form = null;
 	NumberField expenseField = new NumberField();
     MonthlyExpense currentExpense;
+	private Popup popup;
     
     public GridView() {
     	VerticalLayout content = new VerticalLayout();
@@ -62,13 +64,40 @@ public class GridView extends SplitLayout {
 		HorizontalLayout tools = new HorizontalLayout();
         tools.add(limit);
 
-        Span indexLabel = new Span("2000");        
+        HorizontalLayout buttons = createToolButtons(content);
+
+		tools.setWidth("100%");
+   		tools.add(buttons);
+        content.add(tools);
+        
+        content.add(expensesGrid);
+        content.expand(expensesGrid);
+
+        this.setSizeFull();
+        this.setOrientation(Orientation.VERTICAL);
+        this.addToPrimary(content);
+        form = createForm();
+        this.addToSecondary(form);
+        this.setSplitterPosition(80);
+        initalizeAndPopulateGrid(expensesGrid);
+    }
+
+	private HorizontalLayout createToolButtons(VerticalLayout content) {
+		Span indexLabel = new Span("2000");
+
+        // Create button and Popup (later populated by column selector)
+        Button popButton = new Button("Columns");
+        popButton.setId("columnsbutton");
+        popup = new Popup();
+        popup.setFor("columnsbutton");
+        content.add(popup);
+
+        // Buttons to add/decrease the year
         Button upBtn = new Button();
         upBtn.setIcon(new Icon(VaadinIcon.ARROW_UP));
         Button downBtn = new Button();
         downBtn.setIcon(new Icon(VaadinIcon.ARROW_DOWN));
 		HorizontalLayout buttons = new HorizontalLayout();
-		buttons.add(indexLabel,upBtn,downBtn);
 		buttons.getStyle().set("margin-left", "auto");
    		upBtn.addClickListener(event -> {
    			index = index - 12;
@@ -85,21 +114,9 @@ public class GridView extends SplitLayout {
    		indexLabel.addClickListener(event ->{
         	scrollTo(expensesGrid,index);
    		});
-   		tools.setWidth("100%");
-   		tools.add(buttons);
-        content.add(tools);
-        
-        content.add(expensesGrid);
-        content.expand(expensesGrid);
-
-        this.setSizeFull();
-        this.setOrientation(Orientation.VERTICAL);
-        this.addToPrimary(content);
-        form = createForm();
-        this.addToSecondary(form);
-        this.setSplitterPosition(80);
-        initalizeAndPopulateGrid(expensesGrid);
-    }
+		buttons.add(indexLabel,upBtn,downBtn,popButton);
+		return buttons;
+	}
 
 	private FormLayout createForm() {
 		FormLayout form = new FormLayout();
@@ -148,7 +165,7 @@ public class GridView extends SplitLayout {
 //    	menu.getElement().setProperty("selector", "[part~=\"body-cell\"]");
         grid.addColumn(MonthlyExpense::getMonth).setHeader("Month").setKey("month").setId("month-column");
         NumberField numberField = new NumberField();
-        grid.addColumn(MonthlyExpense::getExpenses).setHeader("Expenses").setClassNameGenerator(monthlyExpense -> monthlyExpense.getExpenses() >= getMonthlyExpenseLimit() ? "warning-grid-cell" : "green-grid-cell").setEditorComponent(numberField);
+        grid.addColumn(MonthlyExpense::getExpenses).setKey("expenses").setHeader("Expenses").setClassNameGenerator(monthlyExpense -> monthlyExpense.getExpenses() >= getMonthlyExpenseLimit() ? "warning-grid-cell" : "green-grid-cell").setEditorComponent(numberField);
         grid.addItemDoubleClickListener(event -> {
         	grid.getEditor().editItem(event.getItem());        	
         });
@@ -173,7 +190,7 @@ public class GridView extends SplitLayout {
 				}
 			});
 			return check;		
-		})).setWidth("50px").setHeader("Select");
+		})).setWidth("50px").setKey("select").setHeader("Select");
 		grid.setSelectionMode(SelectionMode.SINGLE);
 		grid.addThemeVariants(GridVariant.LUMO_ROW_STRIPES);
         List<MonthlyExpense> data = getData();
@@ -193,6 +210,22 @@ public class GridView extends SplitLayout {
         //        grid.addItemClickListener(event -> {
 //        	getUI().ifPresent(ui -> ui.navigate(MainView.ROUTE+"/scroll"));
 //        });
+
+        // Add column selector to Popup        
+        VerticalLayout popDiv = new VerticalLayout();
+        for (Column<MonthlyExpense> column : grid.getColumns()) {
+        	Checkbox check = new Checkbox(column.getKey());
+        	check.getStyle().set("border", "white 1px solid");
+        	check.getStyle().set("border-radius", "5px");
+        	check.getStyle().set("width", "200px");
+        	check.setValue(true);
+        	check.addValueChangeListener(event -> {
+        		column.setVisible(event.getValue());
+        	});
+        	popDiv.add(check);
+        }
+        popup.add(popDiv);
+        
     }
 
 	private void populateGridContextMenu(Grid<MonthlyExpense> grid, GridContextMenu<MonthlyExpense> menu) {

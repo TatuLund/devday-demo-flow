@@ -17,7 +17,7 @@
         <failOnMissingWebXml>false</failOnMissingWebXml>
 
         <!-- Dependencies -->
-        <vaadin.version>13.0.9</vaadin.version>
+        <vaadin.version>13.0.13</vaadin.version>
         <servlet.api.version>3.1.0</servlet.api.version>
 
         <!-- Plugins -->
@@ -99,6 +99,12 @@
             <groupId>com.vaadin</groupId>
             <artifactId>vaadin-charts-flow</artifactId>
         </dependency>
+
+		<dependency>
+   			<groupId>com.vaadin.componentfactory</groupId>
+   			<artifactId>popup</artifactId>
+   			<version>1.1.0</version>
+		</dependency>
 
         <!-- Testing -->
         <dependency>
