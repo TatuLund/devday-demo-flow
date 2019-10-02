@@ -2,7 +2,6 @@ package com.vaadin.devday.demo;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.time.Instant;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -19,24 +18,21 @@ import com.vaadin.devday.demo.views.ThemeVariantsView;
 import com.vaadin.devday.demo.views.UploadView;
 import com.vaadin.devday.demo.views.VaadinBoardView;
 import com.vaadin.flow.component.AttachEvent;
+import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.HasElement;
 import com.vaadin.flow.component.Key;
 import com.vaadin.flow.component.Shortcuts;
-import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.applayout.AppLayout;
-import com.vaadin.flow.component.applayout.AppLayoutMenu;
-import com.vaadin.flow.component.applayout.AppLayoutMenuItem;
 import com.vaadin.flow.component.dependency.HtmlImport;
-import com.vaadin.flow.component.dependency.JavaScript;
 import com.vaadin.flow.component.html.Image;
+import com.vaadin.flow.component.html.Span;
+import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.FlexLayout;
-import com.vaadin.flow.component.page.BodySize;
 import com.vaadin.flow.component.page.Push;
-import com.vaadin.flow.component.page.Viewport;
-import com.vaadin.flow.router.AfterNavigationEvent;
-import com.vaadin.flow.router.AfterNavigationObserver;
-import com.vaadin.flow.router.HasDynamicTitle;
+import com.vaadin.flow.component.tabs.Tab;
+import com.vaadin.flow.component.tabs.Tabs;
 import com.vaadin.flow.router.RouterLayout;
+import com.vaadin.flow.router.RouterLink;
 import com.vaadin.flow.server.PWA;
 import com.vaadin.flow.server.VaadinServlet;
 import com.vaadin.flow.server.VaadinServletConfiguration;
@@ -49,29 +45,43 @@ import com.vaadin.flow.theme.lumo.Lumo;
 @HtmlImport("styles.html")
 //@Viewport("width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes")
 //@BodySize(height = "100vh", width = "100vw")
-public class MainLayout extends AppLayout implements RouterLayout, AfterNavigationObserver {
+public class MainLayout extends AppLayout implements RouterLayout {
 
 	private FlexLayout childWrapper = new FlexLayout();
-    private AppLayoutMenu menu = createMenu();
-    private int count = 0;
-    
+    private Tabs menu = new Tabs();
+
+    private Tab createMenuItem(String title, VaadinIcon icon, Class<? extends Component> target) {
+        RouterLink link = new RouterLink(null,target);
+        if (icon != null) link.add(icon.create());
+        link.add(title);
+        Tab tab = new Tab();
+        tab.add(link);
+        return tab;
+    }
+   
 	public MainLayout() {
         Image img = new Image("https://vaadin.com/images/vaadin-logo.svg", "Vaadin Logo");
         img.setHeight("35px");
-        setBranding(img);
+        menu.setOrientation(Tabs.Orientation.HORIZONTAL);
+        Span appName = new Span(img);
+        appName.addClassName("hide-on-mobile");
+        addToNavbar(true, appName, menu);
+        
         getElement().getStyle().set("--vaadin-app-layout-navbar-background", "var(--lumo-tint-30pct)");
-
-        menu.addMenuItems(new AppLayoutMenuItem(AccordionView.TITLE, AccordionView.ROUTE),
-                new AppLayoutMenuItem(SplitLayoutView.TITLE, SplitLayoutView.ROUTE),
-                new AppLayoutMenuItem(DialogView.TITLE, DialogView.ROUTE),
-                new AppLayoutMenuItem(GridView.TITLE, GridView.ROUTE),
-                new AppLayoutMenuItem(VaadinBoardView.TITLE, VaadinBoardView.ROUTE),
-                new AppLayoutMenuItem(FormLayoutView.TITLE, FormLayoutView.ROUTE),
-                new AppLayoutMenuItem(ThemeVariantsView.TITLE, ThemeVariantsView.ROUTE),
-                new AppLayoutMenuItem(AbsoluteLayoutView.TITLE, AbsoluteLayoutView.ROUTE),
-                new AppLayoutMenuItem(UploadView.TITLE, UploadView.ROUTE),
-                new AppLayoutMenuItem(MainView.TITLE, "scroll"));
-
+       
+        menu.add(createMenuItem(AccordionView.TITLE,null,AccordionView.class),
+        		createMenuItem(SplitLayoutView.TITLE, null, SplitLayoutView.class),
+        		createMenuItem(DialogView.TITLE, null, DialogView.class),
+        		createMenuItem(GridView.TITLE, null, GridView.class),
+        		createMenuItem(VaadinBoardView.TITLE, null, VaadinBoardView.class),
+        		createMenuItem(FormLayoutView.TITLE, null, FormLayoutView.class),
+        		createMenuItem(ThemeVariantsView.TITLE, null, ThemeVariantsView.class),
+        		createMenuItem(AbsoluteLayoutView.TITLE, null, AbsoluteLayoutView.class),
+        		createMenuItem(UploadView.TITLE, null, UploadView.class),
+        		createMenuItem(MainView.TITLE, null, MainView.class)
+        		
+        		);
+        
         childWrapper.setSizeFull();
         setContent(childWrapper);
     	Shortcuts.addShortcutListener(this, () -> getUI().ifPresent(ui -> ui.navigate(AccordionView.ROUTE)), Key.F1);
@@ -102,15 +112,9 @@ public class MainLayout extends AppLayout implements RouterLayout, AfterNavigati
 		childWrapper.getElement().appendChild(content.getElement());		
 	}
 
-	@Override
-	public void afterNavigation(AfterNavigationEvent event) {
-		menu.getMenuItemTargetingRoute(event.getLocation().getPath()).ifPresent(menuItem -> menu.selectMenuItem(menuItem));
-		count++;
-	}
-
 	@WebServlet(urlPatterns = {"/myapp/*","/frontend/*"})
 	@VaadinServletConfiguration(productionMode = false)
 	public static class Servlet extends VaadinServlet {
 	}
-	
+
 }

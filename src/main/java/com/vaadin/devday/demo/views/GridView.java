@@ -7,7 +7,9 @@ import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.vaadin.componentfactory.Popup;
 import com.vaadin.devday.demo.MainLayout;
@@ -30,6 +32,8 @@ import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.notification.Notification;
+import com.vaadin.flow.component.notification.Notification.Position;
+import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.component.textfield.NumberField;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.component.timepicker.TimePicker;
@@ -211,7 +215,14 @@ public class GridView extends SplitLayout {
 //        	getUI().ifPresent(ui -> ui.navigate(MainView.ROUTE+"/scroll"));
 //        });
 
-        // Add column selector to Popup        
+        grid.recalculateColumnWidths();
+        
+        addColumnSelectorMenu(grid);
+        
+    }
+
+	private void addColumnSelectorMenu(Grid<MonthlyExpense> grid) {
+		// Add column selector to Popup        
         VerticalLayout popDiv = new VerticalLayout();
         for (Column<MonthlyExpense> column : grid.getColumns()) {
         	Checkbox check = new Checkbox(column.getKey());
@@ -225,13 +236,11 @@ public class GridView extends SplitLayout {
         	popDiv.add(check);
         }
         popup.add(popDiv);
-        
-    }
+	}
 
 	private void populateGridContextMenu(Grid<MonthlyExpense> grid, GridContextMenu<MonthlyExpense> menu) {
    		GridMenuItem<MonthlyExpense> menuItem = menu.addItem("Item", event -> {
-   			event.getItem().ifPresent(item -> Notification.show("This is "+item.getYear()+"/"+item.getMonth()));
-   			
+   			event.getItem().ifPresent(item -> Notification.show("This is "+item.getYear()+"/"+item.getMonth(),3000,Position.TOP_START).addThemeVariants(NotificationVariant.LUMO_CONTRAST));   			
    		});
 	}
 

@@ -1,22 +1,36 @@
 <link rel="import" href="../bower_components/vaadin-charts/theme/vaadin-chart-default-theme.html">
 <custom-style>
   <style>
-        .header {
- 		    background-color: var(--lumo-tint-20pct)  !important;
- 		    color: var(--lumo-primary-text-color) !important;
- 		}
+    .header {
+ 	   background-color: var(--lumo-tint-20pct)  !important;
+ 	   color: var(--lumo-primary-text-color) !important;
+ 	}
 		
- 		.navigation {
- 		    background-color: var(--lumo-tint-30pct) !important;
- 		} 
+ 	.navigation {
+ 	    background-color: var(--lumo-tint-30pct) !important;
+ 	} 
 		
- 		.content {
- 		    background-color: var(--lumo-tint-40pct) !important;
- 		}
+ 	.content {
+ 	    background-color: var(--lumo-tint-40pct) !important;
+ 	}
 		
- 		.footer {
- 		    background-color: var(--lumo-tint-50pct) !important;
- 		}
+ 	.footer {
+ 	    background-color: var(--lumo-tint-50pct) !important;
+ 	}
+ 		
+ 	vaadin-app-layout vaadin-tab a:hover {
+      text-decoration: none;
+    }
+    vaadin-app-layout vaadin-tab:not([selected]) a {
+      color: var(--lumo-contrast-60pct);
+    }
+    vaadin-app-layout vaadin-tab iron-icon {
+      margin: 0 4px;
+      width: var(--lumo-icon-size-m);
+      height: var(--lumo-icon-size-m);
+      padding: .25rem;
+      box-sizing: border-box!important;
+    }
 
 html {
   --limit-field-color:rgb(227, 43, 83);
@@ -262,4 +276,30 @@ html {
         	}
         </style>
     </template>
+</dom-module>
+
+<dom-module id="app-layout-theme" theme-for="vaadin-app-layout">
+  <template>
+    <style>
+      [part="navbar"] {
+        align-items: center;
+        justify-content: center;
+      }
+      [part="navbar"]::after {
+        content: '';
+      }
+      [part="navbar"] ::slotted(*:first-child),
+      [part="navbar"]::after {
+        flex: 1 0 0.001px;
+      }
+      @media (max-width: 425px) {
+        [part="navbar"] ::slotted(.hide-on-mobile) {
+          display: none;
+        }
+        [part="navbar"]::after {
+          content: none;
+        }
+    }
+    </style>
+  </template>
 </dom-module>

@@ -15,6 +15,7 @@ import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.html.Hr;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.notification.Notification.Position;
+import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
@@ -102,9 +103,11 @@ private Binder<Person> binder;
 					binder.writeBean(person);
 	    			close();
 	    			Notification.show("Saved!",
-	    	                2000, Position.MIDDLE);
+	    	                2000, Position.MIDDLE).addThemeVariants(NotificationVariant.LUMO_SUCCESS); ;
 				} catch (ValidationException e) {
-					// TODO Auto-generated catch block
+					Notification not = new Notification();
+	    			Notification.show("Form has validation errors!",
+	    	                2000, Position.MIDDLE).addThemeVariants(NotificationVariant.LUMO_ERROR); ;
 				}
     		});
     		cancelBtn.addClickListener(event -> {
