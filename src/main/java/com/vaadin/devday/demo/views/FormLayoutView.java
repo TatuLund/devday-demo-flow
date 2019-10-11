@@ -111,7 +111,7 @@ public class FormLayoutView extends VerticalLayout {
 
         email.setWidth("100%");
         formLayout.addFormItem(email, "Email").getElement().setAttribute("colspan", "2");
-
+        
         FlexLayout phoneLayout = new FlexLayout();
         phoneLayout.setAlignItems(Alignment.END);
         phoneLayout.setWidth("100%");

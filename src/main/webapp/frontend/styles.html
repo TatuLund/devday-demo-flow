@@ -303,3 +303,24 @@ html {
     </style>
   </template>
 </dom-module>
+
+<dom-module id="selected-hightlight" theme-for="list-box">
+  <template>
+    <style>
+      [part="items"] ::slotted([focus-ring]:not([disabled])) {
+        box-shadow: inset 0 0 0 2px white !important;
+      }
+    </style>
+  </template>
+</dom-module>
+
+<dom-module id="red-notification" theme-for="vaadin-notification-card">
+  <template>
+    <style>
+      [part="content"]  {
+        background: red;
+      }
+    </style>
+  </template>
+</dom-module>
+

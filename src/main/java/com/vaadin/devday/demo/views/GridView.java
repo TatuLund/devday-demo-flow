@@ -38,6 +38,7 @@ import com.vaadin.flow.component.textfield.NumberField;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.component.timepicker.TimePicker;
 import com.vaadin.flow.data.binder.Binder;
+import com.vaadin.flow.data.provider.ListDataProvider;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.data.renderer.Renderer;
 import com.vaadin.flow.data.renderer.TemplateRenderer;
@@ -150,7 +151,8 @@ public class GridView extends SplitLayout {
     }
 
     public static void scrollTo(Grid<?> grid, int index) {
-        UI.getCurrent().getPage().executeJavaScript("$0._scrollToIndex(" + index + ")", grid.getElement());
+        ListDataProvider<MonthlyExpense> ldp =  (ListDataProvider) grid.getDataProvider();
+        if (ldp.getFilter() == null) UI.getCurrent().getPage().executeJavaScript("$0._scrollToIndex(" + index + ")", grid.getElement());
     }
     
     private String getStyles() {
@@ -168,6 +170,7 @@ public class GridView extends SplitLayout {
     	populateGridContextMenu(grid,menu);    	
 //    	menu.getElement().setProperty("selector", "[part~=\"body-cell\"]");
         grid.addColumn(MonthlyExpense::getMonth).setHeader("Month").setKey("month").setId("month-column");
+    	addMonthFilterMenuToColumnHeader(grid); 
         NumberField numberField = new NumberField();
         grid.addColumn(MonthlyExpense::getExpenses).setKey("expenses").setHeader("Expenses").setClassNameGenerator(monthlyExpense -> monthlyExpense.getExpenses() >= getMonthlyExpenseLimit() ? "warning-grid-cell" : "green-grid-cell").setEditorComponent(numberField);
         grid.addItemDoubleClickListener(event -> {
@@ -178,7 +181,7 @@ public class GridView extends SplitLayout {
         grid.getEditor().setBinder(binder);
 		grid.addColumn(new ComponentRenderer<Checkbox,MonthlyExpense>(expense ->  {
 			Checkbox check = new Checkbox();
-			check.setEnabled(false);
+			check.setEnabled(false);			
 			grid.addSelectionListener(event -> {
 				if (event.getAllSelectedItems().contains(expense)) {
 					System.out.println("Selected "+expense.toString());
@@ -193,7 +196,8 @@ public class GridView extends SplitLayout {
 					grid.select(expense);
 				}
 			});
-			return check;		
+			return check;
+			
 		})).setWidth("50px").setKey("select").setHeader("Select");
 		grid.setSelectionMode(SelectionMode.SINGLE);
 		grid.addThemeVariants(GridVariant.LUMO_ROW_STRIPES);
@@ -245,7 +249,6 @@ public class GridView extends SplitLayout {
 	}
 
 	private void addYearSelectorMenuToColumnHeader(Grid<MonthlyExpense> grid) {
-		Column<MonthlyExpense> column = grid.getColumnByKey("year-column");
     	Div div = new Div();
     	div.setSizeFull();
     	div.add(new Text("Year"));
@@ -253,6 +256,31 @@ public class GridView extends SplitLayout {
     	ContextMenu menu = new ContextMenu(div);
     	populateContextMenu(grid, menu);
 	}
+
+	private void addMonthFilterMenuToColumnHeader(Grid<MonthlyExpense> grid) {
+    	Div div = new Div();
+    	div.setSizeFull();
+    	div.add(new Text("Month"));
+    	grid.getHeaderRows().get(0).getCell(grid.getColumnByKey("month")).setComponent(div);
+    	ContextMenu menu = new ContextMenu(div);
+    	populateFilterMenu(grid, menu);
+	}
+
+	private void populateFilterMenu(Grid<MonthlyExpense> grid, ContextMenu menu) {
+		menu.addItem("All months", event -> {
+	        ListDataProvider<MonthlyExpense> ldp =  (ListDataProvider) grid.getDataProvider();
+	        ldp.clearFilters();
+		});
+		String[] months = { "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December" };
+		for (String month : months) {
+    		menu.addItem(month, event -> {
+    	        ListDataProvider<MonthlyExpense> ldp =  (ListDataProvider) grid.getDataProvider();
+    	        ldp.clearFilters();
+    	        ldp.setFilter(item -> item.getMonth().equals(month));
+    		});
+    	}
+	}
+
 
 	private void populateContextMenu(Grid<MonthlyExpense> grid, ContextMenu menu) {
 		for (int i=0;i<10;i++) {

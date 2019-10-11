@@ -6,11 +6,10 @@ import com.vaadin.devday.demo.MainLayout;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.Div;
-import com.vaadin.flow.component.html.H2;
-import com.vaadin.flow.component.html.H3;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextArea;
+import com.vaadin.flow.function.SerializableConsumer;
 import com.vaadin.flow.router.*;
 import com.vaadin.flow.server.RouteRegistry;
 
@@ -47,10 +46,13 @@ public class MainView extends VerticalLayout implements HasUrlParameter<String>,
 		footer.setClassName("footer");
 		footer.setHeight("100px");
 
+		add(new Button("Scroll", event -> {
+			getUI().get().navigate("layouts/scroll");
+		}));
+		
 		add(header);
 		add(layout);
 		add(footer);
-
 		expand(layout);
 	}
 
