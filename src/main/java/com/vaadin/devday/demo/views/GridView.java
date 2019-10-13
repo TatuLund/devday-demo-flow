@@ -271,7 +271,7 @@ public class GridView extends SplitLayout {
 	        ListDataProvider<MonthlyExpense> ldp =  (ListDataProvider) grid.getDataProvider();
 	        ldp.clearFilters();
 		});
-		String[] months = { "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December" };
+		String[] months = new java.text.DateFormatSymbols().getMonths();
 		for (String month : months) {
     		menu.addItem(month, event -> {
     	        ListDataProvider<MonthlyExpense> ldp =  (ListDataProvider) grid.getDataProvider();
