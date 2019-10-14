@@ -134,7 +134,7 @@ public class MainLayout extends AppLayout implements RouterLayout, AfterNavigati
 		childWrapper.getElement().appendChild(content.getElement());		
 	}
 
-	@WebServlet(urlPatterns = {"/myapp/*","/frontend/*"})
+	@WebServlet(urlPatterns = {"/myapp/*","/frontend/*"}, asyncSupported = true)
 	@VaadinServletConfiguration(productionMode = false)
 	public static class Servlet extends VaadinServlet {
 	}

@@ -13,6 +13,8 @@ import java.util.Map;
 
 import com.vaadin.componentfactory.Popup;
 import com.vaadin.devday.demo.MainLayout;
+import com.vaadin.flow.component.AttachEvent;
+import com.vaadin.flow.component.ClientCallable;
 import com.vaadin.flow.component.Text;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
@@ -240,8 +242,14 @@ public class GridView extends SplitLayout {
         	popDiv.add(check);
         }
         popup.add(popDiv);
+        popup.getElement().executeJs("this.$.popupOverlay.addEventListener('vaadin-overlay-close', () => $0.$server.popupClosed())",getElement());		
 	}
 
+	@ClientCallable
+	public void popupClosed() {
+		System.out.println("Popup closed");
+	}
+	
 	private void populateGridContextMenu(Grid<MonthlyExpense> grid, GridContextMenu<MonthlyExpense> menu) {
    		GridMenuItem<MonthlyExpense> menuItem = menu.addItem("Item", event -> {
    			event.getItem().ifPresent(item -> Notification.show("This is "+item.getYear()+"/"+item.getMonth(),3000,Position.TOP_START).addThemeVariants(NotificationVariant.LUMO_CONTRAST));   			
@@ -296,7 +304,7 @@ public class GridView extends SplitLayout {
     		});
     	}
 	}
-
+	
 	private List<MonthlyExpense> getData() {
 		String[] monthNames = new java.text.DateFormatSymbols().getMonths();
         List<MonthlyExpense> data = new ArrayList<>();
