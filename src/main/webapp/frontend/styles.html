@@ -314,6 +314,21 @@ html {
   </template>
 </dom-module>
 
+<dom-module id="weekends" theme-for="vaadin-month-calendar">
+  <template>
+    <style>
+		:host([theme~="weekend-highlight"]) [aria-label~="Saturday"] {
+			background: var(--lumo-base-color);
+    		color: var(--lumo-header-text-color);
+		}
+		:host([theme~="weekend-highlight"]) [aria-label~="Sunday"] { 
+			background: var(--lumo-base-color);
+    		color: var(--lumo-header-text-color);
+   		}
+    </style>
+  </template>
+</dom-module>
+
 <dom-module id="red-notification" theme-for="vaadin-notification-card">
   <template>
     <style>

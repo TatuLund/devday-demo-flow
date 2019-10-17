@@ -38,8 +38,8 @@ public class DialogView extends VerticalLayout {
     	DatePicker datePicker = new DatePicker();
     	Button saveBtn = new Button("save");
     	Button cancelBtn = new Button("cancel");
-private Person person;
-private Binder<Person> binder;
+    	private Person person;
+    	private Binder<Person> binder;
     	
     	public class Person {
     		private String name;
@@ -80,6 +80,7 @@ private Binder<Person> binder;
     		binder.readBean(person);
     		binder.forField(nameField).bind(Person::getName, Person::setName);
     		datePicker.setErrorMessage("Please provide valid date");
+    		datePicker.getElement().setAttribute("theme", "weekend-highlight");
     		binder.forField(datePicker)
     		.withValidator(new DateRangeValidator("Birth date can't be in future",LocalDate.MIN,LocalDate.now()))
     		.bind(Person::getBirthDate, Person::setBirthDate);

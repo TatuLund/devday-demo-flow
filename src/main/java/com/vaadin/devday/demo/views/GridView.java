@@ -149,6 +149,7 @@ public class GridView extends SplitLayout {
         limit.addClassName("limit-field");
         limit.addValueChangeListener(event -> expensesGrid.getDataProvider().refreshAll());
         limit.getElement().getStyle().set("--limit-field-color", "#2dd7a4");
+        limit.setMaxLength(3);
         return limit;
     }
 
