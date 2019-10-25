@@ -136,6 +136,17 @@ html {
   </style>
 </custom-style>
 
+<dom-module id="underline" theme-for="vaadin-text-field">
+  <template>
+    <style>
+      :host([theme~="underline"]) [part="input-field"] {
+		border-bottom: 1px solid white;
+		border-radius: 0px;
+      }    
+    </style>
+  </template>
+</dom-module>
+
 
 <dom-module id="text-field-style" theme-for="vaadin-text-field">
   <template>

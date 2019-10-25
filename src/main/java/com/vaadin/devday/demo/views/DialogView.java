@@ -69,6 +69,7 @@ public class DialogView extends VerticalLayout {
     	private FormLayout createForm() {
     		FormLayout form = new FormLayout();
     		timePicker.setWidth("100%");
+    		timePicker.getElement().setAttribute("theme", "underline");
     		datePicker.setWidth("100%");
     		nameField.setWidth("100%");
     		form.setSizeFull();
@@ -81,6 +82,7 @@ public class DialogView extends VerticalLayout {
     		binder.forField(nameField).bind(Person::getName, Person::setName);
     		datePicker.setErrorMessage("Please provide valid date");
     		datePicker.getElement().setAttribute("theme", "weekend-highlight");
+    		datePicker.getElement().setAttribute("theme", "underline");
     		binder.forField(datePicker)
     		.withValidator(new DateRangeValidator("Birth date can't be in future",LocalDate.MIN,LocalDate.now()))
     		.bind(Person::getBirthDate, Person::setBirthDate);

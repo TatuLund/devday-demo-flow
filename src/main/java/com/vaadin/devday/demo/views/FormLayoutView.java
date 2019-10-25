@@ -3,6 +3,7 @@ package com.vaadin.devday.demo.views;
 import java.util.Optional;
 
 import com.vaadin.devday.demo.MainLayout;
+import com.vaadin.flow.component.AttachEvent;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.checkbox.Checkbox;
@@ -20,6 +21,7 @@ import com.vaadin.flow.component.textfield.PasswordField;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.data.binder.Binder.Binding;
+import com.vaadin.flow.dom.Element;
 import com.vaadin.flow.dom.ElementFactory;
 import com.vaadin.flow.router.AfterNavigationEvent;
 import com.vaadin.flow.router.AfterNavigationObserver;
@@ -94,16 +96,18 @@ public class FormLayoutView extends VerticalLayout {
     PasswordField repeatPassword = new PasswordField();
 
     Button saveButton = new Button("Save");
-    
+  
     public FormLayoutView(){
         setSizeFull();
         
         FormLayout formLayout = new FormLayout();
         title.setItems("Mr","Mrs","Miss");
         title.setWidth("100%");
+		title.getElement().setAttribute("theme", "underline");
+        formLayout.addFormItem(title, "Title");
         formLayout.getElement().appendChild(ElementFactory.createBr());
                 
-        firstName.setWidth("100%");
+        firstName.setWidth("100%");        
         formLayout.addFormItem(firstName, "First Name");
 
         lastName.setWidth("100%");
