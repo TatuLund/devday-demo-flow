@@ -1,17 +1,12 @@
 package com.vaadin.devday.demo.views;
 
-import java.util.Optional;
-
 import com.vaadin.devday.demo.MainLayout;
-import com.vaadin.flow.component.AttachEvent;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.checkbox.Checkbox;
 import com.vaadin.flow.component.combobox.ComboBox;
+import com.vaadin.flow.component.confirmdialog.ConfirmDialog;
 import com.vaadin.flow.component.formlayout.FormLayout;
-import com.vaadin.flow.component.formlayout.FormLayout.FormItem;
-import com.vaadin.flow.component.html.H2;
-import com.vaadin.flow.component.html.Hr;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.notification.Notification.Position;
 import com.vaadin.flow.component.orderedlayout.FlexLayout;
@@ -20,20 +15,22 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.PasswordField;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.Binder;
-import com.vaadin.flow.data.binder.Binder.Binding;
-import com.vaadin.flow.dom.Element;
 import com.vaadin.flow.dom.ElementFactory;
-import com.vaadin.flow.router.AfterNavigationEvent;
-import com.vaadin.flow.router.AfterNavigationObserver;
+import com.vaadin.flow.router.BeforeLeaveEvent;
+import com.vaadin.flow.router.BeforeLeaveEvent.ContinueNavigationAction;
+import com.vaadin.flow.router.BeforeLeaveObserver;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 
 @Route(value = FormLayoutView.ROUTE, layout = MainLayout.class)
 @PageTitle(FormLayoutView.TITLE)
-public class FormLayoutView extends VerticalLayout {
+public class FormLayoutView extends VerticalLayout implements BeforeLeaveObserver {
     public static final String ROUTE = "form";
     public static final String TITLE = "Form Layout";
 
+    private Binder<Person> binder;
+    private ConfirmDialog confirmDialog;
+    
     public class Person {
     	private String title;
     	private String firstName = "ewpotpoqwuteoiuwotiuowituoiwutoiuwtoiuwotu";
@@ -135,7 +132,7 @@ public class FormLayoutView extends VerticalLayout {
         formLayout.addFormItem(repeatPassword, "Repeat Password");
 
         Person person = new Person();
-        Binder<Person> binder = new Binder<>(Person.class);
+        binder = new Binder<>(Person.class);
         // https://github.com/vaadin/vaadin-form-layout-flow/issues/59
         binder.forField(firstName)
     	.asRequired()
@@ -182,4 +179,17 @@ public class FormLayoutView extends VerticalLayout {
 		});
 		return tools;
     }
+
+	@Override
+	public void beforeLeave(BeforeLeaveEvent event) {
+		if (!binder.isValid()) {
+			ContinueNavigationAction action = event.postpone(); // Save navigation action for later
+			confirmDialog = new ConfirmDialog("Form is not validated",
+		    	        "Do you want to save or discard your changes before navigating away?",
+		    	        "Save", e -> {confirmDialog.close();Notification.show("Saved", 2000, Position.MIDDLE);action.proceed();}, 
+		    	        "Discard", e -> {confirmDialog.close();action.proceed();},
+		    	        "Cancel", e -> {confirmDialog.close();});		      
+		    	confirmDialog.open();
+		    }		
+	}
 }

@@ -115,6 +115,12 @@
    			<version>2.1.1</version>
 		</dependency>
 
+		<dependency>
+   			<groupId>com.vaadin</groupId>
+   			<artifactId>vaadin-confirm-dialog-flow</artifactId>
+   			<version>1.2.1</version>
+		</dependency>
+
         <!-- Testing -->
         <dependency>
             <groupId>com.vaadin</groupId>
@@ -215,30 +221,32 @@
 
         	<build>
             	<plugins>
-					<plugin>
-						<groupId>com.github.eirslett</groupId>
-						<artifactId>frontend-maven-plugin</artifactId>
-						<executions>
-							<execution>
-								<id>install-node-and-yarn</id>
-								<goals>
-									<goal>install-node-and-yarn</goal>
-									<goal>yarn</goal>
-								</goals>
-								<configuration>
-									<workingDirectory>${buildtools.directory}</workingDirectory>
-								</configuration>
-							</execution>
-						</executions>
-					</plugin>
+<!-- 					<plugin> -->
+<!-- 						<groupId>com.github.eirslett</groupId> -->
+<!-- 						<artifactId>frontend-maven-plugin</artifactId> -->
+<!-- 						<executions> -->
+<!-- 							<execution> -->
+<!-- 								<id>install-node-and-yarn</id> -->
+<!-- 								<goals> -->
+<!-- 									<goal>install-node-and-yarn</goal> -->
+<!-- 									<goal>yarn</goal> -->
+<!-- 								</goals> -->
+<!-- 								<configuration> -->
+<!-- 									<workingDirectory>${buildtools.directory}</workingDirectory> -->
+<!-- 								</configuration> -->
+<!-- 							</execution> -->
+<!-- 						</executions> -->
+<!-- 					</plugin> -->
                 	<plugin>
             	        <groupId>com.vaadin</groupId>
     		            <artifactId>vaadin-maven-plugin</artifactId>
 	                    <version>${vaadin.version}</version>
             			<configuration>
-							<autodetectTools>true</autodetectTools>
-			                <nodePath>${buildtools.directory}/node/node.exe</nodePath>
-			                <yarnPath>${project.basedir}/yarn.cmd</yarnPath>
+							<nodeVersion>${node.version}</nodeVersion>
+							<yarnVersion>${yarn.version}</yarnVersion>
+							<ignoreMavenProxies>false</ignoreMavenProxies>
+<!-- 			                <nodePath>${buildtools.directory}/node/node.exe</nodePath> -->
+<!-- 			                <yarnPath>${project.basedir}/yarn.cmd</yarnPath> -->
             			</configuration>
                 	    <executions>
             	            <execution>
