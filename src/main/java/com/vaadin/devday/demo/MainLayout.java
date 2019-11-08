@@ -2,10 +2,7 @@ package com.vaadin.devday.demo;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.util.Optional;
 
-import javax.servlet.ServletConfig;
-import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 
 import com.vaadin.devday.demo.views.AbsoluteLayoutView;
@@ -36,13 +33,10 @@ import com.vaadin.flow.component.tabs.Tabs;
 import com.vaadin.flow.router.AfterNavigationEvent;
 import com.vaadin.flow.router.AfterNavigationObserver;
 import com.vaadin.flow.router.HasDynamicTitle;
-import com.vaadin.flow.router.RouteConfiguration;
 import com.vaadin.flow.router.RouterLayout;
 import com.vaadin.flow.router.RouterLink;
 import com.vaadin.flow.server.PWA;
 import com.vaadin.flow.server.VaadinServlet;
-import com.vaadin.flow.server.VaadinServletConfiguration;
-import com.vaadin.flow.server.VaadinSession;
 import com.vaadin.flow.theme.Theme;
 import com.vaadin.flow.theme.lumo.Lumo;
 
@@ -72,6 +66,7 @@ public class MainLayout extends AppLayout implements RouterLayout, AfterNavigati
         img.setHeight("35px");
         menu.setOrientation(Tabs.Orientation.HORIZONTAL);
         menu.addSelectedChangeListener(event -> {
+        	// Note: This does not work if we do not have receiver executed in onAttach
         	getUI().ifPresent(ui -> System.out.println("Width "+ui.getInternals().getExtendedClientDetails().getBodyClientWidth()));        	
         });
         Span appName = new Span(img);
@@ -110,6 +105,7 @@ public class MainLayout extends AppLayout implements RouterLayout, AfterNavigati
 
     @Override
     protected void onAttach(AttachEvent attachEvent) {
+    	// This is the method to fetch client details.
     	getUI().ifPresent(ui -> ui.getPage().retrieveExtendedClientDetails(receiver -> {
             int screenWidth = receiver.getBodyClientWidth();
             System.out.println("Width "+screenWidth);
@@ -131,17 +127,17 @@ public class MainLayout extends AppLayout implements RouterLayout, AfterNavigati
 			System.out.println(titledComponent.getPageTitle());
 		}
 		System.out.println("Show router layout content");
-		childWrapper.getElement().appendChild(content.getElement());		
+		childWrapper.getElement().appendChild(content.getElement());
 	}
 
+	// Mapping servlet to other context, note the frontend mapping
 	@WebServlet(urlPatterns = {"/myapp/*","/frontend/*"}, asyncSupported = true)
-	@VaadinServletConfiguration(productionMode = false)
 	public static class Servlet extends VaadinServlet {
 	}
 
 	@Override
 	public void afterNavigation(AfterNavigationEvent event) {
-		System.out.println("After navigation at root");
+		System.out.println("After navigation at root");		
 	}
 
 }

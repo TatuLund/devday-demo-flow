@@ -1,18 +1,11 @@
 package com.vaadin.devday.demo.views;
 
 import com.vaadin.devday.demo.MainLayout;
-import com.vaadin.flow.component.AttachEvent;
 import com.vaadin.flow.component.Component;
-import com.vaadin.flow.component.DetachEvent;
 import com.vaadin.flow.component.board.Board;
-import com.vaadin.flow.component.board.Row;
-import com.vaadin.flow.component.charts.Chart;
-import com.vaadin.flow.component.charts.model.*;
-import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
-import com.vaadin.flow.shared.Registration;
 
 @Route(value = VaadinBoardView.ROUTE, layout = MainLayout.class)
 @PageTitle(VaadinBoardView.TITLE)

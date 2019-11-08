@@ -93,6 +93,5 @@ public class ThemeVariantsView extends VerticalLayout {
         	Notification.show(event.getValue()).setPosition(Position.MIDDLE);;
         });
         add(buttons);
-		
 	}
 }

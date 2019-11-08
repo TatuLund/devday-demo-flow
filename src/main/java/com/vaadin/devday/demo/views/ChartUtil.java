@@ -68,8 +68,12 @@ public class ChartUtil {
         labels.setEnabled(true);
         options.setDataLabels(labels);
         tokyo.setPlotOptions(options);
-        conf.addSeries(new ListSeries("New York", 83.6, 78.8, 98.5, 93.4,
-                106.0, 84.5, 105.0, 104.3, 91.2, 83.5, 106.6, 92.3));
+        ListSeries newYork = new ListSeries("New York", 83.6, 78.8, 98.5, 93.4,
+                106.0, 84.5, 105.0, 104.3, 91.2, 83.5, 106.6, 92.3);
+        PlotOptionsColumn optionsNY = new PlotOptionsColumn();
+        optionsNY.setCrisp(true);
+        newYork.setPlotOptions(optionsNY);
+        conf.addSeries(newYork);
         conf.addSeries(new ListSeries("London", 48.9, 38.8, 39.3, 41.4, 47.0,
                 48.3, 59.0, 59.6, 52.4, 65.2, 59.3, 51.2));
         conf.addSeries(new ListSeries("Berlin", 42.4, 33.2, 34.5, 39.7, 52.6,

@@ -9,8 +9,16 @@ import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextArea;
-import com.vaadin.flow.function.SerializableConsumer;
-import com.vaadin.flow.router.*;
+import com.vaadin.flow.router.BeforeEnterEvent;
+import com.vaadin.flow.router.BeforeEnterObserver;
+import com.vaadin.flow.router.BeforeEvent;
+import com.vaadin.flow.router.HasDynamicTitle;
+import com.vaadin.flow.router.HasUrlParameter;
+import com.vaadin.flow.router.OptionalParameter;
+import com.vaadin.flow.router.Route;
+import com.vaadin.flow.router.RouteAlias;
+import com.vaadin.flow.router.RouteData;
+import com.vaadin.flow.router.RouterLayout;
 import com.vaadin.flow.server.RouteRegistry;
 
 @Route(value = MainView.ROUTE, layout = MainLayout.class)
@@ -107,7 +115,6 @@ public class MainView extends VerticalLayout implements HasUrlParameter<String>,
 		scrollable = true;
 		
 		makeContentScrollable();
-
 	}
 
 	private void makeContentScrollable() {

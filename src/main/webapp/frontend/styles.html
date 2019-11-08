@@ -228,6 +228,9 @@ html {
 <dom-module theme-for="vaadin-grid" id="my-grid">
     <template>
         <style>
+			:host(.my-grid) [part~="cell"] ::slotted(vaadin-grid-cell-content) {
+                cursor:pointer;
+            }
             :host(.my-grid) [part="row"] :hover{
                 background:var(--lumo-tint-60pct);
             }

@@ -7,13 +7,10 @@ import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import com.vaadin.componentfactory.Popup;
 import com.vaadin.devday.demo.MainLayout;
-import com.vaadin.flow.component.AttachEvent;
 import com.vaadin.flow.component.ClientCallable;
 import com.vaadin.flow.component.Text;
 import com.vaadin.flow.component.UI;
@@ -42,7 +39,6 @@ import com.vaadin.flow.component.timepicker.TimePicker;
 import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.data.provider.ListDataProvider;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
-import com.vaadin.flow.data.renderer.Renderer;
 import com.vaadin.flow.data.renderer.TemplateRenderer;
 
 @Route(value = GridView.ROUTE, layout = MainLayout.class)
@@ -58,6 +54,7 @@ public class GridView extends SplitLayout {
 	NumberField expenseField = new NumberField();
     MonthlyExpense currentExpense;
 	private Popup popup;
+	private boolean openMenu;
     
     public GridView() {
     	VerticalLayout content = new VerticalLayout();
@@ -98,7 +95,8 @@ public class GridView extends SplitLayout {
         popup = new Popup();
         popup.setFor("columnsbutton");
         content.add(popup);
-
+        popButton.getElement().addEventListener("mouseover",  event -> popup.setOpened(true));
+        
         // Buttons to add/decrease the year
         Button upBtn = new Button();
         upBtn.setIcon(new Icon(VaadinIcon.ARROW_UP));
@@ -143,13 +141,14 @@ public class GridView extends SplitLayout {
 		expenseField.setSuffixComponent(new Span("EUR"));
 		return form;
 	}
-	
+
     private TextField createLimitTextField() {
         TextField limit = new TextField("Limit for monthly expenses");
         limit.addClassName("limit-field");
         limit.addValueChangeListener(event -> expensesGrid.getDataProvider().refreshAll());
         limit.getElement().getStyle().set("--limit-field-color", "#2dd7a4");
         limit.setMaxLength(3);
+//        limit.getElement().setAttribute("aria-required", "false");
         return limit;
     }
 
@@ -170,7 +169,7 @@ public class GridView extends SplitLayout {
     	).setHeader("Year").setKey("year").setId("year-column");
     	addYearSelectorMenuToColumnHeader(grid);
     	GridContextMenu<MonthlyExpense> menu = new GridContextMenu<>(grid);
-    	populateGridContextMenu(grid,menu);    	
+    	populateGridContextMenu(grid,menu);
 //    	menu.getElement().setProperty("selector", "[part~=\"body-cell\"]");
         grid.addColumn(MonthlyExpense::getMonth).setHeader("Month").setKey("month").setId("month-column");
     	addMonthFilterMenuToColumnHeader(grid); 
@@ -250,10 +249,22 @@ public class GridView extends SplitLayout {
 	public void popupClosed() {
 		System.out.println("Popup closed");
 	}
-	
+
 	private void populateGridContextMenu(Grid<MonthlyExpense> grid, GridContextMenu<MonthlyExpense> menu) {
-   		GridMenuItem<MonthlyExpense> menuItem = menu.addItem("Item", event -> {
-   			event.getItem().ifPresent(item -> Notification.show("This is "+item.getYear()+"/"+item.getMonth(),3000,Position.TOP_START).addThemeVariants(NotificationVariant.LUMO_CONTRAST));   			
+		GridMenuItem<MonthlyExpense> menuItem = menu.addItem("Item", event -> {
+			event.getItem().ifPresent(item -> Notification.show("This is "+item.getYear()+"/"+item.getMonth(),3000,Position.TOP_START).addThemeVariants(NotificationVariant.LUMO_CONTRAST));   			
+		});
+		menu.setDynamicContentHandler(item -> {			
+			Button button = new Button(VaadinIcon.DOWNLOAD.create());
+			menu.addItem(button);
+			menuItem.setText("Download");
+			return true;
+		});
+   		menu.addGridContextMenuOpenedListener(event -> {
+   			if (event.getColumnId() == null) return;
+   			if (!(event.getColumnId().get().equals("year-column"))) {
+   				menu.close();
+   			}
    		});
 	}
 

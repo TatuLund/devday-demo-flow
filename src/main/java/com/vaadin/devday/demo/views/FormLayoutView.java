@@ -186,9 +186,17 @@ public class FormLayoutView extends VerticalLayout implements BeforeLeaveObserve
 			ContinueNavigationAction action = event.postpone(); // Save navigation action for later
 			confirmDialog = new ConfirmDialog("Form is not validated",
 		    	        "Do you want to save or discard your changes before navigating away?",
-		    	        "Save", e -> {confirmDialog.close();Notification.show("Saved", 2000, Position.MIDDLE);action.proceed();}, 
-		    	        "Discard", e -> {confirmDialog.close();action.proceed();},
-		    	        "Cancel", e -> {confirmDialog.close();});		      
+		    	        "Save", e -> {
+		    	        	confirmDialog.close();
+		    	        	Notification.show("Saved", 2000, Position.MIDDLE);
+		    	        	action.proceed();}, 
+		    	        "Discard", e -> {
+		    	        	confirmDialog.close();
+		    	        	action.proceed();},
+		    	        "Cancel", e -> {
+		    	        	confirmDialog.close();
+		    	        	
+		    	        	});		      
 		    	confirmDialog.open();
 		    }		
 	}
