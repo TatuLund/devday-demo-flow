@@ -386,3 +386,18 @@ html {
   </template>
 </dom-module>
 
+<dom-module id="buttons-spread1" theme-for="vaadin-radio-group">
+  <template>
+    <style>
+      :host([theme~="button-spread"]) [part="group-field"]  {
+        display: flex;
+        flex-direction: row;
+        align-content: space-between;
+      }
+      :host([theme~="button-spread"]) ::slotted(vaadin-radio-button) {
+      		flex-grow: 1;
+      }
+    </style>
+  </template>
+</dom-module>
+

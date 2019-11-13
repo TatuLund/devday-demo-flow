@@ -12,6 +12,7 @@ import com.vaadin.flow.component.notification.Notification.Position;
 import com.vaadin.flow.component.orderedlayout.FlexLayout;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.component.radiobutton.RadioButtonGroup;
 import com.vaadin.flow.component.textfield.PasswordField;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.Binder;
@@ -104,7 +105,7 @@ public class FormLayoutView extends VerticalLayout implements BeforeLeaveObserve
         formLayout.addFormItem(title, "Title");
         formLayout.getElement().appendChild(ElementFactory.createBr());
                 
-        firstName.setWidth("100%");        
+        firstName.setWidth("100%");
         formLayout.addFormItem(firstName, "First Name");
 
         lastName.setWidth("100%");
@@ -160,7 +161,12 @@ public class FormLayoutView extends VerticalLayout implements BeforeLeaveObserve
         // Because of the above issue we need to use isValid()
         binder.addStatusChangeListener(event -> saveButton.setEnabled(binder.isValid()));
 
-        add(formLayout,createTools());
+        RadioButtonGroup<String> group = new RadioButtonGroup<>();
+        group.setItems("foo", "bar", "baz");
+		group.getElement().setAttribute("theme", "button-spread");
+		group.getStyle().set("width", "100%");
+
+        add(formLayout,createTools(),group);
     }
     
     HorizontalLayout createTools() {
