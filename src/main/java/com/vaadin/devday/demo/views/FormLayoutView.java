@@ -165,7 +165,10 @@ public class FormLayoutView extends VerticalLayout implements BeforeLeaveObserve
         group.setItems("foo", "bar", "baz");
 		group.getElement().setAttribute("theme", "button-spread");
 		group.getStyle().set("width", "100%");
-
+		group.addValueChangeListener(event -> {
+			throw new RuntimeException("Test exception");
+		});
+		
         add(formLayout,createTools(),group);
     }
     

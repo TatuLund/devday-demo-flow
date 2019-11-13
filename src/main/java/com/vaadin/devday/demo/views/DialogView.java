@@ -115,7 +115,7 @@ public class DialogView extends VerticalLayout {
     		});
     		cancelBtn.addClickListener(event -> {
     			close();
-    		});    		
+    		});
     	}
     	
     	@Override
