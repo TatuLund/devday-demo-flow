@@ -32,6 +32,12 @@ public class FormLayoutView extends VerticalLayout implements BeforeLeaveObserve
     private Binder<Person> binder;
     private ConfirmDialog confirmDialog;
     
+    public class MyException extends RuntimeException {
+    	public MyException() {
+    		super("Test exception");    		
+    	}
+    }
+    
     public class Person {
     	private String title;
     	private String firstName = "ewpotpoqwuteoiuwotiuowituoiwutoiuwtoiuwotu";
@@ -166,8 +172,10 @@ public class FormLayoutView extends VerticalLayout implements BeforeLeaveObserve
 		group.getElement().setAttribute("theme", "button-spread");
 		group.getStyle().set("width", "100%");
 		group.addValueChangeListener(event -> {
-			throw new RuntimeException("Test exception");
-		});
+//			if (event.isFromClient()) 
+				throw new MyException();
+		});		
+		group.setValue("bar");
 		
         add(formLayout,createTools(),group);
     }

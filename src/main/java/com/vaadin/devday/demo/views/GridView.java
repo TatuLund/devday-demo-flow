@@ -169,6 +169,7 @@ public class GridView extends SplitLayout {
     	).setHeader("Year").setKey("year").setId("year-column");
     	addYearSelectorMenuToColumnHeader(grid);
     	GridContextMenu<MonthlyExpense> menu = new GridContextMenu<>(grid);
+    	menu.setOpenOnClick(true);
     	populateGridContextMenu(grid,menu);
 //    	menu.getElement().setProperty("selector", "[part~=\"body-cell\"]");
         grid.addColumn(MonthlyExpense::getMonth).setHeader("Month").setKey("month").setId("month-column");
@@ -183,19 +184,11 @@ public class GridView extends SplitLayout {
         grid.getEditor().setBinder(binder);
 		grid.addColumn(new ComponentRenderer<Checkbox,MonthlyExpense>(expense ->  {
 			Checkbox check = new Checkbox();
-			check.setEnabled(false);			
-			grid.addSelectionListener(event -> {
-				if (event.getAllSelectedItems().contains(expense)) {
-					System.out.println("Selected "+expense.toString());
-					check.setValue(true);
-				} else {
-					check.setValue(false);
-				}
-			});
+			check.setValue(expense.isChecked());
 			check.addValueChangeListener(event -> {
 				if (event.isFromClient()) {
 					System.out.println("Check box clicked");
-					grid.select(expense);
+					expense.setChecked(check.getValue());
 				}
 			});
 			return check;
@@ -266,6 +259,7 @@ public class GridView extends SplitLayout {
    				menu.close();
    			}
    		});
+   		Icon icon = VaadinIcon.CLOSE_BIG.create();
 	}
 
 	private void addYearSelectorMenuToColumnHeader(Grid<MonthlyExpense> grid) {

@@ -2,8 +2,6 @@ package com.vaadin.devday.demo;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.util.Collection;
-import java.util.Enumeration;
 
 import javax.servlet.annotation.WebServlet;
 
@@ -26,7 +24,6 @@ import com.vaadin.flow.component.applayout.AppLayout;
 import com.vaadin.flow.component.confirmdialog.ConfirmDialog;
 import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.dependency.HtmlImport;
-import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.icon.VaadinIcon;
