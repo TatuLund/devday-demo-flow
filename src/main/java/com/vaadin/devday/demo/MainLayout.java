@@ -3,6 +3,7 @@ package com.vaadin.devday.demo;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
+import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 
 import com.vaadin.devday.demo.views.AbsoluteLayoutView;
@@ -20,7 +21,10 @@ import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.HasElement;
 import com.vaadin.flow.component.Key;
 import com.vaadin.flow.component.Shortcuts;
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.applayout.AppLayout;
+import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.confirmdialog.ConfirmDialog;
 import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.dependency.HtmlImport;
@@ -28,15 +32,22 @@ import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.FlexLayout;
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.page.Push;
 import com.vaadin.flow.component.tabs.Tab;
 import com.vaadin.flow.component.tabs.Tabs;
 import com.vaadin.flow.router.AfterNavigationEvent;
 import com.vaadin.flow.router.AfterNavigationObserver;
 import com.vaadin.flow.router.HasDynamicTitle;
+import com.vaadin.flow.router.Location;
+import com.vaadin.flow.router.RouteConfiguration;
 import com.vaadin.flow.router.RouterLayout;
 import com.vaadin.flow.router.RouterLink;
+import com.vaadin.flow.server.CustomizedSystemMessages;
 import com.vaadin.flow.server.PWA;
+import com.vaadin.flow.server.SystemMessages;
+import com.vaadin.flow.server.SystemMessagesInfo;
+import com.vaadin.flow.server.SystemMessagesProvider;
 import com.vaadin.flow.server.VaadinServlet;
 import com.vaadin.flow.server.VaadinSession;
 import com.vaadin.flow.theme.Theme;
@@ -55,11 +66,19 @@ public class MainLayout extends AppLayout implements RouterLayout, AfterNavigati
     private Tabs menu = new Tabs();
 
     private Tab createMenuItem(String title, VaadinIcon icon, Class<? extends Component> target) {
+    	HorizontalLayout div = new HorizontalLayout();
         RouterLink link = new RouterLink(null,target);
         if (icon != null) link.add(icon.create());
         link.add(title);
         Tab tab = new Tab();
-        tab.add(link);
+        Button button = new Button();
+        button.addThemeVariants(ButtonVariant.LUMO_TERTIARY_INLINE);
+        button.setIcon(VaadinIcon.CLOSE.create());
+        button.addClickListener(event -> {
+        	menu.remove(tab);
+        });
+        div.add(link,button);
+        tab.add(div);
         return tab;
     }
    
@@ -89,7 +108,7 @@ public class MainLayout extends AppLayout implements RouterLayout, AfterNavigati
         		createMenuItem(MainView.TITLE, null, MainView.class)
         		
         		);
-        
+        	
         childWrapper.setSizeFull();
         setContent(childWrapper);
     	Shortcuts.addShortcutListener(this, () -> getUI().ifPresent(ui -> ui.navigate(AccordionView.ROUTE)), Key.F1);
@@ -102,9 +121,9 @@ public class MainLayout extends AppLayout implements RouterLayout, AfterNavigati
     	Shortcuts.addShortcutListener(this, () -> getUI().ifPresent(ui -> ui.navigate(AbsoluteLayoutView.ROUTE)), Key.F8);
     	Shortcuts.addShortcutListener(this, () -> getUI().ifPresent(ui -> ui.navigate(UploadView.ROUTE)), Key.F9);
     	Shortcuts.addShortcutListener(this, () -> getUI().ifPresent(ui -> ui.navigate("")), Key.F12);
-
+    	
 //		menu.add(confirmDialog);
-		
+
     	VaadinSession.getCurrent().setErrorHandler(error -> {
         	ConfirmDialog confirmDialog = new ConfirmDialog("Error","Internal Error: "+error.getThrowable().getMessage(), "Do Something", confirmFire -> {});
     		confirmDialog.setWidth("500px");
@@ -144,11 +163,37 @@ public class MainLayout extends AppLayout implements RouterLayout, AfterNavigati
 	// Mapping servlet to other context, note the frontend mapping
 	@WebServlet(urlPatterns = {"/myapp/*","/frontend/*"}, asyncSupported = true)
 	public static class Servlet extends VaadinServlet {
+        @Override
+        protected void servletInitialized() throws ServletException {
+            super.servletInitialized();
+            getService().setSystemMessagesProvider(new SystemMessagesProvider() {
+				@Override
+				public SystemMessages getSystemMessages(SystemMessagesInfo systemMessagesInfo) {
+        			CustomizedSystemMessages messages = new CustomizedSystemMessages();
+    				messages.setSessionExpiredNotificationEnabled(false);
+    				messages.setSessionExpiredURL(null);
+    				messages.setCookiesDisabledNotificationEnabled(false);
+					return messages;
+				}
+            });
+        }
 	}
 
 	@Override
 	public void afterNavigation(AfterNavigationEvent event) {
-		System.out.println("After navigation at root");		
+		Location location = event.getLocation();
+		String path = location.getPath();
+		String pathQ = location.getPathWithQueryParameters();
+		
+		RouteConfiguration.forSessionScope().getRoute(path).ifPresent(route -> {
+			String url = RouteConfiguration.forSessionScope().getUrl(route);
+			System.out.println("Current path: "+path);
+			System.out.println("Current pathQ: "+pathQ);
+			System.out.println("Current url: "+url);
+			System.out.println("Context root relative path: "+UI.getCurrent().getInternals().getContextRootRelativePath());
+			
+		});
+		
 	}
 
 }

@@ -58,7 +58,10 @@ public class SplitLayoutView extends SplitLayout {
     @Override
     protected void onAttach(AttachEvent attachEvent) {
     	super.onAttach(attachEvent);
+    	System.out.println("UI: "+attachEvent.getUI().toString());
+    	System.out.println("Comp: "+this.toString());
         getUI().ifPresent(ui -> listener = ui.getPage().addBrowserWindowResizeListener(event -> {
+        	System.out.println("Browser resize: "+this.toString());
         	if (event.getWidth() < 800) {
         		// Getting restore position would be nice https://github.com/vaadin/vaadin-split-layout-flow/issues/50
         		setSplitterPosition(0);
@@ -70,6 +73,7 @@ public class SplitLayoutView extends SplitLayout {
         		}
         	}
         }));
+    	System.out.println("onAttach");
     }
 
     @Override
@@ -78,6 +82,7 @@ public class SplitLayoutView extends SplitLayout {
     	// in order not to bloat browser resources
     	listener.remove();
     	super.onDetach(detachEvent);
+    	System.out.println("onDetach");
     }
     
     

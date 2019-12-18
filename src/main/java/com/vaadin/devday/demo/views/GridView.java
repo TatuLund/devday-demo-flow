@@ -76,7 +76,8 @@ public class GridView extends SplitLayout {
         
         content.add(expensesGrid);
         content.expand(expensesGrid);
-
+        tools.getElement().callJsFunction("scrollIntoView");
+        
         this.setSizeFull();
         this.setOrientation(Orientation.VERTICAL);
         this.addToPrimary(content);
@@ -194,6 +195,9 @@ public class GridView extends SplitLayout {
 			return check;
 			
 		})).setWidth("50px").setKey("select").setHeader("Select");
+        grid.getEditor().addCloseListener(event -> {
+        	System.out.println(event.getItem().getExpenses());
+        });
 		grid.setSelectionMode(SelectionMode.SINGLE);
 		grid.addThemeVariants(GridVariant.LUMO_ROW_STRIPES);
         List<MonthlyExpense> data = getData();
@@ -210,12 +214,11 @@ public class GridView extends SplitLayout {
         		grid.getDataProvider().refreshItem(currentExpense);
         	}
         });
-        //        grid.addItemClickListener(event -> {
+//        grid.addItemClickListener(event -> {
 //        	getUI().ifPresent(ui -> ui.navigate(MainView.ROUTE+"/scroll"));
 //        });
 
         grid.recalculateColumnWidths();
-        
         addColumnSelectorMenu(grid);
         
     }

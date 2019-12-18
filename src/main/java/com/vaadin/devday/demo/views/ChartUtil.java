@@ -1,16 +1,21 @@
 package com.vaadin.devday.demo.views;
 
+import java.util.Random;
+
 import com.vaadin.flow.component.charts.Chart;
+import com.vaadin.flow.component.charts.model.AxisType;
 import com.vaadin.flow.component.charts.model.ChartType;
 import com.vaadin.flow.component.charts.model.Configuration;
 import com.vaadin.flow.component.charts.model.Cursor;
 import com.vaadin.flow.component.charts.model.DataLabels;
 import com.vaadin.flow.component.charts.model.DataSeries;
 import com.vaadin.flow.component.charts.model.DataSeriesItem;
+import com.vaadin.flow.component.charts.model.DataSeriesItem3d;
 import com.vaadin.flow.component.charts.model.HorizontalAlign;
 import com.vaadin.flow.component.charts.model.LayoutDirection;
 import com.vaadin.flow.component.charts.model.Legend;
 import com.vaadin.flow.component.charts.model.ListSeries;
+import com.vaadin.flow.component.charts.model.PlotOptionsBubble;
 import com.vaadin.flow.component.charts.model.PlotOptionsColumn;
 import com.vaadin.flow.component.charts.model.PlotOptionsPie;
 import com.vaadin.flow.component.charts.model.Tooltip;
@@ -34,8 +39,9 @@ public class ChartUtil {
         conf.setSubTitle("Source: WorldClimate.com");
 
         XAxis x = new XAxis();
-        x.setCategories("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug",
-                "Sep", "Oct", "Nov", "Dec");
+//        x.setCategories("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug",
+//                "Sep", "Oct", "Nov", "Dec");
+        x.setType(AxisType.DATETIME);
         conf.addxAxis(x);
 
         YAxis y = new YAxis();
@@ -57,7 +63,7 @@ public class ChartUtil {
         plot.setPointPadding(0.2);
         plot.setShowInLegend(true);
         conf.setPlotOptions(plot);
-
+        
         ListSeries tokyo = new ListSeries("Tokyo", 49.9, 71.5, 106.4, 129.2, 144.0,
                 176.0, 135.6, 148.5, 216.4, 194.1, 95.6, 54.4);
         conf.addSeries(tokyo);
@@ -80,8 +86,114 @@ public class ChartUtil {
                 75.5, 57.4, 60.4, 47.6, 39.1, 46.8, 51.1));
 
         div.add(chart);
+//        chart.getElement().executeJs("Highcharts.setOptions({\r\n" + 
+//        		"    lang: {\r\n" + 
+//        		"        shortMonths: [\r\n" + 
+//        		"            'Jan', 'Fév', 'Mar', 'Avr',\r\n" + 
+//        		"            'Mai', 'Jui', 'Jul', 'Aoû',\r\n" + 
+//        		"            'Sep', 'Oct', 'Nov', 'Déc'\r\n" + 
+//        		"        ],\r\n" + 
+//        		"        shortWeekdays: [\r\n" + 
+//        		"            'Dim', 'Lun', 'Mar', 'Mer',\r\n" + 
+//        		"            'Jeu', 'Ven', 'Sam'\r\n" + 
+//        		"        ]\r\n" + 
+//        		"    }\r\n" + 
+//        		"});");
+        
         return div;
     }
+
+    public static Div getBubbleChart() {
+    	Div div = new Div();
+        Chart chart = new Chart(ChartType.BUBBLE);
+
+        Configuration conf = chart.getConfiguration();
+        conf.setTitle((String) null);
+
+        DataSeries dataSeries = createDataSeries("main",2);
+
+        PlotOptionsBubble opts = new PlotOptionsBubble();
+        opts.setMaxSize("120");
+        opts.setMinSize("3");
+
+        Tooltip tooltip = new Tooltip();
+        tooltip.setValueDecimals(1);
+        tooltip.setFormatter("function() { var s='<i>'+this.series.name+'</i><br>';if (this.series.name.includes('sub')) { s+='X: <b>'+this.x+'</b><br>Y: <b>'+this.y+'</b>'; } else if (this.series.name.includes('Drill')) {s+='Click me';};return s;}");
+        conf.setTooltip(tooltip);
+        
+        conf.setPlotOptions(opts);
+
+        conf.addSeries(dataSeries);
+
+        DataSeries dataSeries2 = new DataSeries("Drill down items");
+        dataSeries2.addItemWithDrilldown(item(13, 30, 10, 6),createDataSeries2("sub_1",3));
+        dataSeries2.addItemWithDrilldown(item(23, 20, -10, 6),createDataSeries2("sub_2",4));
+        dataSeries2.addItemWithDrilldown(item(23, 40, 10, 6),createDataSeries2("sub_3",5));
+        opts = new PlotOptionsBubble();
+        opts.setDisplayNegative(false);
+        dataSeries2.setPlotOptions(opts);
+        conf.addSeries(dataSeries2);
+
+        div.add(chart);    	
+    	return div;
+    }
+
+	private static DataSeries createDataSeries(String id, int colorIndex) {
+		DataSeries dataSeries = new DataSeries("Main series");
+		dataSeries.setId(id);
+        dataSeries.add(item(9, 81, 13, colorIndex));
+        dataSeries.add(item(98, 5, 39, colorIndex));
+        dataSeries.add(item(51, 50, 23, colorIndex));
+        dataSeries.add(item(41, 22, -36, colorIndex));
+        dataSeries.add(item(58, 24, -30, colorIndex));
+        dataSeries.add(item(78, 37, -16, colorIndex));
+        dataSeries.add(item(55, 56, 3, colorIndex));
+        dataSeries.add(item(18, 45, 20, colorIndex));
+        dataSeries.add(item(42, 44, -22, colorIndex));
+        dataSeries.add(item(3, 52, 9, colorIndex));
+        dataSeries.add(item(31, 18, 47, colorIndex));
+        dataSeries.add(item(79, 91, 13, colorIndex));
+        dataSeries.add(item(93, 23, -27, colorIndex));
+        dataSeries.add(item(44, 83, -28, colorIndex));
+		return dataSeries;
+	}
+
+	private static DataSeries createDataSeries2(String id, int colorIndex) {
+		DataSeries dataSeries = new DataSeries("Drill down: "+id);
+		dataSeries.setId(id);
+		Random rand = new Random();
+		for (int i=0;i<15;i++) {
+	        dataSeries.add(item(rand.nextInt(200)-100, rand.nextInt(200)-100, rand.nextInt(200)-100, colorIndex));
+			
+		}
+//        dataSeries.add(item(9, 81, -13, colorIndex));
+//        dataSeries.add(item(98, 5, -39, colorIndex));
+//        dataSeries.add(item(51, 50, -23, colorIndex));
+//        dataSeries.add(item(41, 22, 36, colorIndex));
+//        dataSeries.add(item(58, 24, 30, colorIndex));
+//        dataSeries.add(item(78, 37, 16, colorIndex));
+//        dataSeries.add(item(55, 56, -3, colorIndex));
+//        dataSeries.add(item(18, 45, -20, colorIndex));
+//        dataSeries.add(item(42, 44, 22, colorIndex));
+//        dataSeries.add(item(3, 52, -9, colorIndex));
+//        dataSeries.add(item(31, 18, -47, colorIndex));
+//        dataSeries.add(item(79, 91, -13, colorIndex));
+//        dataSeries.add(item(93, 23, 27, colorIndex));
+//        dataSeries.add(item(44, 83, 28, colorIndex));
+		return dataSeries;
+	}
+    
+    public static DataSeriesItem item(int x, int y, int z, int colorIndex) {
+        DataSeriesItem3d dataSeriesItem = new DataSeriesItem3d();
+        dataSeriesItem.setX(x);
+        dataSeriesItem.setY(y);
+        dataSeriesItem.setZ(z);
+        dataSeriesItem.setColorIndex(colorIndex);
+        DataLabels labels = new DataLabels();
+        labels.setEnabled(true);
+        dataSeriesItem.setDataLabels(labels);
+        return dataSeriesItem;
+    }    
 
     public static Div getPieChart(String year){
     	Div div = new Div();

@@ -211,8 +211,7 @@ public class FormLayoutView extends VerticalLayout implements BeforeLeaveObserve
 		    	        	confirmDialog.close();
 		    	        	action.proceed();},
 		    	        "Cancel", e -> {
-		    	        	confirmDialog.close();
-		    	        	
+		    	        	confirmDialog.close();		    	        	
 		    	        	});		      
 		    	confirmDialog.open();
 		    }		

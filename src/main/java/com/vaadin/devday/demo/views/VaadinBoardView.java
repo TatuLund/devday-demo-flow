@@ -16,6 +16,7 @@ public class VaadinBoardView extends VerticalLayout {
 	private Component pieChart1;
 	private Component pieChart2;
 	private Component columnChart;
+	private Component bubbleChart;
     
     public VaadinBoardView(){
         setSizeFull();
@@ -24,6 +25,9 @@ public class VaadinBoardView extends VerticalLayout {
         board.addRow(pieChart1, pieChart2);
         columnChart = ChartUtil.getColumnChart();
         board.addRow(columnChart);
+        board.setSizeFull();
+        bubbleChart = ChartUtil.getBubbleChart();
+        board.addRow(bubbleChart);
         board.setSizeFull();
         add(board);
     }
