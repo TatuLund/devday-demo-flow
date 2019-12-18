@@ -176,7 +176,8 @@ public class GridView extends SplitLayout {
         grid.addColumn(MonthlyExpense::getMonth).setHeader("Month").setKey("month").setId("month-column");
     	addMonthFilterMenuToColumnHeader(grid); 
         NumberField numberField = new NumberField();
-        grid.addColumn(MonthlyExpense::getExpenses).setKey("expenses").setHeader("Expenses").setClassNameGenerator(monthlyExpense -> monthlyExpense.getExpenses() >= getMonthlyExpenseLimit() ? "warning-grid-cell" : "green-grid-cell").setEditorComponent(numberField);
+        numberField.setWidth("100%");
+        grid.addColumn(MonthlyExpense::getExpenses).setResizable(true).setKey("expenses").setHeader("Expenses").setClassNameGenerator(monthlyExpense -> monthlyExpense.getExpenses() >= getMonthlyExpenseLimit() ? "warning-grid-cell" : "green-grid-cell").setEditorComponent(numberField);
         grid.addItemDoubleClickListener(event -> {
         	grid.getEditor().editItem(event.getItem());        	
         });

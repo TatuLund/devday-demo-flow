@@ -68,23 +68,24 @@ public class GridProView extends VerticalLayout {
 //			1 TextField
 		grid.addEditColumn(Person::getName)
 		.text((item, newValue) ->
-		item.setName(newValue))
+		item.setName(newValue)).setResizable(true)
 		.setHeader("Name (editable)");
 
 //			2 TextField
 		grid.addEditColumn(Person::getAge)
 		.text((item, newValue) ->
-		item.setName(newValue))
+		item.setName(newValue)).setResizable(true)
 		.setHeader("Age (editable)");;
 
 //		2 TextField
 		DatePicker datePicker = new DatePicker();
+		datePicker.setWidth("100%");
 		LocalDateToDateConverter converter = new LocalDateToDateConverter();
 		grid.addEditColumn(Person::getDate)
 			.custom(datePicker, (item, newValue) -> {				
 				Result<Date> result = converter.convertToModel(newValue, new ValueContext((Component) datePicker, datePicker));
 				result.ifOk(date -> item.setDate(date));	
-			})
+			}).setResizable(true)
 			.setHeader("Date (editable)");		
 		
 //			3 Combox
@@ -94,13 +95,13 @@ public class GridProView extends VerticalLayout {
 		optionsList.add("super-mail@gmail.com");
 		grid.addEditColumn(Person::getEmail)
 		.select((item, newValue) ->
-		item.setEmail(newValue), optionsList)
+		item.setEmail(newValue), optionsList).setResizable(true)
 		.setHeader("Email (editable)");
 
 //			4 checkbox
 		grid.addEditColumn(Person::isSubscriber)
 		.checkbox((item, newValue) ->
-		item.setSubscriber(newValue))
+		item.setSubscriber(newValue)).setResizable(true)
 		.setHeader("Subscriber (editable)");
 
 		grid.setItems(createItems());

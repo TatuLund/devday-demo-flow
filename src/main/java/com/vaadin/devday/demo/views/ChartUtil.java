@@ -118,7 +118,7 @@ public class ChartUtil {
 
         Tooltip tooltip = new Tooltip();
         tooltip.setValueDecimals(1);
-        tooltip.setFormatter("function() { var s='<i>'+this.series.name+'</i><br>';if (this.series.name.includes('sub')) { s+='X: <b>'+this.x+'</b><br>Y: <b>'+this.y+'</b>'; } else if (this.series.name.includes('Drill')) {s+='Click me';};return s;}");
+        tooltip.setFormatter("function() { var s=this.series.name+'<br><i>'+this.point.name+'</i><br>';if (this.series.name.includes('sub')) { s+='X: <b>'+this.x+'</b><br>Y: <b>'+this.y+'</b>'; } else if (this.series.name.includes('Drill')) {s+='Click me';};return s;}");
         conf.setTooltip(tooltip);
         
         conf.setPlotOptions(opts);
@@ -163,27 +163,17 @@ public class ChartUtil {
 		dataSeries.setId(id);
 		Random rand = new Random();
 		for (int i=0;i<15;i++) {
-	        dataSeries.add(item(rand.nextInt(200)-100, rand.nextInt(200)-100, rand.nextInt(200)-100, colorIndex));
+	        dataSeries.add(item(rand.nextInt(200)-100, rand.nextInt(200)-100, rand.nextInt(200)-100, colorIndex, i));
 			
 		}
-//        dataSeries.add(item(9, 81, -13, colorIndex));
-//        dataSeries.add(item(98, 5, -39, colorIndex));
-//        dataSeries.add(item(51, 50, -23, colorIndex));
-//        dataSeries.add(item(41, 22, 36, colorIndex));
-//        dataSeries.add(item(58, 24, 30, colorIndex));
-//        dataSeries.add(item(78, 37, 16, colorIndex));
-//        dataSeries.add(item(55, 56, -3, colorIndex));
-//        dataSeries.add(item(18, 45, -20, colorIndex));
-//        dataSeries.add(item(42, 44, 22, colorIndex));
-//        dataSeries.add(item(3, 52, -9, colorIndex));
-//        dataSeries.add(item(31, 18, -47, colorIndex));
-//        dataSeries.add(item(79, 91, -13, colorIndex));
-//        dataSeries.add(item(93, 23, 27, colorIndex));
-//        dataSeries.add(item(44, 83, 28, colorIndex));
 		return dataSeries;
 	}
-    
+
     public static DataSeriesItem item(int x, int y, int z, int colorIndex) {
+    	return item(x,y,z,colorIndex,-1);
+    }
+    
+    public static DataSeriesItem item(int x, int y, int z, int colorIndex, int index) {
         DataSeriesItem3d dataSeriesItem = new DataSeriesItem3d();
         dataSeriesItem.setX(x);
         dataSeriesItem.setY(y);
@@ -192,6 +182,7 @@ public class ChartUtil {
         DataLabels labels = new DataLabels();
         labels.setEnabled(true);
         dataSeriesItem.setDataLabels(labels);
+        if (index > -1) dataSeriesItem.setName("Item "+index);
         return dataSeriesItem;
     }    
 
