@@ -187,6 +187,7 @@ public class GridView extends SplitLayout {
 		grid.addColumn(new ComponentRenderer<Checkbox,MonthlyExpense>(expense ->  {
 			Checkbox check = new Checkbox();
 			check.setValue(expense.isChecked());
+			check.getElement().setAttribute("theme", "swapped");
 			check.addValueChangeListener(event -> {
 				if (event.isFromClient()) {
 					System.out.println("Check box clicked");

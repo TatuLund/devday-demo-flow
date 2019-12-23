@@ -45,10 +45,14 @@ import com.vaadin.flow.router.RouterLayout;
 import com.vaadin.flow.router.RouterLink;
 import com.vaadin.flow.server.CustomizedSystemMessages;
 import com.vaadin.flow.server.PWA;
+import com.vaadin.flow.server.ServiceException;
 import com.vaadin.flow.server.SystemMessages;
 import com.vaadin.flow.server.SystemMessagesInfo;
 import com.vaadin.flow.server.SystemMessagesProvider;
+import com.vaadin.flow.server.VaadinRequest;
+import com.vaadin.flow.server.VaadinResponse;
 import com.vaadin.flow.server.VaadinServlet;
+import com.vaadin.flow.server.VaadinServletService;
 import com.vaadin.flow.server.VaadinSession;
 import com.vaadin.flow.theme.Theme;
 import com.vaadin.flow.theme.lumo.Lumo;
@@ -93,7 +97,7 @@ public class MainLayout extends AppLayout implements RouterLayout, AfterNavigati
         Span appName = new Span(img);
         appName.addClassName("hide-on-mobile");
         addToNavbar(true, appName, menu);
-        
+        UI.getCurrent().getPage().open("");
         getElement().getStyle().set("--vaadin-app-layout-navbar-background", "var(--lumo-tint-30pct)");
        
         menu.add(createMenuItem(AccordionView.TITLE,null,AccordionView.class),

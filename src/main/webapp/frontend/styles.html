@@ -293,7 +293,7 @@ html {
 <dom-module id="flip-box" theme-for="vaadin-checkbox">
     <template>
         <style>
-        	label {
+        	:host([theme~="swapped"]) label {
         		display: flex;
         		flex-direction: row-reverse;
 				justify-content: space-between;

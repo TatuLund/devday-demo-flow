@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.vaadin.devday.demo.MainLayout;
 import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
@@ -101,7 +102,7 @@ public class MainView extends VerticalLayout implements HasUrlParameter<String>,
 	public void setParameter(BeforeEvent event, @OptionalParameter String parameter) {
 		if ("scroll".equals(parameter)) {
 			updateUIForScroll();
-		}
+		}		
 	}
 
 	private void updateUIForScroll() {

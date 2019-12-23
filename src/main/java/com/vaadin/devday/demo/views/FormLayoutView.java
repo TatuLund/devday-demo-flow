@@ -172,7 +172,7 @@ public class FormLayoutView extends VerticalLayout implements BeforeLeaveObserve
 		group.getElement().setAttribute("theme", "button-spread");
 		group.getStyle().set("width", "100%");
 		group.addValueChangeListener(event -> {
-//			if (event.isFromClient()) 
+			if (event.isFromClient()) 
 				throw new MyException();
 		});		
 		group.setValue("bar");

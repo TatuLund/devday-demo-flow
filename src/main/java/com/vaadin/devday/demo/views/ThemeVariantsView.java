@@ -1,5 +1,11 @@
 package com.vaadin.devday.demo.views;
 
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.HashSet;
+import java.util.Set;
+
+import com.google.common.collect.Comparators;
 import com.vaadin.devday.demo.MainLayout;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
@@ -16,6 +22,9 @@ import com.vaadin.flow.component.radiobutton.RadioGroupVariant;
 import com.vaadin.flow.component.textfield.NumberField;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.component.textfield.TextFieldVariant;
+import com.vaadin.flow.data.provider.DataProvider;
+import com.vaadin.flow.data.provider.ListDataProvider;
+import com.vaadin.flow.function.SerializableComparator;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 
@@ -24,6 +33,7 @@ import com.vaadin.flow.router.Route;
 public class ThemeVariantsView extends VerticalLayout {
 	public static final String ROUTE = "variants";
 	public static final String TITLE = "Theme Variants";
+  	int newi=1000;
 
 	public ThemeVariantsView() {
 		setSizeFull();
@@ -93,5 +103,30 @@ public class ThemeVariantsView extends VerticalLayout {
         	Notification.show(event.getValue()).setPosition(Position.MIDDLE);;
         });
         add(buttons);
+
+        TwinColSelect<String> select = new TwinColSelect<>();
+//      	select.setItems("One","Two","Three","Four","Five","Six","Seven","Eight","Nine","Ten");
+        Set<String> set = new HashSet<>();
+        for (Integer i=1;i<101;i++) {
+        	set.add("Item "+i);
+        }
+        select.setItems(set);
+        ListDataProvider<String> dp = (ListDataProvider<String>) select.getDataProvider();
+        dp.setSortComparator((a, b) -> a.compareTo(b));
+      	select.setHeight("300px");
+      	select.setWidth("500px");
+      	select.addSelectionListener(event -> {
+      		System.out.println("Value changed");
+      		event.getValue().forEach(item -> System.out.println(item + " selected!"));
+      	});
+      	Button refresh = new Button("Refresh");
+      	refresh.addClickListener(event -> {
+      		dp.getItems().add("An item "+newi);
+      		newi++;
+            dp.setSortComparator((a, b) -> a.compareTo(b));
+      		dp.refreshAll();
+      	});
+      	add(select,refresh);
 	}
+	
 }

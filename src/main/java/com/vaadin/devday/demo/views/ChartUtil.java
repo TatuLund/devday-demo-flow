@@ -133,7 +133,10 @@ public class ChartUtil {
         opts.setDisplayNegative(false);
         dataSeries2.setPlotOptions(opts);
         conf.addSeries(dataSeries2);
-
+        div.getElement()
+        .executeJs("return getComputedStyle(document.querySelector('p'), ':before').getPropertyValue('content')")
+        .then(value -> {
+        });
         div.add(chart);    	
     	return div;
     }
