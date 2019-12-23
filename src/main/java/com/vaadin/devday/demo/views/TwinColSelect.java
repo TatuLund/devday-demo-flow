@@ -7,6 +7,7 @@ import java.util.Set;
 import java.util.stream.Stream;
 
 import com.vaadin.flow.component.HasSize;
+import com.vaadin.flow.component.HasStyle;
 import com.vaadin.flow.component.HasValidation;
 import com.vaadin.flow.component.ItemLabelGenerator;
 import com.vaadin.flow.component.AbstractField;
@@ -14,7 +15,9 @@ import com.vaadin.flow.component.Tag;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.checkbox.Checkbox;
 import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.icon.VaadinIcon;
+import com.vaadin.flow.component.orderedlayout.FlexComponent.Alignment;
 import com.vaadin.flow.component.orderedlayout.FlexComponent.JustifyContentMode;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
@@ -45,7 +48,9 @@ public class TwinColSelect<T> extends AbstractField<TwinColSelect<T>,Set<T>> imp
 	private VerticalLayout list2 = new VerticalLayout();
 	private String errorMessage = "Validation error";
 	private Div errorLabel = new Div();
-	private DataProvider<T, ?> dataProvider; 
+	private Label label = new Label();
+	private Label required = new Label("*");
+    private DataProvider<T, ?> dataProvider = DataProvider.ofItems();
 
     private ItemLabelGenerator<T> itemLabelGenerator = String::valueOf;
 	
@@ -71,7 +76,6 @@ public class TwinColSelect<T> extends AbstractField<TwinColSelect<T>,Set<T>> imp
 		public T getItem() {
 			return item;
 		}
-
     }
     
 	public TwinColSelect() {
@@ -81,6 +85,15 @@ public class TwinColSelect<T> extends AbstractField<TwinColSelect<T>,Set<T>> imp
 		HorizontalLayout layout = new HorizontalLayout();
 		layout.setSizeFull();
 		setErrorLabelStyles();
+		errorLabel.setVisible(false);
+		HorizontalLayout indicators = new HorizontalLayout();
+		indicators.setSpacing(false);
+		indicators.setMargin(false);
+        label.setVisible(false);
+        required.setVisible(false);
+		indicators.add(required,label);
+		setLabelStyles(label);
+		setLabelStyles(required);
 		setSizeFull();
 		setupList(list1);
 		setupList(list2);
@@ -111,15 +124,26 @@ public class TwinColSelect<T> extends AbstractField<TwinColSelect<T>,Set<T>> imp
 			setValue(getSelectedItems());
 		});
 		VerticalLayout buttons = new VerticalLayout();
-		buttons.setWidth("50px");
+		buttons.setWidth("15%");
 		buttons.setHeight("100%");
 		buttons.setJustifyContentMode(JustifyContentMode.CENTER);
+		buttons.setAlignItems(Alignment.CENTER);
 		buttons.add(allButton,addButton,removeButton, clearButton);
 		layout.setFlexGrow(1, list1,list2);
 		layout.add(list1,buttons,list2);
-		add(layout,errorLabel);
+		add(indicators,layout,errorLabel);
 	}
 
+	@Override
+	public void setRequiredIndicatorVisible(boolean requiredIndicatorVisible) {
+	    required.setVisible(true);
+	}
+	
+	@Override
+	public boolean isRequiredIndicatorVisible() {
+		return required.isVisible();
+	}
+	
 	private void moveItems(VerticalLayout list1, VerticalLayout list2) {
 		list1.getChildren().forEach(comp -> {
 			Checkbox checkbox = (Checkbox) comp;
@@ -134,11 +158,42 @@ public class TwinColSelect<T> extends AbstractField<TwinColSelect<T>,Set<T>> imp
 	private void setupList(VerticalLayout list) {
 		list.getStyle().set("overflow-y", "auto");
 		list.setSizeFull();
+		list.setSpacing(false);
+		list.setPadding(false);
 		list.getStyle().set("border", LIST_BORDER);
 		list.getStyle().set("border-radius",LIST_BORDER_RADIUS);
 		list.getStyle().set("background", LIST_BACKGROUND);
 	}
 
+    public void setLabel(String label) {
+        if (label != null) {
+        	this.label.setText(label);
+        	this.label.setVisible(true);
+        } else {
+        	this.label.setVisible(false);
+        }
+    }
+    
+	private void setLabelStyles(HasStyle label) {
+		label.getStyle().set("align-self", "flex-start");
+		label.getStyle().set("color","var(--lumo-secondary-text-color)");
+		label.getStyle().set("font-weight","500");
+		label.getStyle().set("font-size","var(--lumo-font-size-s)");
+		label.getStyle().set("transition","color 0.2s");
+		label.getStyle().set("line-height","1");
+//		label.getStyle().set("padding-bottom","1.5em");
+		label.getStyle().set("overflow","hidden");
+		label.getStyle().set("white-space","nowrap");
+		label.getStyle().set("text-overflow","ellipsis");
+		label.getStyle().set("position","relative");
+		label.getStyle().set("max-width","100%");
+		label.getStyle().set("box-sizing","border-box");
+    }   
+    
+	private void setRequiredStyles() {
+		required.getStyle().set("color","var(--lumo-primary-color)");
+	}
+	
 	private void setErrorLabelStyles() {
 		errorLabel.getStyle().set("color", "var(--lumo-error-text-color)");
 		errorLabel.getStyle().set("font-size", "var(--lumo-font-size-xs)");
@@ -230,6 +285,7 @@ public class TwinColSelect<T> extends AbstractField<TwinColSelect<T>,Set<T>> imp
     private CheckBoxItem<T> createCheckBox(T item) {
         CheckBoxItem<T> checkbox = new CheckBoxItem<>(keyMapper.key(item),
                 item);
+        checkbox.setWidth("100%");
         updateCheckbox(checkbox);
         return checkbox;
     }

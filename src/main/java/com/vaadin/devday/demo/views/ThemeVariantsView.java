@@ -1,11 +1,8 @@
 package com.vaadin.devday.demo.views;
 
-import java.util.Arrays;
-import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.google.common.collect.Comparators;
 import com.vaadin.devday.demo.MainLayout;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
@@ -22,9 +19,7 @@ import com.vaadin.flow.component.radiobutton.RadioGroupVariant;
 import com.vaadin.flow.component.textfield.NumberField;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.component.textfield.TextFieldVariant;
-import com.vaadin.flow.data.provider.DataProvider;
 import com.vaadin.flow.data.provider.ListDataProvider;
-import com.vaadin.flow.function.SerializableComparator;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 
@@ -97,6 +92,8 @@ public class ThemeVariantsView extends VerticalLayout {
 		add(new HorizontalLayout(alignCenterTextField, alignRightTextField,numberField));		
 		
         RadioButtonGroup<String> buttons = new RadioButtonGroup<>();
+        buttons.setRequiredIndicatorVisible(true);
+//        buttons.setLabel("Test");
         buttons.addThemeVariants(RadioGroupVariant.LUMO_VERTICAL);
         buttons.setItems("One","Two", "Three");
         buttons.addValueChangeListener(event -> {
@@ -105,6 +102,8 @@ public class ThemeVariantsView extends VerticalLayout {
         add(buttons);
 
         TwinColSelect<String> select = new TwinColSelect<>();
+//        select.setLabel("Do selection");
+        select.setRequiredIndicatorVisible(true);
 //      	select.setItems("One","Two","Three","Four","Five","Six","Seven","Eight","Nine","Ten");
         Set<String> set = new HashSet<>();
         for (Integer i=1;i<101;i++) {
