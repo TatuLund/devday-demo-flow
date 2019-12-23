@@ -187,7 +187,6 @@ public class GridView extends SplitLayout {
 		grid.addColumn(new ComponentRenderer<Checkbox,MonthlyExpense>(expense ->  {
 			Checkbox check = new Checkbox();
 			check.setValue(expense.isChecked());
-			check.getElement().setAttribute("theme", "swapped");
 			check.addValueChangeListener(event -> {
 				if (event.isFromClient()) {
 					System.out.println("Check box clicked");
@@ -230,6 +229,7 @@ public class GridView extends SplitLayout {
         VerticalLayout popDiv = new VerticalLayout();
         for (Column<MonthlyExpense> column : grid.getColumns()) {
         	Checkbox check = new Checkbox(column.getKey());
+			check.getElement().setAttribute("theme", "swapped");
         	check.getStyle().set("border", "white 1px solid");
         	check.getStyle().set("border-radius", "5px");
         	check.getStyle().set("width", "200px");
