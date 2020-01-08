@@ -98,7 +98,7 @@ public class TreeGridView extends VerticalLayout {
         });
         // end-source-example
         grid.setId("treegridbasic");
-        
+
         add(withTreeGridToggleButtons(
                 departmentData.getRootDepartments().get(0), grid, message));
     }

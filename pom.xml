@@ -139,6 +139,12 @@
             <artifactId>vaadin-testbench</artifactId>
             <scope>test</scope>
         </dependency>
+        
+        <dependency>
+   			<groupId>org.vaadin.tatu</groupId>
+  			<artifactId>twincolselect</artifactId>
+   			<version>1.0.0</version>
+		</dependency>
 
 <!-- 		<dependency> -->
 <!--    			<groupId>org.vaadin</groupId> -->

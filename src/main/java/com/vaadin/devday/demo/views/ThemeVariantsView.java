@@ -3,6 +3,8 @@ package com.vaadin.devday.demo.views;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.vaadin.tatu.TwinColSelect;
+
 import com.vaadin.devday.demo.MainLayout;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
@@ -126,6 +128,8 @@ public class ThemeVariantsView extends VerticalLayout {
       		dp.refreshAll();
       	});
       	add(select,refresh);
+
+
 	}
 	
 }

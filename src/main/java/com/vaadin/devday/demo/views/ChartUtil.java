@@ -2,6 +2,7 @@ package com.vaadin.devday.demo.views;
 
 import java.util.Random;
 
+import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.charts.Chart;
 import com.vaadin.flow.component.charts.model.AxisType;
 import com.vaadin.flow.component.charts.model.ChartType;
@@ -23,6 +24,7 @@ import com.vaadin.flow.component.charts.model.VerticalAlign;
 import com.vaadin.flow.component.charts.model.XAxis;
 import com.vaadin.flow.component.charts.model.YAxis;
 import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.component.textfield.NumberField;
 
 public class ChartUtil {
 
@@ -111,7 +113,7 @@ public class ChartUtil {
         conf.setTitle((String) null);
 
         DataSeries dataSeries = createDataSeries("main",2);
-
+        
         PlotOptionsBubble opts = new PlotOptionsBubble();
         opts.setMaxSize("120");
         opts.setMinSize("3");
@@ -125,10 +127,13 @@ public class ChartUtil {
 
         conf.addSeries(dataSeries);
 
+        XAxis axis = new XAxis();
+        conf.addxAxis(axis);
+        
         DataSeries dataSeries2 = new DataSeries("Drill down items");
-        dataSeries2.addItemWithDrilldown(item(13, 30, 10, 6),createDataSeries2("sub_1",3));
-        dataSeries2.addItemWithDrilldown(item(23, 20, -10, 6),createDataSeries2("sub_2",4));
-        dataSeries2.addItemWithDrilldown(item(23, 40, 10, 6),createDataSeries2("sub_3",5));
+        dataSeries2.addItemWithDrilldown(item(13, 30, 10, 6, "drill"),createDataSeries2("sub_1",3));
+        dataSeries2.addItemWithDrilldown(item(23, 20, -10, 6, "drill"),createDataSeries2("sub_2",4));
+        dataSeries2.addItemWithDrilldown(item(23, 40, 10, 6, "drill"),createDataSeries2("sub_3",5));
         opts = new PlotOptionsBubble();
         opts.setDisplayNegative(false);
         dataSeries2.setPlotOptions(opts);
@@ -137,7 +142,40 @@ public class ChartUtil {
         .executeJs("return getComputedStyle(document.querySelector('p'), ':before').getPropertyValue('content')")
         .then(value -> {
         });
-        div.add(chart);    	
+
+        
+        NumberField min = new NumberField();
+        min.setHasControls(true);
+        min.setStep(1);
+        min.setValue(0d);
+        NumberField max = new NumberField();
+        max.setStep(1);
+        max.setHasControls(true);
+        max.setValue(100d);
+        min.addValueChangeListener(event -> {
+            axis.setExtremes(min.getValue(), max.getValue(), true, true);        	
+        });
+        max.addValueChangeListener(event -> {
+            axis.setExtremes(min.getValue(), max.getValue(), true, true);        	
+        });
+        Button reset = new Button("reset");
+        reset.addClickListener(event -> {
+        	min.setValue(0d);
+        	max.setValue(100d);
+        });
+        div.add(chart,min,max,reset);
+
+        chart.addPointClickListener(event -> {
+        	if (event.getItem().getId().equals("data")) {
+        		min.setValue(event.getxAxisValue()-10);
+        		max.setValue(event.getxAxisValue()+10);
+        	}
+        });
+        
+        chart.addDrilldownListener(event -> {
+    		System.out.println("Drill down clicked");        	
+        });
+        
     	return div;
     }
 
@@ -166,18 +204,23 @@ public class ChartUtil {
 		dataSeries.setId(id);
 		Random rand = new Random();
 		for (int i=0;i<15;i++) {
-	        dataSeries.add(item(rand.nextInt(200)-100, rand.nextInt(200)-100, rand.nextInt(200)-100, colorIndex, i));
-			
+	        dataSeries.add(item(rand.nextInt(200)-100, rand.nextInt(200)-100, rand.nextInt(200)-100, colorIndex, i, "data"));			
 		}
+        dataSeries.addItemWithDrilldown(item(23, 40, 10, 6),createDataSeries("sub_"+id,5));
 		return dataSeries;
 	}
 
     public static DataSeriesItem item(int x, int y, int z, int colorIndex) {
-    	return item(x,y,z,colorIndex,-1);
+    	return item(x,y,z,colorIndex,-1,"data");
+    }
+
+    public static DataSeriesItem item(int x, int y, int z, int colorIndex, String id) {
+    	return item(x,y,z,colorIndex,-1,id);
     }
     
-    public static DataSeriesItem item(int x, int y, int z, int colorIndex, int index) {
+    public static DataSeriesItem item(int x, int y, int z, int colorIndex, int index, String id) {
         DataSeriesItem3d dataSeriesItem = new DataSeriesItem3d();
+        dataSeriesItem.setId(id);
         dataSeriesItem.setX(x);
         dataSeriesItem.setY(y);
         dataSeriesItem.setZ(z);

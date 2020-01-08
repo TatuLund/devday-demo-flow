@@ -181,6 +181,9 @@ public class GridView extends SplitLayout {
         grid.addItemDoubleClickListener(event -> {
         	grid.getEditor().editItem(event.getItem());        	
         });
+        grid.addItemClickListener(event -> {
+        	if (grid.getEditor().isOpen()) grid.getEditor().closeEditor();
+        });
         Binder<MonthlyExpense> binder = new Binder<>();
         binder.forField(numberField).bind(MonthlyExpense::getExpenses,MonthlyExpense::setExpenses);
         grid.getEditor().setBinder(binder);
@@ -220,8 +223,6 @@ public class GridView extends SplitLayout {
 //        });
 
         grid.recalculateColumnWidths();
-        addColumnSelectorMenu(grid);
-        
     }
 
 	private void addColumnSelectorMenu(Grid<MonthlyExpense> grid) {
