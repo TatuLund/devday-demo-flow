@@ -8,8 +8,10 @@ import org.vaadin.tatu.TwinColSelect;
 import com.vaadin.devday.demo.MainLayout;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
+import com.vaadin.flow.component.contextmenu.MenuItem;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.html.Span;
+import com.vaadin.flow.component.menubar.MenuBar;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.notification.Notification.Position;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
@@ -103,6 +105,24 @@ public class ThemeVariantsView extends VerticalLayout {
         });
         add(buttons);
 
+        MenuBar menubar = new MenuBar();
+		menubar.getElement().setAttribute("theme", "menu-bar-grow");
+        menubar.setWidth("100%");
+        MenuItem first = menubar.addItem("First");
+        first.getSubMenu().addItem("Sub one");
+        first.getSubMenu().addItem("Sub two");
+        first.getSubMenu().addItem("Sub three");
+        menubar.addItem("Second");
+        menubar.addItem("Third");
+        MenuItem fourth = menubar.addItem("Fourth");
+        fourth.getSubMenu().addItem("Sub one");
+        fourth.getSubMenu().addItem("Sub two");
+        fourth.getSubMenu().addItem("Sub three");
+        menubar.addItem("Fith");
+        menubar.addItem("Sixth");
+
+        add(menubar);
+        
         TwinColSelect<String> select = new TwinColSelect<>();
 //        select.setLabel("Do selection");
         select.setRequiredIndicatorVisible(true);

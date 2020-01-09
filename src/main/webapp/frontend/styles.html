@@ -411,3 +411,23 @@ html {
   </template>
 </dom-module>
 
+<dom-module id="menu-buttons-grow" theme-for="vaadin-menu-bar">
+  <template>
+    <style>
+      :host([theme~="menu-bar-grow"]) [part="menu-bar-button"]  {
+        flex-grow: 1;
+      }
+    </style>
+  </template>
+</dom-module>
+
+<dom-module id="menu-items-large" theme-for="vaadin-context-menu-overlay">
+  <template>
+    <style>
+      :host([theme~="menu-bar-grow"]) [part="overlay"] {
+        width: 300px;
+      }
+    </style>
+  </template>
+</dom-module>
+
