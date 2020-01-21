@@ -1,0 +1,30 @@
+    .header {
+ 	   background-color: var(--lumo-tint-20pct)  !important;
+ 	   color: var(--lumo-primary-text-color) !important;
+ 	}
+		
+ 	.navigation {
+ 	    background-color: var(--lumo-tint-30pct) !important;
+ 	} 
+		
+ 	.content {
+ 	    background-color: var(--lumo-tint-40pct) !important;
+ 	}
+		
+ 	.footer {
+ 	    background-color: var(--lumo-tint-50pct) !important;
+ 	}
+ 		
+ 	vaadin-app-layout vaadin-tab a:hover {
+      text-decoration: none;
+    }
+    vaadin-app-layout vaadin-tab:not([selected]) a {
+      color: var(--lumo-contrast-60pct);
+    }
+    vaadin-app-layout vaadin-tab iron-icon {
+      margin: 0 4px;
+      width: var(--lumo-icon-size-m);
+      height: var(--lumo-icon-size-m);
+      padding: .25rem;
+      box-sizing: border-box!important;
+    }

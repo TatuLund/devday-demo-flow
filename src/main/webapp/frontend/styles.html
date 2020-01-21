@@ -1,36 +1,36 @@
 <link rel="import" href="../frontend/bower_components/vaadin-charts/theme/vaadin-chart-default-theme.html">
 <custom-style>
   <style>
-    .header {
- 	   background-color: var(--lumo-tint-20pct)  !important;
- 	   color: var(--lumo-primary-text-color) !important;
- 	}
+/*     .header { */
+/*  	   background-color: var(--lumo-tint-20pct)  !important; */
+/*  	   color: var(--lumo-primary-text-color) !important; */
+/*  	} */
 		
- 	.navigation {
- 	    background-color: var(--lumo-tint-30pct) !important;
- 	} 
+/*  	.navigation { */
+/*  	    background-color: var(--lumo-tint-30pct) !important; */
+/*  	}  */
 		
- 	.content {
- 	    background-color: var(--lumo-tint-40pct) !important;
- 	}
+/*  	.content { */
+/*  	    background-color: var(--lumo-tint-40pct) !important; */
+/*  	} */
 		
- 	.footer {
- 	    background-color: var(--lumo-tint-50pct) !important;
- 	}
+/*  	.footer { */
+/*  	    background-color: var(--lumo-tint-50pct) !important; */
+/*  	} */
  		
- 	vaadin-app-layout vaadin-tab a:hover {
-      text-decoration: none;
-    }
-    vaadin-app-layout vaadin-tab:not([selected]) a {
-      color: var(--lumo-contrast-60pct);
-    }
-    vaadin-app-layout vaadin-tab iron-icon {
-      margin: 0 4px;
-      width: var(--lumo-icon-size-m);
-      height: var(--lumo-icon-size-m);
-      padding: .25rem;
-      box-sizing: border-box!important;
-    }
+/*  	vaadin-app-layout vaadin-tab a:hover { */
+/*       text-decoration: none; */
+/*     } */
+/*     vaadin-app-layout vaadin-tab:not([selected]) a { */
+/*       color: var(--lumo-contrast-60pct); */
+/*     } */
+/*     vaadin-app-layout vaadin-tab iron-icon { */
+/*       margin: 0 4px; */
+/*       width: var(--lumo-icon-size-m); */
+/*       height: var(--lumo-icon-size-m); */
+/*       padding: .25rem; */
+/*       box-sizing: border-box!important; */
+/*     } */
 
 html {
   --limit-field-color:rgb(227, 43, 83);
@@ -431,3 +431,15 @@ html {
   </template>
 </dom-module>
 
+<dom-module theme-for="vaadin-number-field" id="text-field-blue">
+    <template>
+        <style>
+            :host([theme~="text-field-blue"]) [part="input-field"] {
+                 background: var(--lumo-tint-70pct);
+            }
+            :host([theme~="text-field-blue"]) [part="value"] {
+                 color: var(--lumo-shade-80pct);
+            }
+        </style>
+    </template>
+</dom-module>

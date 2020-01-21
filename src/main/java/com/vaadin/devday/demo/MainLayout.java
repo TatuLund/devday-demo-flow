@@ -1,10 +1,16 @@
 package com.vaadin.devday.demo;
 
+import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+import java.util.function.Function;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import com.vaadin.devday.demo.views.AbsoluteLayoutView;
 import com.vaadin.devday.demo.views.AccordionView;
@@ -36,6 +42,8 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.page.Push;
 import com.vaadin.flow.component.tabs.Tab;
 import com.vaadin.flow.component.tabs.Tabs;
+import com.vaadin.flow.dom.Element;
+import com.vaadin.flow.dom.ElementFactory;
 import com.vaadin.flow.router.AfterNavigationEvent;
 import com.vaadin.flow.router.AfterNavigationObserver;
 import com.vaadin.flow.router.HasDynamicTitle;
@@ -44,7 +52,10 @@ import com.vaadin.flow.router.RouteConfiguration;
 import com.vaadin.flow.router.RouterLayout;
 import com.vaadin.flow.router.RouterLink;
 import com.vaadin.flow.server.CustomizedSystemMessages;
+import com.vaadin.flow.server.InitialPageSettings;
+import com.vaadin.flow.server.InitialPageSettings.WrapMode;
 import com.vaadin.flow.server.PWA;
+import com.vaadin.flow.server.PageConfigurator;
 import com.vaadin.flow.server.ServiceException;
 import com.vaadin.flow.server.SystemMessages;
 import com.vaadin.flow.server.SystemMessagesInfo;
@@ -57,6 +68,8 @@ import com.vaadin.flow.server.VaadinSession;
 import com.vaadin.flow.theme.Theme;
 import com.vaadin.flow.theme.lumo.Lumo;
 
+import elemental.json.JsonValue;
+
 @Push
 @PWA(name = "DevDay demo application", shortName = "DevDay")
 @Theme(value = Lumo.class, variant = Lumo.DARK)
@@ -64,10 +77,12 @@ import com.vaadin.flow.theme.lumo.Lumo;
 @CssImport("styles.css")
 //@Viewport("width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes")
 //@BodySize(height = "100vh", width = "100vw")
-public class MainLayout extends AppLayout implements RouterLayout, AfterNavigationObserver {
+public class MainLayout extends AppLayout implements RouterLayout, AfterNavigationObserver, PageConfigurator {
 
 	private FlexLayout childWrapper = new FlexLayout();
     private Tabs menu = new Tabs();
+	private String fullUrl;
+	private CompletableFuture<JsonValue> future;
 
     private Tab createMenuItem(String title, VaadinIcon icon, Class<? extends Component> target) {
     	HorizontalLayout div = new HorizontalLayout();
@@ -97,7 +112,6 @@ public class MainLayout extends AppLayout implements RouterLayout, AfterNavigati
         Span appName = new Span(img);
         appName.addClassName("hide-on-mobile");
         addToNavbar(true, appName, menu);
-        UI.getCurrent().getPage().open("");
         getElement().getStyle().set("--vaadin-app-layout-navbar-background", "var(--lumo-tint-30pct)");
        
         menu.add(createMenuItem(AccordionView.TITLE,null,AccordionView.class),
@@ -139,7 +153,7 @@ public class MainLayout extends AppLayout implements RouterLayout, AfterNavigati
 
     @Override
     protected void onAttach(AttachEvent attachEvent) {
-    	// This is the method to fetch client details.
+    	// This is the method to fetch client details.    	
     	getUI().ifPresent(ui -> ui.getPage().retrieveExtendedClientDetails(receiver -> {
             int screenWidth = receiver.getBodyClientWidth();
             System.out.println("Width "+screenWidth);
@@ -181,22 +195,29 @@ public class MainLayout extends AppLayout implements RouterLayout, AfterNavigati
 				}
             });
         }
-	}
-
+       
+    }
+	
 	@Override
 	public void afterNavigation(AfterNavigationEvent event) {
 		Location location = event.getLocation();
 		String path = location.getPath();
 		String pathQ = location.getPathWithQueryParameters();
-		
 		RouteConfiguration.forSessionScope().getRoute(path).ifPresent(route -> {
 			String url = RouteConfiguration.forSessionScope().getUrl(route);
 			System.out.println("Current path: "+path);
 			System.out.println("Current pathQ: "+pathQ);
+			System.out.println("Current url: "+fullUrl);
 			System.out.println("Current url: "+url);
 			System.out.println("Context root relative path: "+UI.getCurrent().getInternals().getContextRootRelativePath());
 			
 		});
+		
+	}
+
+	@Override
+	public void configurePage(InitialPageSettings settings) {
+		settings.addInlineFromFile("./test.css", WrapMode.STYLESHEET);
 		
 	}
 

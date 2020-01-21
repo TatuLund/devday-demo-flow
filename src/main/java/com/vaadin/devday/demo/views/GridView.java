@@ -3,8 +3,16 @@ package com.vaadin.devday.demo.views;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.splitlayout.SplitLayout;
+import com.vaadin.flow.router.AfterNavigationEvent;
+import com.vaadin.flow.router.AfterNavigationObserver;
+import com.vaadin.flow.router.BeforeEvent;
+import com.vaadin.flow.router.HasUrlParameter;
+import com.vaadin.flow.router.OptionalParameter;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
+import com.vaadin.flow.server.VaadinRequest;
+import com.vaadin.flow.server.VaadinServletRequest;
+import com.vaadin.flow.server.VaadinSession;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,6 +20,7 @@ import java.util.List;
 import com.vaadin.componentfactory.Popup;
 import com.vaadin.devday.demo.MainLayout;
 import com.vaadin.flow.component.ClientCallable;
+import com.vaadin.flow.component.ComponentUtil;
 import com.vaadin.flow.component.Text;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
@@ -43,7 +52,7 @@ import com.vaadin.flow.data.renderer.TemplateRenderer;
 
 @Route(value = GridView.ROUTE, layout = MainLayout.class)
 @PageTitle(GridView.TITLE)
-public class GridView extends SplitLayout {
+public class GridView extends SplitLayout  {
 	public static final String ROUTE = "grid";
 	public static final String TITLE = "Grid";
 
@@ -55,6 +64,8 @@ public class GridView extends SplitLayout {
     MonthlyExpense currentExpense;
 	private Popup popup;
 	private boolean openMenu;
+	private String firstName;
+	private String lastName;
     
     public GridView() {
     	VerticalLayout content = new VerticalLayout();
@@ -108,17 +119,17 @@ public class GridView extends SplitLayout {
    		upBtn.addClickListener(event -> {
    			index = index - 12;
    			if (index < 0) index = 0;
-        	scrollTo(expensesGrid,index);
+        	expensesGrid.scrollToIndex(index); // scrollTo(expensesGrid,index);
         	indexLabel.setText(Integer.toString(2000+(index/12)));
         });
    		downBtn.addClickListener(event -> {
    			index = index + 12;
    			if (index > 12*19) index = 0;
-        	scrollTo(expensesGrid,index);
+        	expensesGrid.scrollToIndex(index); // scrollTo(expensesGrid,index);
         	indexLabel.setText(Integer.toString(2000+(index/12)));
         });
    		indexLabel.addClickListener(event ->{
-        	scrollTo(expensesGrid,index);
+        	expensesGrid.scrollToIndex(index); // scrollTo(expensesGrid,index);
    		});
 		buttons.add(indexLabel,upBtn,downBtn,popButton);
 		return buttons;
@@ -167,7 +178,7 @@ public class GridView extends SplitLayout {
     	grid.addColumn(TemplateRenderer.<MonthlyExpense>of("<div style$=\"[[item.styles]]\">[[item.expenses]]</div>")
     			.withProperty("styles", MonthlyExpense::getStyles)
     			.withProperty("expenses", MonthlyExpense::getYear)
-    	).setHeader("Year").setKey("year").setId("year-column");
+    	).setAutoWidth(true).setHeader("Year").setKey("year").setId("year-column");
     	addYearSelectorMenuToColumnHeader(grid);
     	GridContextMenu<MonthlyExpense> menu = new GridContextMenu<>(grid);
     	menu.setOpenOnClick(true);
@@ -177,6 +188,7 @@ public class GridView extends SplitLayout {
     	addMonthFilterMenuToColumnHeader(grid); 
         NumberField numberField = new NumberField();
         numberField.setWidth("100%");
+        numberField.getElement().setAttribute("theme", "text-field-blue");
         grid.addColumn(MonthlyExpense::getExpenses).setResizable(true).setKey("expenses").setHeader("Expenses").setClassNameGenerator(monthlyExpense -> monthlyExpense.getExpenses() >= getMonthlyExpenseLimit() ? "warning-grid-cell" : "green-grid-cell").setEditorComponent(numberField);
         grid.addItemDoubleClickListener(event -> {
         	grid.getEditor().editItem(event.getItem());        	
@@ -198,7 +210,7 @@ public class GridView extends SplitLayout {
 			});
 			return check;
 			
-		})).setWidth("50px").setKey("select").setHeader("Select");
+		})).setWidth("50px").setFlexGrow(0).setKey("select").setHeader("Select");
         grid.getEditor().addCloseListener(event -> {
         	System.out.println(event.getItem().getExpenses());
         });
@@ -221,8 +233,9 @@ public class GridView extends SplitLayout {
 //        grid.addItemClickListener(event -> {
 //        	getUI().ifPresent(ui -> ui.navigate(MainView.ROUTE+"/scroll"));
 //        });
-
+        grid.getElement().setAttribute("theme", "text-field-blue");
         grid.recalculateColumnWidths();
+        addColumnSelectorMenu(grid);
     }
 
 	private void addColumnSelectorMenu(Grid<MonthlyExpense> grid) {
@@ -339,5 +352,5 @@ public class GridView extends SplitLayout {
         }
         return Integer.parseInt(limit.getValue());
     }
-    
+
 }

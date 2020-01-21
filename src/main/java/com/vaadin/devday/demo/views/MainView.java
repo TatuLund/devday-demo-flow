@@ -46,6 +46,7 @@ public class MainView extends VerticalLayout implements HasUrlParameter<String>,
 		header.setHeight("150px");
 
 		layout = new HorizontalLayout();
+		layout.setHeight("100px");
 		layout.setSpacing(false);
 		createTextLayout();
 
@@ -77,7 +78,8 @@ public class MainView extends VerticalLayout implements HasUrlParameter<String>,
 		content.setText("This is the content area");
 		content.setClassName("content");
 		content.getStyle().set("alignContent", "start");
-
+		content.getStyle().set("overflow-y", "auto");
+		
 		layout.add(navigation, content);
 		layout.expand(content);
 		layout.setDefaultVerticalComponentAlignment(Alignment.STRETCH);
