@@ -9,12 +9,17 @@ import java.util.List;
 
 import com.vaadin.devday.demo.MainLayout;
 import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.UI;
+import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.datepicker.DatePicker;
 import com.vaadin.flow.component.gridpro.GridPro;
+import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.data.binder.Result;
 import com.vaadin.flow.data.binder.ValueContext;
 import com.vaadin.flow.data.converter.LocalDateToDateConverter;
+import com.vaadin.flow.data.provider.DataProvider;
+import com.vaadin.flow.data.provider.ListDataProvider;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 
@@ -105,16 +110,26 @@ public class GridProView extends VerticalLayout {
 		.setHeader("Subscriber (editable)");
 
 		grid.setItems(createItems());
-
-
-		add(grid);
+		grid.getEditor().setBuffered(true);
+		Button button = new Button("Save");
+		button.addClickListener(event -> {
+			 grid.getElement().executeJs("this._stopEdit(false,true);").then(i -> {
+				ListDataProvider<Person> dp = (ListDataProvider<Person>) grid.getDataProvider();			
+				dp.getItems().stream().map(item -> item.getName()).forEach(name -> Notification.show(name));			
+				
+			});
+		});
+		add(grid,button);
 		}
-
+	
 		private Collection<Person> createItems() {
 		Person p = new Person();
 		p.setName("Dinesh");
 		p.setAge(12);
-		return Arrays.asList(p);
+		Person p1 = new Person();
+		p1.setName("Mark");
+		p1.setAge(20);
+		return Arrays.asList(p,p1);
 		}	
 	
 }
