@@ -1,16 +1,11 @@
 package com.vaadin.devday.demo;
 
-import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
-import java.util.function.Function;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import com.vaadin.devday.demo.views.AbsoluteLayoutView;
 import com.vaadin.devday.demo.views.AccordionView;
@@ -31,7 +26,6 @@ import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.applayout.AppLayout;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
-import com.vaadin.flow.component.confirmdialog.ConfirmDialog;
 import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.dependency.HtmlImport;
 import com.vaadin.flow.component.html.Image;
@@ -42,8 +36,6 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.page.Push;
 import com.vaadin.flow.component.tabs.Tab;
 import com.vaadin.flow.component.tabs.Tabs;
-import com.vaadin.flow.dom.Element;
-import com.vaadin.flow.dom.ElementFactory;
 import com.vaadin.flow.router.AfterNavigationEvent;
 import com.vaadin.flow.router.AfterNavigationObserver;
 import com.vaadin.flow.router.HasDynamicTitle;
@@ -56,15 +48,10 @@ import com.vaadin.flow.server.InitialPageSettings;
 import com.vaadin.flow.server.InitialPageSettings.WrapMode;
 import com.vaadin.flow.server.PWA;
 import com.vaadin.flow.server.PageConfigurator;
-import com.vaadin.flow.server.ServiceException;
 import com.vaadin.flow.server.SystemMessages;
 import com.vaadin.flow.server.SystemMessagesInfo;
 import com.vaadin.flow.server.SystemMessagesProvider;
-import com.vaadin.flow.server.VaadinRequest;
-import com.vaadin.flow.server.VaadinResponse;
 import com.vaadin.flow.server.VaadinServlet;
-import com.vaadin.flow.server.VaadinServletService;
-import com.vaadin.flow.server.VaadinSession;
 import com.vaadin.flow.theme.Theme;
 import com.vaadin.flow.theme.lumo.Lumo;
 
@@ -139,16 +126,7 @@ public class MainLayout extends AppLayout implements RouterLayout, AfterNavigati
     	Shortcuts.addShortcutListener(this, () -> getUI().ifPresent(ui -> ui.navigate(AbsoluteLayoutView.ROUTE)), Key.F8);
     	Shortcuts.addShortcutListener(this, () -> getUI().ifPresent(ui -> ui.navigate(UploadView.ROUTE)), Key.F9);
     	Shortcuts.addShortcutListener(this, () -> getUI().ifPresent(ui -> ui.navigate("")), Key.F12);
-    	
-//		menu.add(confirmDialog);
-
-    	VaadinSession.getCurrent().setErrorHandler(error -> {
-        	ConfirmDialog confirmDialog = new ConfirmDialog("Error","Internal Error: "+error.getThrowable().getMessage(), "Do Something", confirmFire -> {});
-    		confirmDialog.setWidth("500px");
-    		confirmDialog.setHeight("500px");
-    		confirmDialog.open();
-    	});
-    	
+   	
 	}
 
     @Override
