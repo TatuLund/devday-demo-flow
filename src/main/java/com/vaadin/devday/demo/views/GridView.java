@@ -3,16 +3,10 @@ package com.vaadin.devday.demo.views;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.splitlayout.SplitLayout;
-import com.vaadin.flow.router.AfterNavigationEvent;
-import com.vaadin.flow.router.AfterNavigationObserver;
-import com.vaadin.flow.router.BeforeEvent;
-import com.vaadin.flow.router.HasUrlParameter;
-import com.vaadin.flow.router.OptionalParameter;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.VaadinRequest;
-import com.vaadin.flow.server.VaadinServletRequest;
-import com.vaadin.flow.server.VaadinSession;
+import com.vaadin.flow.server.VaadinServletService;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,7 +14,6 @@ import java.util.List;
 import com.vaadin.componentfactory.Popup;
 import com.vaadin.devday.demo.MainLayout;
 import com.vaadin.flow.component.ClientCallable;
-import com.vaadin.flow.component.ComponentUtil;
 import com.vaadin.flow.component.Text;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
@@ -108,6 +101,8 @@ public class GridView extends SplitLayout  {
         popup.setFor("columnsbutton");
         content.add(popup);
         popButton.getElement().addEventListener("mouseover",  event -> popup.setOpened(true));
+        VaadinServletService.getCurrentServletRequest();
+        VaadinRequest.getCurrent();
         
         // Buttons to add/decrease the year
         Button upBtn = new Button();
@@ -188,6 +183,9 @@ public class GridView extends SplitLayout  {
     	addMonthFilterMenuToColumnHeader(grid); 
         NumberField numberField = new NumberField();
         numberField.setWidth("100%");
+        numberField.setMin(0);
+        numberField.setMax(1000);
+        numberField.setPreventInvalidInput(true);
         numberField.getElement().setAttribute("theme", "text-field-blue");
         grid.addColumn(MonthlyExpense::getExpenses).setResizable(true).setKey("expenses").setHeader("Expenses").setClassNameGenerator(monthlyExpense -> monthlyExpense.getExpenses() >= getMonthlyExpenseLimit() ? "warning-grid-cell" : "green-grid-cell").setEditorComponent(numberField);
         grid.addItemDoubleClickListener(event -> {
@@ -235,6 +233,7 @@ public class GridView extends SplitLayout  {
 //        });
         grid.getElement().setAttribute("theme", "text-field-blue");
         grid.recalculateColumnWidths();
+        grid.addThemeVariants(GridVariant.LUMO_NO_ROW_BORDERS);
         addColumnSelectorMenu(grid);
     }
 

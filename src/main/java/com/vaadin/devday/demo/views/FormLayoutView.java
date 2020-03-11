@@ -1,6 +1,12 @@
 package com.vaadin.devday.demo.views;
 
+import java.math.BigDecimal;
+import java.util.List;
+import java.util.Optional;
+
 import com.vaadin.devday.demo.MainLayout;
+import com.vaadin.flow.component.AttachEvent;
+import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.checkbox.Checkbox;
@@ -16,6 +22,8 @@ import com.vaadin.flow.component.radiobutton.RadioButtonGroup;
 import com.vaadin.flow.component.textfield.PasswordField;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.Binder;
+import com.vaadin.flow.data.binder.BindingValidationStatus.Status;
+import com.vaadin.flow.data.converter.StringToBigDecimalConverter;
 import com.vaadin.flow.dom.ElementFactory;
 import com.vaadin.flow.router.BeforeLeaveEvent;
 import com.vaadin.flow.router.BeforeLeaveEvent.ContinueNavigationAction;
@@ -44,8 +52,9 @@ public class FormLayoutView extends VerticalLayout implements BeforeLeaveObserve
     	private String lastName;
     	private String email;
     	private String password;
-    	private String phone;
+    	private BigDecimal phone;
     	private Boolean doNotCall;
+		private List<String> options;
 		public String getTitle() {
 			return title;
 		}
@@ -76,10 +85,10 @@ public class FormLayoutView extends VerticalLayout implements BeforeLeaveObserve
 		public void setPassword(String password) {
 			this.password = password;
 		}
-		public String getPhone() {
+		public BigDecimal getPhone() {
 			return phone;
 		}
-		public void setPhone(String phone) {
+		public void setPhone(BigDecimal phone) {
 			this.phone = phone;
 		}
 		public Boolean isDoNotCall() {
@@ -87,7 +96,13 @@ public class FormLayoutView extends VerticalLayout implements BeforeLeaveObserve
 		}
 		public void setDoNotCall(Boolean doNotCall) {
 			this.doNotCall = doNotCall;
-		} 
+		}
+		public List<String> getOptions() {
+			return options;
+		}
+		public void setOptions(List<String> options) {
+			this.options = options;
+		}
     }
 
     // If you want to use bindInstanceFields(this);
@@ -106,16 +121,23 @@ public class FormLayoutView extends VerticalLayout implements BeforeLeaveObserve
         
         FormLayout formLayout = new FormLayout();
         title.setItems("Mr","Mrs","Miss");
-        title.setWidth("100%");
-		title.getElement().setAttribute("theme", "underline");
+        title.setWidth("100px");
+		title.getElement().setAttribute("theme", "underline titlefont widepopup");
+		title.addValueChangeListener(event -> {
+			if (event.getValue().equals("Operations")) {
+				
+			}
+		});
         formLayout.addFormItem(title, "Title");
         formLayout.getElement().appendChild(ElementFactory.createBr());
-                
+       
         firstName.setWidth("100%");
         formLayout.addFormItem(firstName, "First Name");
 
         lastName.setWidth("100%");
         formLayout.addFormItem(lastName, "Last Name");
+        lastName.setPlaceholder("Last name");
+//        lastName.setEnabled(false);
 
         email.setWidth("100%");
         formLayout.addFormItem(email, "Email").getElement().setAttribute("colspan", "2");
@@ -150,8 +172,16 @@ public class FormLayoutView extends VerticalLayout implements BeforeLeaveObserve
         binder.forField(password)
         	.asRequired()
         	.withValidator(pw -> pw.length() > 7, "Use at least 8 characters for password")
-        	.withValidator(pw -> pw.equals(repeatPassword.getValue()) , "Passwords do not match")
+        	.withValidator(pw -> pw.equals(repeatPassword.getValue()) && !pw.isEmpty(), "Passwords do not match")
+        	.withValidationStatusHandler(handler -> {
+        		if (handler.getStatus().equals(Status.ERROR)) {
+        			Notification.show(handler.getMessage().get()+" "+handler.getField().getValue().toString());
+        		}
+        	})
         	.bind("password");
+        binder.forField(phone)
+        	.withNullRepresentation("null")
+        	.withConverter(new StringToBigDecimalConverter("Must input number")).bind(Person::getPhone,Person::setPhone);
         binder.bindInstanceFields(this);
         binder.setBean(person);
         // setting bean does not trigger validators, calling validate explicitly will bring
@@ -176,8 +206,20 @@ public class FormLayoutView extends VerticalLayout implements BeforeLeaveObserve
 				throw new MyException();
 		});		
 		group.setValue("bar");
-		
         add(formLayout,createTools(),group);
+    }
+
+    @Override
+    public void onAttach(AttachEvent event) {
+		Optional<Component> parent = getParent();
+		while (parent.isPresent()) { 
+			Component p = parent.get();
+			if (p instanceof MainLayout) {
+				MainLayout main = (MainLayout) p;
+				main.hello();
+			}			
+			parent = p.getParent();
+		}
     }
     
     HorizontalLayout createTools() {
@@ -187,6 +229,7 @@ public class FormLayoutView extends VerticalLayout implements BeforeLeaveObserve
 		tools.add(cancelButton,saveButton);
 		saveButton.getStyle().set("margin-left", "auto");
 		tools.setWidth("100%");
+		saveButton.focus();
 		saveButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
 		saveButton.addClickListener(event -> {
 			Notification.show("Saved!",
@@ -216,4 +259,5 @@ public class FormLayoutView extends VerticalLayout implements BeforeLeaveObserve
 		    	confirmDialog.open();
 		    }		
 	}
+
 }

@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 
 import com.vaadin.devday.demo.MainLayout;
+import com.vaadin.flow.component.Html;
 import com.vaadin.flow.component.Key;
 import com.vaadin.flow.component.Shortcuts;
 import com.vaadin.flow.component.button.Button;
@@ -13,6 +14,7 @@ import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.html.Hr;
+import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.notification.Notification.Position;
 import com.vaadin.flow.component.notification.NotificationVariant;
@@ -81,8 +83,7 @@ public class DialogView extends VerticalLayout {
     		binder.readBean(person);
     		binder.forField(nameField).bind(Person::getName, Person::setName);
     		datePicker.setErrorMessage("Please provide valid date");
-    		datePicker.getElement().setAttribute("theme", "weekend-highlight");
-    		datePicker.getElement().setAttribute("theme", "underline");
+    		datePicker.getElement().setAttribute("theme", "weekend-highlight underline");
     		binder.forField(datePicker)
     		.withValidator(new DateRangeValidator("Birth date can't be in future",LocalDate.MIN,LocalDate.now()))
     		.bind(Person::getBirthDate, Person::setBirthDate);

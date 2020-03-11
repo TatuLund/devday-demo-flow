@@ -87,6 +87,7 @@ public class MainView extends VerticalLayout implements HasUrlParameter<String>,
 
 	private Div createBlock() {
 		final Div button = new Div();
+		button.addClassName("block");
 		button.getStyle().set("background", "var(--lumo-tint-10pct)");
 		button.setHeight("200px");
 		button.setWidth("200px");

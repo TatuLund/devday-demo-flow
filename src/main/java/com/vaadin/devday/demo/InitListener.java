@@ -17,16 +17,16 @@ public class InitListener implements VaadinServiceInitListener {
         	UI ui = event.getUI();
         	System.out.println("New UI instantiated. UI id # " + ui.getUIId() + " " + Instant.now () + " " + ui.toString());
         });
+        serviceInitEvent.getSource().addSessionInitListener(event -> {
+        	System.out.println("Session init");
+        	VaadinSession session = event.getSession();
+    		session.setErrorHandler(error -> {
+            	ConfirmDialog confirmDialog = new ConfirmDialog("Error","Internal Error: "+error.getThrowable().getMessage(), "Do Something", confirmFire -> {});
+        		confirmDialog.setWidth("500px");
+        		confirmDialog.setHeight("500px");
+        		confirmDialog.open();
+        	});
+        });
     }
 
-    
-	private void sessionInit(VaadinSession session) {
-		session.setErrorHandler(error -> {
-        	ConfirmDialog confirmDialog = new ConfirmDialog("Error","Internal Error: "+error.getThrowable().getMessage(), "Do Something", confirmFire -> {});
-    		confirmDialog.setWidth("500px");
-    		confirmDialog.setHeight("500px");
-    		confirmDialog.open();
-    	});
-
-	}
 }

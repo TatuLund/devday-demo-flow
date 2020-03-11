@@ -18,6 +18,7 @@ import com.vaadin.devday.demo.views.ThemeVariantsView;
 import com.vaadin.devday.demo.views.UploadView;
 import com.vaadin.devday.demo.views.VaadinBoardView;
 import com.vaadin.flow.component.AttachEvent;
+import com.vaadin.flow.component.ClientCallable;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.HasElement;
 import com.vaadin.flow.component.Key;
@@ -38,6 +39,8 @@ import com.vaadin.flow.component.tabs.Tab;
 import com.vaadin.flow.component.tabs.Tabs;
 import com.vaadin.flow.router.AfterNavigationEvent;
 import com.vaadin.flow.router.AfterNavigationObserver;
+import com.vaadin.flow.router.BeforeEnterEvent;
+import com.vaadin.flow.router.BeforeEnterObserver;
 import com.vaadin.flow.router.HasDynamicTitle;
 import com.vaadin.flow.router.Location;
 import com.vaadin.flow.router.RouteConfiguration;
@@ -55,16 +58,17 @@ import com.vaadin.flow.server.VaadinServlet;
 import com.vaadin.flow.theme.Theme;
 import com.vaadin.flow.theme.lumo.Lumo;
 
+import elemental.json.JsonObject;
 import elemental.json.JsonValue;
 
 @Push
-@PWA(name = "DevDay demo application", shortName = "DevDay")
+@PWA(name = "DevDay demo application", shortName = "DevDay", enableInstallPrompt = false)
 @Theme(value = Lumo.class, variant = Lumo.DARK)
 @HtmlImport("styles.html")
 @CssImport("styles.css")
 //@Viewport("width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes")
 //@BodySize(height = "100vh", width = "100vw")
-public class MainLayout extends AppLayout implements RouterLayout, AfterNavigationObserver, PageConfigurator {
+public class MainLayout extends AppLayout implements RouterLayout, AfterNavigationObserver, PageConfigurator, BeforeEnterObserver {
 
 	private FlexLayout childWrapper = new FlexLayout();
     private Tabs menu = new Tabs();
@@ -100,7 +104,6 @@ public class MainLayout extends AppLayout implements RouterLayout, AfterNavigati
         appName.addClassName("hide-on-mobile");
         addToNavbar(true, appName, menu);
         getElement().getStyle().set("--vaadin-app-layout-navbar-background", "var(--lumo-tint-30pct)");
-       
         menu.add(createMenuItem(AccordionView.TITLE,null,AccordionView.class),
         		createMenuItem(SplitLayoutView.TITLE, null, SplitLayoutView.class),
         		createMenuItem(DialogView.TITLE, null, DialogView.class),
@@ -126,9 +129,12 @@ public class MainLayout extends AppLayout implements RouterLayout, AfterNavigati
     	Shortcuts.addShortcutListener(this, () -> getUI().ifPresent(ui -> ui.navigate(AbsoluteLayoutView.ROUTE)), Key.F8);
     	Shortcuts.addShortcutListener(this, () -> getUI().ifPresent(ui -> ui.navigate(UploadView.ROUTE)), Key.F9);
     	Shortcuts.addShortcutListener(this, () -> getUI().ifPresent(ui -> ui.navigate("")), Key.F12);
-   	
 	}
 
+	public void hello() {
+		System.out.println("Hello");
+	}
+	
     @Override
     protected void onAttach(AttachEvent attachEvent) {
     	// This is the method to fetch client details.    	
@@ -143,9 +149,18 @@ public class MainLayout extends AppLayout implements RouterLayout, AfterNavigati
         } catch (UnknownHostException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}        
+		}
+        UI.getCurrent().getPage().executeJs("window.addEventListener('beforeunload', () => $0.$server.windowClosed(window.location)); ",getElement());
+        UI.getCurrent().getElement().setAttribute("class", "my-class");
     }	
 	
+    @ClientCallable
+    public void windowClosed(JsonValue location) {
+    	JsonObject loc = (JsonObject) location;
+    	String href = loc.get("href").toJson();
+    	System.out.println("Window closed: "+href);
+    }
+    
 	@Override
 	public void showRouterLayoutContent(HasElement content) {
 		if (content instanceof HasDynamicTitle) {
@@ -173,7 +188,6 @@ public class MainLayout extends AppLayout implements RouterLayout, AfterNavigati
 				}
             });
         }
-       
     }
 	
 	@Override
@@ -190,12 +204,17 @@ public class MainLayout extends AppLayout implements RouterLayout, AfterNavigati
 			System.out.println("Context root relative path: "+UI.getCurrent().getInternals().getContextRootRelativePath());
 			
 		});
-		
 	}
 
 	@Override
 	public void configurePage(InitialPageSettings settings) {
 		settings.addInlineFromFile("./test.css", WrapMode.STYLESHEET);
+		
+	}
+
+	@Override
+	public void beforeEnter(BeforeEnterEvent event) {
+		// TODO Auto-generated method stub
 		
 	}
 

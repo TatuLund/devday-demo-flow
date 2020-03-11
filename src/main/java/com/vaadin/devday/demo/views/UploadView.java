@@ -19,6 +19,7 @@ import com.vaadin.flow.component.Tag;
 import com.vaadin.flow.component.Text;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Image;
+import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.upload.Upload;
 import com.vaadin.flow.component.upload.receivers.MultiFileMemoryBuffer;
@@ -26,6 +27,8 @@ import com.vaadin.flow.internal.MessageDigestUtil;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.StreamResource;
+
+import elemental.json.JsonArray;
 
 @Route(value = UploadView.ROUTE, layout = MainLayout.class)
 @PageTitle(UploadView.TITLE)
@@ -40,6 +43,13 @@ public class UploadView extends VerticalLayout {
     	// Button is removed with style module, see styles.html
     	Upload upload = new Upload(buffer);
     	upload.setSizeFull();
+    	upload.addStartedListener(event -> {
+    		upload.getElement().getPropertyNames().forEach(prop -> System.out.println(prop+" "+upload.getElement().getProperty(prop)));
+    	});
+    	upload.addFileRejectedListener(event -> {
+    		Notification.show(event.getErrorMessage());
+    	});
+    	upload.setAcceptedFileTypes("image/jpeg");
     	
     	upload.addSucceededListener(event -> {
     	    Component component = createComponent(event.getMIMEType(),

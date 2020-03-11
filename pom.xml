@@ -17,7 +17,7 @@
         <failOnMissingWebXml>false</failOnMissingWebXml>
 
         <!-- Dependencies -->
-        <vaadin.version>14.1.2</vaadin.version>
+        <vaadin.version>14.1.17</vaadin.version>
         <servlet.api.version>3.1.0</servlet.api.version>
 
         <!-- Plugins -->
@@ -61,6 +61,13 @@
 
     <dependencyManagement>
         <dependencies>
+<!--             <dependency> -->
+<!--                 <groupId>com.vaadin</groupId> -->
+<!--                 <artifactId>flow-bom</artifactId> -->
+<!--                 <type>pom</type> -->
+<!--                 <scope>import</scope> -->
+<!--                 <version>2.1.fix7399-SNAPSHOT</version> -->
+<!--             </dependency> -->
             <dependency>
                 <groupId>com.vaadin</groupId>
                 <artifactId>vaadin-bom</artifactId>
@@ -68,7 +75,7 @@
                 <scope>import</scope>
                 <version>${vaadin.version}</version>
             </dependency>
-        </dependencies>
+       </dependencies>
     </dependencyManagement>
 
 
@@ -87,6 +94,7 @@
     		<groupId>com.vaadin</groupId>
     		<artifactId>vaadin-lumo-theme</artifactId>
 		</dependency>
+
 		<dependency>
     		<groupId>org.webjars.bowergithub.vaadin</groupId>
     		<artifactId>vaadin-lumo-styles</artifactId>
@@ -143,7 +151,7 @@
         <dependency>
    			<groupId>org.vaadin.tatu</groupId>
   			<artifactId>twincolselect</artifactId>
-   			<version>1.0.0</version>
+   			<version>1.2.4</version>
 		</dependency>
 
 <!-- 		<dependency> -->

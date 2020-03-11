@@ -443,3 +443,25 @@ html {
         </style>
     </template>
 </dom-module>
+
+
+<dom-module theme-for="vaadin-combo-box-item" id="fontspec">
+    <template>
+        <style>
+            :host([theme~="titlefont"]) [part="content"] {
+                 font-size: 20px;
+            }
+        </style>
+    </template>
+</dom-module>
+
+
+<dom-module theme-for="vaadin-combo-box-overlay" id="widepopup">
+    <template>
+        <style>
+            :host([theme~="widepopup"]) {
+                 width: 500px !important;
+            }
+        </style>
+    </template>
+</dom-module>
