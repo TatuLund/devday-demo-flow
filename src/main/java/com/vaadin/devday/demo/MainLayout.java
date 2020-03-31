@@ -1,11 +1,14 @@
 package com.vaadin.devday.demo;
 
+import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.concurrent.CompletableFuture;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import com.vaadin.devday.demo.views.AbsoluteLayoutView;
 import com.vaadin.devday.demo.views.AccordionView;
@@ -54,6 +57,7 @@ import com.vaadin.flow.server.PageConfigurator;
 import com.vaadin.flow.server.SystemMessages;
 import com.vaadin.flow.server.SystemMessagesInfo;
 import com.vaadin.flow.server.SystemMessagesProvider;
+import com.vaadin.flow.server.VaadinService;
 import com.vaadin.flow.server.VaadinServlet;
 import com.vaadin.flow.theme.Theme;
 import com.vaadin.flow.theme.lumo.Lumo;
@@ -131,8 +135,9 @@ public class MainLayout extends AppLayout implements RouterLayout, AfterNavigati
     	Shortcuts.addShortcutListener(this, () -> getUI().ifPresent(ui -> ui.navigate("")), Key.F12);
 	}
 
-	public void hello() {
+	public Tabs hello() {
 		System.out.println("Hello");
+		return menu;
 	}
 	
     @Override
@@ -152,6 +157,8 @@ public class MainLayout extends AppLayout implements RouterLayout, AfterNavigati
 		}
         UI.getCurrent().getPage().executeJs("window.addEventListener('beforeunload', () => $0.$server.windowClosed(window.location)); ",getElement());
         UI.getCurrent().getElement().setAttribute("class", "my-class");
+        this.getElement().executeJs("return document.cookie;").then(String.class, value -> System.out.println(value));        
+        
     }	
 	
     @ClientCallable

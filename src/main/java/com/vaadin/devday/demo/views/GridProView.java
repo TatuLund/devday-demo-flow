@@ -86,6 +86,7 @@ public class GridProView extends VerticalLayout {
 		DatePicker datePicker = new DatePicker();
 		datePicker.setWidth("100%");
 		LocalDateToDateConverter converter = new LocalDateToDateConverter();
+		grid.addColumn(person -> person.getDate()).setHeader("date");
 		grid.addEditColumn(Person::getDate)
 			.custom(datePicker, (item, newValue) -> {				
 				Result<Date> result = converter.convertToModel(newValue, new ValueContext((Component) datePicker, datePicker));
@@ -111,25 +112,40 @@ public class GridProView extends VerticalLayout {
 
 		grid.setItems(createItems());
 		grid.getEditor().setBuffered(true);
-		Button button = new Button("Save");
-		button.addClickListener(event -> {
+		Button save = new Button("Save");
+		save.addClickListener(event -> {
 			 grid.getElement().executeJs("this._stopEdit(false,true);").then(i -> {
 				ListDataProvider<Person> dp = (ListDataProvider<Person>) grid.getDataProvider();			
 				dp.getItems().stream().map(item -> item.getName()).forEach(name -> Notification.show(name));			
 				
 			});
 		});
-		add(grid,button);
+		Button add = new Button("Add");
+		add.addClickListener(event -> {
+			Person p = new Person();
+			p.setName("Tatu");
+			p.setAge(48);
+			ListDataProvider<Person> dp = (ListDataProvider<Person>) grid.getDataProvider();			
+			dp.getItems().add(p);
+			dp.refreshAll();
+		});
+		grid.setSizeFull();
+		grid.setHeightByRows(true);
+		this.setHeight("200px");
+		add(grid,add,save);
 		}
 	
 		private Collection<Person> createItems() {
+			ArrayList<Person> list = new ArrayList<>();
 		Person p = new Person();
 		p.setName("Dinesh");
 		p.setAge(12);
 		Person p1 = new Person();
 		p1.setName("Mark");
 		p1.setAge(20);
-		return Arrays.asList(p,p1);
+		list.add(p);
+		list.add(p1);
+		return list;
 		}	
 	
 }

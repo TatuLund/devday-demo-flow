@@ -3,6 +3,7 @@ package com.vaadin.devday.demo.views;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
+import com.vaadin.componentfactory.EnhancedRichTextEditor;
 import com.vaadin.devday.demo.MainLayout;
 import com.vaadin.flow.component.Html;
 import com.vaadin.flow.component.Key;
@@ -139,6 +140,9 @@ public class DialogView extends VerticalLayout {
     			dialog.open();
     		}
     	});
-    	add(button);
+		EnhancedRichTextEditor edit = new EnhancedRichTextEditor();
+		edit.setWidth("500px");
+		edit.setHeight("200px");    	
+    	add(button,edit);
     }
 }

@@ -10,6 +10,8 @@ import com.vaadin.flow.server.VaadinServletService;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import com.vaadin.componentfactory.Popup;
 import com.vaadin.devday.demo.MainLayout;
@@ -235,6 +237,16 @@ public class GridView extends SplitLayout  {
         grid.recalculateColumnWidths();
         grid.addThemeVariants(GridVariant.LUMO_NO_ROW_BORDERS);
         addColumnSelectorMenu(grid);
+
+        grid.setItemDetailsRenderer(
+                TemplateRenderer.<MonthlyExpense>of("<div style=\"border: 1px solid gray; padding: 10px; width: 100%; box-sizing: border-box;\" inner-h-t-m-l=\"[[item.html]]\"></div>")
+                        .withProperty("html", o ->
+                                Stream.of(2, 3, 4, 5, 7, 8, 9).map(i -> "Value " + i + ": " + o.getYear()).collect(Collectors.joining("<br>"))
+                        )
+//                        .withEventHandler("handleClick", o -> grid.getDataProvider().refreshItem(o))
+        );
+        grid.getElement().executeJs("return this.getBoundingClientRect().width;").then(String.class, value -> System.out.println(value));
+        grid.getElement().executeJs("return this.getBoundingClientRect().height;").then(String.class, value -> System.out.println(value));
     }
 
 	private void addColumnSelectorMenu(Grid<MonthlyExpense> grid) {
@@ -273,9 +285,10 @@ public class GridView extends SplitLayout  {
 		});
    		menu.addGridContextMenuOpenedListener(event -> {
    			if (event.getColumnId() == null) return;
-   			if (!(event.getColumnId().get().equals("year-column"))) {
-   				menu.close();
-   			}
+//   			if (!(event.getColumnId().get().equals("year-column"))) {
+//   				menu.close();
+//   			}
+   			event.getColumnId().ifPresent(c -> { if (!c.equals("year-column")) menu.close(); }); 
    		});
    		Icon icon = VaadinIcon.CLOSE_BIG.create();
 	}

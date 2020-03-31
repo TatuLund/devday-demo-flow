@@ -46,6 +46,8 @@ import com.vaadin.flow.component.timepicker.TimePicker;
 import com.vaadin.flow.component.treegrid.TreeGrid;
 import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.data.provider.ListDataProvider;
+import com.vaadin.flow.data.provider.hierarchy.HierarchicalDataProvider;
+import com.vaadin.flow.data.provider.hierarchy.TreeDataProvider;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.data.renderer.TemplateRenderer;
 
@@ -98,7 +100,7 @@ public class TreeGridView extends VerticalLayout {
         });
         // end-source-example
         grid.setId("treegridbasic");
-
+		grid.setHeightByRows(true);
         add(withTreeGridToggleButtons(
                 departmentData.getRootDepartments().get(0), grid, message));
     }

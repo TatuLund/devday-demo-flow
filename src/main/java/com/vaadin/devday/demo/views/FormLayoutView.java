@@ -10,6 +10,8 @@ import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.checkbox.Checkbox;
+import com.vaadin.flow.component.checkbox.CheckboxGroup;
+import com.vaadin.flow.component.checkbox.CheckboxGroupVariant;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.confirmdialog.ConfirmDialog;
 import com.vaadin.flow.component.formlayout.FormLayout;
@@ -19,11 +21,16 @@ import com.vaadin.flow.component.orderedlayout.FlexLayout;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.radiobutton.RadioButtonGroup;
+import com.vaadin.flow.component.tabs.Tabs;
 import com.vaadin.flow.component.textfield.PasswordField;
+import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.data.binder.BindingValidationStatus.Status;
 import com.vaadin.flow.data.converter.StringToBigDecimalConverter;
+import com.vaadin.flow.data.validator.EmailValidator;
+import com.vaadin.flow.data.validator.StringLengthValidator;
+import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.dom.ElementFactory;
 import com.vaadin.flow.router.BeforeLeaveEvent;
 import com.vaadin.flow.router.BeforeLeaveEvent.ContinueNavigationAction;
@@ -110,7 +117,7 @@ public class FormLayoutView extends VerticalLayout implements BeforeLeaveObserve
     TextField firstName = new TextField();
     TextField lastName = new TextField();
     TextField phone = new TextField();
-    TextField email = new TextField();
+    TextArea email = new TextArea();
     PasswordField password = new PasswordField();
     PasswordField repeatPassword = new PasswordField();
 
@@ -128,8 +135,8 @@ public class FormLayoutView extends VerticalLayout implements BeforeLeaveObserve
 				
 			}
 		});
+		title.getElement().getStyle().set("--lumo-icons-checkmark", "T");
         formLayout.addFormItem(title, "Title");
-        formLayout.getElement().appendChild(ElementFactory.createBr());
        
         firstName.setWidth("100%");
         formLayout.addFormItem(firstName, "First Name");
@@ -141,6 +148,8 @@ public class FormLayoutView extends VerticalLayout implements BeforeLeaveObserve
 
         email.setWidth("100%");
         formLayout.addFormItem(email, "Email").getElement().setAttribute("colspan", "2");
+        email.setValueChangeMode(ValueChangeMode.EAGER);
+        phone.setEnabled(false);
         
         FlexLayout phoneLayout = new FlexLayout();
         phoneLayout.setAlignItems(Alignment.END);
@@ -159,16 +168,16 @@ public class FormLayoutView extends VerticalLayout implements BeforeLeaveObserve
 
         repeatPassword.setWidth("100%");
         formLayout.addFormItem(repeatPassword, "Repeat Password");
-
+        
         Person person = new Person();
         binder = new Binder<>(Person.class);
         // https://github.com/vaadin/vaadin-form-layout-flow/issues/59
         binder.forField(firstName)
     	.asRequired()
-        	.withValidator(pw -> pw.length() < 21, "Max 20 chars")
+        	.withValidator(new StringLengthValidator("Max 20 chars",5,20))
         	.bind("firstName");
         binder.forField(lastName).asRequired().bind("lastName");
-        binder.forField(email).asRequired().bind("email");
+        binder.forField(email).withValidator(new EmailValidator("Not valid")).asRequired().bind("email");
         binder.forField(password)
         	.asRequired()
         	.withValidator(pw -> pw.length() > 7, "Use at least 8 characters for password")
@@ -207,8 +216,23 @@ public class FormLayoutView extends VerticalLayout implements BeforeLeaveObserve
 		});		
 		group.setValue("bar");
         add(formLayout,createTools(),group);
+        
     }
 
+    public Tabs getData() {
+		Optional<Component> parent = getParent();
+		Tabs menu = null;
+		while (parent.isPresent()) { 
+			Component p = parent.get();
+			if (p instanceof MainLayout) {
+				MainLayout main = (MainLayout) p;
+				menu = main.hello();
+			}			
+			parent = p.getParent();
+		}
+		return menu;
+    }
+    
     @Override
     public void onAttach(AttachEvent event) {
 		Optional<Component> parent = getParent();
