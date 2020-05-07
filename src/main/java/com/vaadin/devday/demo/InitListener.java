@@ -1,5 +1,6 @@
 package com.vaadin.devday.demo;
 
+import com.vaadin.devday.demo.views.LoginView;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.confirmdialog.ConfirmDialog;
 import com.vaadin.flow.server.ServiceInitEvent;
@@ -16,6 +17,18 @@ public class InitListener implements VaadinServiceInitListener {
         serviceInitEvent.getSource().addUIInitListener(event -> {
         	UI ui = event.getUI();
         	System.out.println("New UI instantiated. UI id # " + ui.getUIId() + " " + Instant.now () + " " + ui.toString());
+        	ui.addBeforeEnterListener(beforeEvent -> {
+        		Boolean loggedIn = (Boolean) VaadinSession.getCurrent().getAttribute("loggedIn");
+    			String route = beforeEvent.getLocation().getPath();
+        		if (!route.equals(LoginView.ROUTE)) {        			
+        			if (loggedIn == null || !loggedIn) {
+        				System.out.println("Not logged in: "+route);
+        				VaadinSession.getCurrent().setAttribute("intendedRoute", route);
+        				beforeEvent.rerouteTo(LoginView.ROUTE);
+        				ui.navigate(LoginView.ROUTE);
+        			}
+        		}
+        	});
         });
         serviceInitEvent.getSource().addSessionInitListener(event -> {
         	System.out.println("Session init");

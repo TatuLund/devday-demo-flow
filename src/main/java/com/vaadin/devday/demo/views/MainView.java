@@ -20,6 +20,7 @@ import com.vaadin.flow.router.Route;
 import com.vaadin.flow.router.RouteAlias;
 import com.vaadin.flow.router.RouteData;
 import com.vaadin.flow.router.RouterLayout;
+import com.vaadin.flow.router.WildcardParameter;
 import com.vaadin.flow.server.RouteRegistry;
 
 @Route(value = MainView.ROUTE, layout = MainLayout.class)

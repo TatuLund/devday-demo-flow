@@ -59,6 +59,7 @@ import com.vaadin.flow.server.SystemMessagesInfo;
 import com.vaadin.flow.server.SystemMessagesProvider;
 import com.vaadin.flow.server.VaadinService;
 import com.vaadin.flow.server.VaadinServlet;
+import com.vaadin.flow.server.VaadinSession;
 import com.vaadin.flow.theme.Theme;
 import com.vaadin.flow.theme.lumo.Lumo;
 
@@ -69,7 +70,6 @@ import elemental.json.JsonValue;
 @PWA(name = "DevDay demo application", shortName = "DevDay", enableInstallPrompt = false)
 @Theme(value = Lumo.class, variant = Lumo.DARK)
 @HtmlImport("styles.html")
-@CssImport("styles.css")
 //@Viewport("width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes")
 //@BodySize(height = "100vh", width = "100vw")
 public class MainLayout extends AppLayout implements RouterLayout, AfterNavigationObserver, PageConfigurator, BeforeEnterObserver {
@@ -95,7 +95,20 @@ public class MainLayout extends AppLayout implements RouterLayout, AfterNavigati
         tab.add(div);
         return tab;
     }
-   
+
+    private Tab createLogout() {
+        Tab tab = new Tab();
+        Button button = new Button();
+        button.addThemeVariants(ButtonVariant.LUMO_TERTIARY_INLINE);
+        button.setIcon(VaadinIcon.KEY.create());
+        button.addClickListener(event -> {
+        	VaadinSession.getCurrent().getSession().invalidate();
+        	UI.getCurrent().navigate("login");
+        });
+        tab.add(button);
+        return tab;
+    }
+    
 	public MainLayout() {
         Image img = new Image("https://vaadin.com/images/vaadin-logo.svg", "Vaadin Logo");
         img.setHeight("35px");
@@ -117,7 +130,8 @@ public class MainLayout extends AppLayout implements RouterLayout, AfterNavigati
         		createMenuItem(ThemeVariantsView.TITLE, null, ThemeVariantsView.class),
         		createMenuItem(AbsoluteLayoutView.TITLE, null, AbsoluteLayoutView.class),
         		createMenuItem(UploadView.TITLE, null, UploadView.class),
-        		createMenuItem(MainView.TITLE, null, MainView.class)
+        		createMenuItem(MainView.TITLE, null, MainView.class),
+        		createLogout()
         		
         		);
         	
@@ -133,6 +147,9 @@ public class MainLayout extends AppLayout implements RouterLayout, AfterNavigati
     	Shortcuts.addShortcutListener(this, () -> getUI().ifPresent(ui -> ui.navigate(AbsoluteLayoutView.ROUTE)), Key.F8);
     	Shortcuts.addShortcutListener(this, () -> getUI().ifPresent(ui -> ui.navigate(UploadView.ROUTE)), Key.F9);
     	Shortcuts.addShortcutListener(this, () -> getUI().ifPresent(ui -> ui.navigate("")), Key.F12);
+    	
+    	System.out.println(UI.getCurrent().getSession().getBrowser().getAddress());
+    	
 	}
 
 	public Tabs hello() {
@@ -215,8 +232,7 @@ public class MainLayout extends AppLayout implements RouterLayout, AfterNavigati
 
 	@Override
 	public void configurePage(InitialPageSettings settings) {
-		settings.addInlineFromFile("./test.css", WrapMode.STYLESHEET);
-		
+		settings.addInlineFromFile("./test.css", WrapMode.STYLESHEET);		
 	}
 
 	@Override

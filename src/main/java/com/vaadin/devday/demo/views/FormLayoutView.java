@@ -7,6 +7,8 @@ import java.util.Optional;
 import com.vaadin.devday.demo.MainLayout;
 import com.vaadin.flow.component.AttachEvent;
 import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.Key;
+import com.vaadin.flow.component.KeyModifier;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.checkbox.Checkbox;
@@ -25,6 +27,7 @@ import com.vaadin.flow.component.tabs.Tabs;
 import com.vaadin.flow.component.textfield.PasswordField;
 import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.component.textfield.TextFieldVariant;
 import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.data.binder.BindingValidationStatus.Status;
 import com.vaadin.flow.data.converter.StringToBigDecimalConverter;
@@ -127,6 +130,9 @@ public class FormLayoutView extends VerticalLayout implements BeforeLeaveObserve
         setSizeFull();
         
         FormLayout formLayout = new FormLayout();
+        formLayout.getStyle().set("border", "white 1px solid");
+        formLayout.getStyle().set("border-radius", "5px");
+        formLayout.add("Caption");
         title.setItems("Mr","Mrs","Miss");
         title.setWidth("100px");
 		title.getElement().setAttribute("theme", "underline titlefont widepopup");
@@ -137,11 +143,15 @@ public class FormLayoutView extends VerticalLayout implements BeforeLeaveObserve
 		});
 		title.getElement().getStyle().set("--lumo-icons-checkmark", "T");
         formLayout.addFormItem(title, "Title");
+
+        formLayout.getElement().appendChild(ElementFactory.createBr());
        
         firstName.setWidth("100%");
         formLayout.addFormItem(firstName, "First Name");
 
+        firstName.addThemeName("grid-pro-editor");
         lastName.setWidth("100%");
+        lastName.getElement().setProperty("title", "Description text");
         formLayout.addFormItem(lastName, "Last Name");
         lastName.setPlaceholder("Last name");
 //        lastName.setEnabled(false);
@@ -174,7 +184,8 @@ public class FormLayoutView extends VerticalLayout implements BeforeLeaveObserve
         // https://github.com/vaadin/vaadin-form-layout-flow/issues/59
         binder.forField(firstName)
     	.asRequired()
-        	.withValidator(new StringLengthValidator("Max 20 chars",5,20))
+        	.withValidator(new StringLengthValidator("Min 4, Max 20 chars",4,20))
+        	.withNullRepresentation("")
         	.bind("firstName");
         binder.forField(lastName).asRequired().bind("lastName");
         binder.forField(email).withValidator(new EmailValidator("Not valid")).asRequired().bind("email");
@@ -205,7 +216,8 @@ public class FormLayoutView extends VerticalLayout implements BeforeLeaveObserve
         // https://github.com/vaadin/flow/issues/4988
         // Because of the above issue we need to use isValid()
         binder.addStatusChangeListener(event -> saveButton.setEnabled(binder.isValid()));
-
+        saveButton.addClickShortcut(Key.F12, KeyModifier.CONTROL);
+        
         RadioButtonGroup<String> group = new RadioButtonGroup<>();
         group.setItems("foo", "bar", "baz");
 		group.getElement().setAttribute("theme", "button-spread");
@@ -261,6 +273,7 @@ public class FormLayoutView extends VerticalLayout implements BeforeLeaveObserve
 		});
 		cancelButton.addClickListener(event -> {
 		});
+		
 		return tools;
     }
 

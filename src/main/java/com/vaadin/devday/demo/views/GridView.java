@@ -5,8 +5,7 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.splitlayout.SplitLayout;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
-import com.vaadin.flow.server.VaadinRequest;
-import com.vaadin.flow.server.VaadinServletService;
+import com.vaadin.flow.theme.lumo.Lumo;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,6 +15,7 @@ import java.util.stream.Stream;
 import com.vaadin.componentfactory.Popup;
 import com.vaadin.devday.demo.MainLayout;
 import com.vaadin.flow.component.ClientCallable;
+import com.vaadin.flow.component.Html;
 import com.vaadin.flow.component.Text;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
@@ -68,7 +68,7 @@ public class GridView extends SplitLayout  {
         Label label = new Label(TITLE);
         label.addClassName("title-label");
         content.add(label);
-        
+        content.getThemeList().add(Lumo.DARK);
         expensesGrid = new Grid<>();
         limit = createLimitTextField();
 		HorizontalLayout tools = new HorizontalLayout();
@@ -103,8 +103,6 @@ public class GridView extends SplitLayout  {
         popup.setFor("columnsbutton");
         content.add(popup);
         popButton.getElement().addEventListener("mouseover",  event -> popup.setOpened(true));
-        VaadinServletService.getCurrentServletRequest();
-        VaadinRequest.getCurrent();
         
         // Buttons to add/decrease the year
         Button upBtn = new Button();
@@ -199,6 +197,7 @@ public class GridView extends SplitLayout  {
         Binder<MonthlyExpense> binder = new Binder<>();
         binder.forField(numberField).bind(MonthlyExpense::getExpenses,MonthlyExpense::setExpenses);
         grid.getEditor().setBinder(binder);
+        grid.focus();
 		grid.addColumn(new ComponentRenderer<Checkbox,MonthlyExpense>(expense ->  {
 			Checkbox check = new Checkbox();
 			check.setValue(expense.isChecked());
@@ -206,6 +205,11 @@ public class GridView extends SplitLayout  {
 				if (event.isFromClient()) {
 					System.out.println("Check box clicked");
 					expense.setChecked(check.getValue());
+				}
+				if (grid.getSelectedItems().contains(expense)) {
+					grid.deselect(expense);
+				} else {
+					grid.select(expense);
 				}
 			});
 			return check;

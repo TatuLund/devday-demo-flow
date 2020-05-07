@@ -7,8 +7,10 @@ import java.util.stream.Collectors;
 import org.vaadin.tatu.TwinColSelect;
 
 import com.vaadin.devday.demo.MainLayout;
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
+import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.contextmenu.MenuItem;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.html.Span;
@@ -28,6 +30,7 @@ import com.vaadin.flow.component.textfield.TextFieldVariant;
 import com.vaadin.flow.data.provider.ListDataProvider;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
+import com.vaadin.flow.server.StreamResource;
 
 @Route(value = ThemeVariantsView.ROUTE, layout = MainLayout.class)
 @PageTitle(ThemeVariantsView.TITLE)
@@ -159,8 +162,12 @@ public class ThemeVariantsView extends VerticalLayout {
             dp.setSortComparator((a, b) -> a.compareTo(b));
       		dp.refreshAll();
       	});
-      	add(select,refresh);
-
+      	ComboBox<String> combo = new ComboBox<>();
+      	combo.setItems("","One","Two","Three","Four","Five","Six","Seven","Eight","Nine","Ten");
+      	add(select,refresh,combo);
+      	combo.addValueChangeListener(event -> {
+      		Notification.show(event.getValue());
+      	});
 
 	}
 	

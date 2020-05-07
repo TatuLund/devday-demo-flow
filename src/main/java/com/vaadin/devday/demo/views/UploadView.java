@@ -17,9 +17,11 @@ import com.vaadin.flow.component.HasComponents;
 import com.vaadin.flow.component.HtmlComponent;
 import com.vaadin.flow.component.Tag;
 import com.vaadin.flow.component.Text;
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.notification.Notification;
+import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.upload.Upload;
 import com.vaadin.flow.component.upload.receivers.MultiFileMemoryBuffer;
@@ -28,6 +30,7 @@ import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.StreamResource;
 
+import elemental.json.Json;
 import elemental.json.JsonArray;
 
 @Route(value = UploadView.ROUTE, layout = MainLayout.class)
@@ -56,9 +59,14 @@ public class UploadView extends VerticalLayout {
     	            event.getFileName(),
     	            buffer.getInputStream(event.getFileName()));
     	    showOutput(event.getFileName(), component, output);
-        	remove(upload);    	    
+        	remove(upload);
     	}); 
     	
+    	upload.addFailedListener(event -> {
+    		Notification.show("Failed to load file: "+event.getFileName()).addThemeVariants(NotificationVariant.LUMO_ERROR);
+    		upload.getElement().setPropertyJson("files", Json.createArray());
+    	});
+
     	add(upload,output);
     }
 

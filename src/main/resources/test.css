@@ -9,7 +9,13 @@
 		
  	.content {
  	    background-color: var(--lumo-tint-40pct) !important;
+ 	    background-image: url("../frontend/background.png") !important;
  	}
+
+ 	.block {
+ 	
+ 	}
+		
 		
  	.footer {
  	    background-color: var(--lumo-tint-50pct) !important;

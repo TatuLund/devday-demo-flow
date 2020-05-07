@@ -1,5 +1,9 @@
 package com.vaadin.devday.demo.views;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 import com.vaadin.flow.component.button.Button;
@@ -19,6 +23,8 @@ import com.vaadin.flow.component.charts.model.ListSeries;
 import com.vaadin.flow.component.charts.model.PlotOptionsBubble;
 import com.vaadin.flow.component.charts.model.PlotOptionsColumn;
 import com.vaadin.flow.component.charts.model.PlotOptionsPie;
+import com.vaadin.flow.component.charts.model.Series;
+import com.vaadin.flow.component.charts.model.Stacking;
 import com.vaadin.flow.component.charts.model.Tooltip;
 import com.vaadin.flow.component.charts.model.VerticalAlign;
 import com.vaadin.flow.component.charts.model.XAxis;
@@ -88,6 +94,7 @@ public class ChartUtil {
                 75.5, 57.4, 60.4, 47.6, 39.1, 46.8, 51.1));
 
         div.add(chart);
+//      This is partial workaround for missing setLang(..) method, this won't work in npm mode at all.
 //        chart.getElement().executeJs("Highcharts.setOptions({\r\n" + 
 //        		"    lang: {\r\n" + 
 //        		"        shortMonths: [\r\n" + 
@@ -120,7 +127,7 @@ public class ChartUtil {
 
         Tooltip tooltip = new Tooltip();
         tooltip.setValueDecimals(1);
-        tooltip.setFormatter("function() { var s=this.series.name+'<br><i>'+this.point.name+'</i><br>';if (this.series.name.includes('sub')) { s+='X: <b>'+this.x+'</b><br>Y: <b>'+this.y+'</b>'; } else if (this.series.name.includes('Drill')) {s+='Click me';};return s;}");
+        tooltip.setFormatter("function() { var s='<span style=\"font-weight:bold; color: blue\">'+this.series.name+'</span><br><i>'+this.point.name+'</i><br>';if (this.series.name.includes('sub')) { s+='X: <b>'+this.x+'</b><br>Y: <b>'+this.y+'</b>'; } else if (this.series.name.includes('Drill')) {s+='Click me';};return s;}");
         conf.setTooltip(tooltip);
         
         conf.setPlotOptions(opts);
@@ -134,6 +141,15 @@ public class ChartUtil {
         dataSeries2.addItemWithDrilldown(item(13, 30, 10, 6, "drill"),createDataSeries2("sub_1",3));
         dataSeries2.addItemWithDrilldown(item(23, 20, -10, 6, "drill"),createDataSeries2("sub_2",4));
         dataSeries2.addItemWithDrilldown(item(23, 40, 10, 6, "drill"),createDataSeries2("sub_3",5));
+// Commented code demos how lazy loading drills could work, but it is not
+// working due bugs in Charts, I have added bug reports in tracker
+//        List<DataSeries> drills = new ArrayList<>();
+//		drills.add(createDataSeries2("sub_1",3));
+//		drills.add(createDataSeries2("sub_2",4));
+//		drills.add(createDataSeries2("sub_3",5));
+//        dataSeries2.addItemWithDrilldown(item(13, 30, 10, 6, "drill"),drills.get(0));
+//        dataSeries2.addItemWithDrilldown(item(23, 20, -10, 6, "drill"),drills.get(1));
+//        dataSeries2.addItemWithDrilldown(item(23, 40, 10, 6, "drill"),drills.get(2));
         opts = new PlotOptionsBubble();
         opts.setDisplayNegative(false);
         dataSeries2.setPlotOptions(opts);
@@ -173,12 +189,19 @@ public class ChartUtil {
         });
         
         chart.addDrilldownListener(event -> {
-    		System.out.println("Drill down clicked");        	
+//        	String drillDown = event.getDrilldown();
+//        	for (DataSeries drill : drills) {
+//        		if (drill.getId().equals(drillDown)) {
+//                	updateDataSeries(drill,drill.getId(),3);
+//                	drill.updateSeries();
+//        		}
+//        	}        	
         });
         
     	return div;
     }
 
+    
 	private static DataSeries createDataSeries(String id, int colorIndex) {
 		DataSeries dataSeries = new DataSeries("Main series");
 		dataSeries.setId(id);
@@ -210,6 +233,18 @@ public class ChartUtil {
 		return dataSeries;
 	}
 
+	private static void updateDataSeries(DataSeries dataSeries, String id, int colorIndex) {
+		dataSeries.clear();
+		System.out.println("Updating series "+id);
+		Random rand = new Random();
+		for (int i=0;i<15;i++) {
+	        dataSeries.add(item(rand.nextInt(200)-100, rand.nextInt(200)-100, rand.nextInt(200)-100, colorIndex, i, "data"));			
+		}
+        dataSeries.addItemWithDrilldown(item(23, 40, 10, 6),createDataSeries("sub_"+id,5));
+	}
+
+	
+	
     public static DataSeriesItem item(int x, int y, int z, int colorIndex) {
     	return item(x,y,z,colorIndex,-1,"data");
     }
@@ -224,7 +259,7 @@ public class ChartUtil {
         dataSeriesItem.setX(x);
         dataSeriesItem.setY(y);
         dataSeriesItem.setZ(z);
-        dataSeriesItem.setColorIndex(colorIndex);
+        dataSeriesItem.setColorIndex(colorIndex);   
         DataLabels labels = new DataLabels();
         labels.setEnabled(true);
         dataSeriesItem.setDataLabels(labels);
