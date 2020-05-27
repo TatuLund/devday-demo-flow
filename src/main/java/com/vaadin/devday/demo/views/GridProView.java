@@ -15,6 +15,7 @@ import com.vaadin.flow.component.datepicker.DatePicker;
 import com.vaadin.flow.component.gridpro.GridPro;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.component.textfield.IntegerField;
 import com.vaadin.flow.data.binder.Result;
 import com.vaadin.flow.data.binder.ValueContext;
 import com.vaadin.flow.data.converter.LocalDateToDateConverter;
@@ -76,13 +77,13 @@ public class GridProView extends VerticalLayout {
 		item.setName(newValue)).setResizable(true)
 		.setHeader("Name (editable)");
 
-//			2 TextField
-		grid.addEditColumn(Person::getAge)
-		.text((item, newValue) ->
-		item.setName(newValue)).setResizable(true)
+//		2 IntegerField - i.e. custom field
+		IntegerField integerField = new IntegerField();
+		grid.addEditColumn(Person::getAge).custom(integerField, (item, newValue) ->
+		item.setAge(newValue)).setResizable(true)
 		.setHeader("Age (editable)");;
 
-//		2 TextField
+//		2 DatePicker - i.e. custom field with conversion
 		DatePicker datePicker = new DatePicker();
 		datePicker.setWidth("100%");
 		LocalDateToDateConverter converter = new LocalDateToDateConverter();
@@ -126,7 +127,8 @@ public class GridProView extends VerticalLayout {
 			p.setName("Tatu");
 			p.setAge(48);
 			ListDataProvider<Person> dp = (ListDataProvider<Person>) grid.getDataProvider();			
-			dp.getItems().add(p);
+			List<Person> list  = (List<Person>) dp.getItems();
+			list.add(0,p);
 			dp.refreshAll();
 		});
 		grid.setSizeFull();
@@ -135,7 +137,7 @@ public class GridProView extends VerticalLayout {
 		add(grid,add,save);
 		}
 	
-		private Collection<Person> createItems() {
+		private List<Person> createItems() {
 			ArrayList<Person> list = new ArrayList<>();
 		Person p = new Person();
 		p.setName("Dinesh");

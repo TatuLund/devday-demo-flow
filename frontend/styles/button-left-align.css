@@ -1,0 +1,3 @@
+:host(.left-align) .vaadin-button-container {
+    justify-content: left;
+}

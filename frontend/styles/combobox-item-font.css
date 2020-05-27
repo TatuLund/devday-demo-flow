@@ -1,0 +1,7 @@
+:host([theme~="titlefont"]) [part="content"] {
+    font-size: 20px;
+}
+
+:host {
+   	--lumo-icons-checkmark: '';
+}

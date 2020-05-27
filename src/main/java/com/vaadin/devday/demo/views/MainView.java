@@ -23,8 +23,8 @@ import com.vaadin.flow.router.RouterLayout;
 import com.vaadin.flow.router.WildcardParameter;
 import com.vaadin.flow.server.RouteRegistry;
 
-@Route(value = MainView.ROUTE, layout = MainLayout.class)
-@RouteAlias(value = "", layout = MainLayout.class)
+@Route(value = "", layout = MainLayout.class)
+@RouteAlias(value = MainView.ROUTE, layout = MainLayout.class)
 public class MainView extends VerticalLayout implements HasUrlParameter<String>, HasDynamicTitle, BeforeEnterObserver {
 
 	public static final String ROUTE = "layouts";

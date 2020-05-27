@@ -1,0 +1,22 @@
+:host(.my-grid) [part~="cell"] ::slotted(vaadin-grid-cell-content) {
+    cursor: pointer;
+}
+
+:host(.my-grid) [part="row"] :hover{
+    background: var(--lumo-tint-60pct);
+}
+
+:host(.my-grid) [part="row"] [part~="header-cell"]{
+   	padding-left: 3px;
+    color: brown;
+    background: var(--lumo-primary-color);
+    align-items: flex-start;
+}
+
+.warning-grid-cell {
+    color: var(--lumo-error-text-color);
+}
+
+.green-grid-cell {
+    color: var(--lumo-success-text-color);
+}

@@ -1,0 +1,3 @@
+:host(.colored-text-area) [part="input-field"]{
+    background:white;
+}

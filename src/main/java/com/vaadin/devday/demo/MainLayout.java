@@ -1,14 +1,11 @@
 package com.vaadin.devday.demo;
 
-import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.util.concurrent.CompletableFuture;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import javax.servlet.annotation.WebInitParam;
 
 import com.vaadin.devday.demo.views.AbsoluteLayoutView;
 import com.vaadin.devday.demo.views.AccordionView;
@@ -31,7 +28,6 @@ import com.vaadin.flow.component.applayout.AppLayout;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.dependency.CssImport;
-import com.vaadin.flow.component.dependency.HtmlImport;
 import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.icon.VaadinIcon;
@@ -57,7 +53,6 @@ import com.vaadin.flow.server.PageConfigurator;
 import com.vaadin.flow.server.SystemMessages;
 import com.vaadin.flow.server.SystemMessagesInfo;
 import com.vaadin.flow.server.SystemMessagesProvider;
-import com.vaadin.flow.server.VaadinService;
 import com.vaadin.flow.server.VaadinServlet;
 import com.vaadin.flow.server.VaadinSession;
 import com.vaadin.flow.theme.Theme;
@@ -69,15 +64,35 @@ import elemental.json.JsonValue;
 @Push
 @PWA(name = "DevDay demo application", shortName = "DevDay", enableInstallPrompt = false)
 @Theme(value = Lumo.class, variant = Lumo.DARK)
-@HtmlImport("styles.html")
+@CssImport(value = "./styles/shared-styles.css")
+@CssImport(value = "./styles/underline-textfield.css", themeFor = "vaadin-text-field")
+@CssImport(value = "./styles/text-field-style.css", themeFor = "vaadin-text-field")
+@CssImport(value = "./styles/text-field-style.css", themeFor = "vaadin-text-field")
+@CssImport(value = "./styles/colored-text-area.css", themeFor = "vaadin-text-area")
+@CssImport(value = "./styles/grid-styles.css", themeFor = "vaadin-grid")
+@CssImport(value = "./styles/parent-highlight.css", themeFor = "vaadin-grid")
+@CssImport(value = "./styles/custom-form-item.css", themeFor = "vaadin-form-item")
+@CssImport(value = "./styles/upload-styles.css", themeFor = "vaadin-upload")
+@CssImport(value = "./styles/button-left-align.css", themeFor = "vaadin-button")
+@CssImport(value = "./styles/flip-checkbox.css", themeFor = "vaadin-checkbox")
+@CssImport(value = "./styles/flip-checkbox.css", themeFor = "vaadin-checkbox")
+@CssImport(value = "./styles/applayout-styles.css", themeFor = "vaadin-app-layout")
+@CssImport(value = "./styles/selected-highlight.css", themeFor = "list-box")
+@CssImport(value = "./styles/red-notification.css", themeFor = "vaadin-notification-card")
+@CssImport(value = "./styles/radio-button-spread.css", themeFor = "vaadin-radio-button-group")
+@CssImport(value = "./styles/menubar-styles.css", themeFor = "vaadin-menu-bar")
+@CssImport(value = "./styles/menu-items-large.css", themeFor = "vaadin-context-menu-item")
+@CssImport(value = "./styles/text-field-blue.css", themeFor = "vaadin-number-field")
+@CssImport(value = "./styles/combobox-item-font.css", themeFor = "vaadin-combo-box-item")
+@CssImport(value = "./styles/combobox-widepopup.css", themeFor = "vaadin-combo-box-overlay")
+@CssImport(value = "./styles/charts-dark.css", themeFor = "vaadin-chart", include = "vaadin-chart-default-theme")
 //@Viewport("width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes")
 //@BodySize(height = "100vh", width = "100vw")
-public class MainLayout extends AppLayout implements RouterLayout, AfterNavigationObserver, PageConfigurator, BeforeEnterObserver {
+public class MainLayout extends AppLayout implements RouterLayout, AfterNavigationObserver, BeforeEnterObserver, PageConfigurator {
 
 	private FlexLayout childWrapper = new FlexLayout();
     private Tabs menu = new Tabs();
 	private String fullUrl;
-	private CompletableFuture<JsonValue> future;
 
     private Tab createMenuItem(String title, VaadinIcon icon, Class<? extends Component> target) {
     	HorizontalLayout div = new HorizontalLayout();
@@ -149,7 +164,6 @@ public class MainLayout extends AppLayout implements RouterLayout, AfterNavigati
     	Shortcuts.addShortcutListener(this, () -> getUI().ifPresent(ui -> ui.navigate("")), Key.F12);
     	
     	System.out.println(UI.getCurrent().getSession().getBrowser().getAddress());
-    	
 	}
 
 	public Tabs hello() {
@@ -194,25 +208,6 @@ public class MainLayout extends AppLayout implements RouterLayout, AfterNavigati
 		System.out.println("Show router layout content");
 		childWrapper.getElement().appendChild(content.getElement());
 	}
-
-	// Mapping servlet to other context, note the frontend mapping
-	@WebServlet(urlPatterns = {"/myapp/*","/frontend/*"}, asyncSupported = true)
-	public static class Servlet extends VaadinServlet {
-        @Override
-        protected void servletInitialized() throws ServletException {
-            super.servletInitialized();
-            getService().setSystemMessagesProvider(new SystemMessagesProvider() {
-				@Override
-				public SystemMessages getSystemMessages(SystemMessagesInfo systemMessagesInfo) {
-        			CustomizedSystemMessages messages = new CustomizedSystemMessages();
-    				messages.setSessionExpiredNotificationEnabled(false);
-    				messages.setSessionExpiredURL(null);
-    				messages.setCookiesDisabledNotificationEnabled(false);
-					return messages;
-				}
-            });
-        }
-    }
 	
 	@Override
 	public void afterNavigation(AfterNavigationEvent event) {
@@ -241,4 +236,26 @@ public class MainLayout extends AppLayout implements RouterLayout, AfterNavigati
 		
 	}
 
+
+	// Mapping servlet to other context, note the frontend mapping
+	@WebServlet(urlPatterns = {"/myapp/*","/frontend/*"}, asyncSupported = true, initParams = {
+			@WebInitParam(name = "org.atmosphere.cpr.AtmosphereConfig.getInitParameter", value = "true"),
+			@WebInitParam(name = "org.atmosphere.websocket.maxIdleTime", value = "45000")
+	})
+	public static class Servlet extends VaadinServlet {
+	    @Override
+	    protected void servletInitialized() throws ServletException {
+	        super.servletInitialized();
+	        getService().setSystemMessagesProvider(new SystemMessagesProvider() {
+				@Override
+				public SystemMessages getSystemMessages(SystemMessagesInfo systemMessagesInfo) {
+	    			CustomizedSystemMessages messages = new CustomizedSystemMessages();
+					messages.setSessionExpiredNotificationEnabled(false);
+					messages.setSessionExpiredURL(null);
+					messages.setCookiesDisabledNotificationEnabled(false);
+					return messages;
+				}
+	        });
+	    }
+	}	
 }

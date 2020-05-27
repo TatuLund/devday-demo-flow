@@ -1,0 +1,7 @@
+:host([theme~="text-field-blue"]) [part="input-field"] {
+    background: var(--lumo-tint-70pct);
+}
+
+:host([theme~="text-field-blue"]) [part="value"] {
+    color: var(--lumo-shade-80pct);
+}

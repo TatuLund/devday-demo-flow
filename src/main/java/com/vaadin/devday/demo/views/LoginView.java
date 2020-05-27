@@ -4,6 +4,8 @@ import com.vaadin.devday.demo.MainLayout;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.dependency.HtmlImport;
 import com.vaadin.flow.component.login.LoginForm;
+import com.vaadin.flow.component.notification.Notification;
+import com.vaadin.flow.component.notification.Notification.Position;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.orderedlayout.FlexComponent.JustifyContentMode;
 import com.vaadin.flow.router.PageTitle;
@@ -15,7 +17,7 @@ import com.vaadin.flow.server.PageConfigurator;
 import com.vaadin.flow.theme.Theme;
 import com.vaadin.flow.theme.lumo.Lumo;
 
-@HtmlImport("styles.html")
+//@HtmlImport("styles.html")
 @Theme(value = Lumo.class, variant = Lumo.DARK)
 @Route(value = LoginView.ROUTE)
 @PageTitle(LoginView.TITLE)
@@ -41,6 +43,9 @@ public class LoginView extends VerticalLayout implements PageConfigurator {
 		add(form);
 		setAlignItems(Alignment.CENTER);
 		setJustifyContentMode(JustifyContentMode.CENTER);
+		form.addForgotPasswordListener(event -> {
+			Notification.show("Username: user, Passoword: user", 2000, Position.MIDDLE);
+		});
 	}
 
 

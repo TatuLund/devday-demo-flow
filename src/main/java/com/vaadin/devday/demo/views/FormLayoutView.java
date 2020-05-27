@@ -2,18 +2,14 @@ package com.vaadin.devday.demo.views;
 
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.Optional;
 
 import com.vaadin.devday.demo.MainLayout;
 import com.vaadin.flow.component.AttachEvent;
-import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.Key;
 import com.vaadin.flow.component.KeyModifier;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.checkbox.Checkbox;
-import com.vaadin.flow.component.checkbox.CheckboxGroup;
-import com.vaadin.flow.component.checkbox.CheckboxGroupVariant;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.confirmdialog.ConfirmDialog;
 import com.vaadin.flow.component.formlayout.FormLayout;
@@ -27,7 +23,6 @@ import com.vaadin.flow.component.tabs.Tabs;
 import com.vaadin.flow.component.textfield.PasswordField;
 import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.component.textfield.TextField;
-import com.vaadin.flow.component.textfield.TextFieldVariant;
 import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.data.binder.BindingValidationStatus.Status;
 import com.vaadin.flow.data.converter.StringToBigDecimalConverter;
@@ -43,7 +38,7 @@ import com.vaadin.flow.router.Route;
 
 @Route(value = FormLayoutView.ROUTE, layout = MainLayout.class)
 @PageTitle(FormLayoutView.TITLE)
-public class FormLayoutView extends VerticalLayout implements BeforeLeaveObserver {
+public class FormLayoutView extends VerticalLayout implements BeforeLeaveObserver, HasTabsAccessor {
     public static final String ROUTE = "form";
     public static final String TITLE = "Form Layout";
 
@@ -143,9 +138,8 @@ public class FormLayoutView extends VerticalLayout implements BeforeLeaveObserve
 		});
 		title.getElement().getStyle().set("--lumo-icons-checkmark", "T");
         formLayout.addFormItem(title, "Title");
-
         formLayout.getElement().appendChild(ElementFactory.createBr());
-       
+
         firstName.setWidth("100%");
         formLayout.addFormItem(firstName, "First Name");
 
@@ -159,6 +153,7 @@ public class FormLayoutView extends VerticalLayout implements BeforeLeaveObserve
         email.setWidth("100%");
         formLayout.addFormItem(email, "Email").getElement().setAttribute("colspan", "2");
         email.setValueChangeMode(ValueChangeMode.EAGER);
+
         phone.setEnabled(false);
         
         FlexLayout phoneLayout = new FlexLayout();
@@ -231,31 +226,9 @@ public class FormLayoutView extends VerticalLayout implements BeforeLeaveObserve
         
     }
 
-    public Tabs getData() {
-		Optional<Component> parent = getParent();
-		Tabs menu = null;
-		while (parent.isPresent()) { 
-			Component p = parent.get();
-			if (p instanceof MainLayout) {
-				MainLayout main = (MainLayout) p;
-				menu = main.hello();
-			}			
-			parent = p.getParent();
-		}
-		return menu;
-    }
-    
     @Override
     public void onAttach(AttachEvent event) {
-		Optional<Component> parent = getParent();
-		while (parent.isPresent()) { 
-			Component p = parent.get();
-			if (p instanceof MainLayout) {
-				MainLayout main = (MainLayout) p;
-				main.hello();
-			}			
-			parent = p.getParent();
-		}
+    	Tabs menu = getTabs(this);
     }
     
     HorizontalLayout createTools() {

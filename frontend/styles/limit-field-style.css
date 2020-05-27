@@ -1,0 +1,17 @@
+:host(.limit-field) {
+    width: 100%;
+    height: 30px;
+}
+
+:host(.limit-field) [part="value"]{
+    color:var(--limit-field-color);
+    text-align: right;
+}
+
+:host(.limit-field) [part="label"]{
+    padding-right: 5px;
+}
+
+:host(.limit-field) .vaadin-text-field-container {
+	flex-direction: row;
+}

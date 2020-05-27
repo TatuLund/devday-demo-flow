@@ -1,0 +1,3 @@
+:host([theme~="menu-bar-grow"]) [part="menu-bar-button"]  {
+   flex-grow: 1;
+}

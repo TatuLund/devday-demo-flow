@@ -1,0 +1,23 @@
+.highcharts-title {
+    fill: var(--lumo-tint-50pct);
+}
+
+.highcharts-background {
+    fill: var(--lumo-tint-10pct);
+}
+
+.highcharts-subtitle {
+    fill: var(--lumo-primary-text-color);
+}
+
+.highcharts-data-label text {
+    fill: var(--lumo-primary-text-color);
+}
+       
+.highcharts-legend-item text {
+    fill: var(--lumo-primary-text-color);
+}
+
+.highcharts-yaxis-grid .highcharts-grid-line {
+    stroke-width: 0;
+}

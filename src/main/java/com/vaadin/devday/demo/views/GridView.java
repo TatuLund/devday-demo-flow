@@ -2,11 +2,13 @@ package com.vaadin.devday.demo.views;
 
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.component.radiobutton.GeneratedVaadinRadioButton;
 import com.vaadin.flow.component.splitlayout.SplitLayout;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.theme.lumo.Lumo;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -15,6 +17,7 @@ import java.util.stream.Stream;
 import com.vaadin.componentfactory.Popup;
 import com.vaadin.devday.demo.MainLayout;
 import com.vaadin.flow.component.ClientCallable;
+import com.vaadin.flow.component.HasComponents;
 import com.vaadin.flow.component.Html;
 import com.vaadin.flow.component.Text;
 import com.vaadin.flow.component.UI;
@@ -22,6 +25,7 @@ import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.checkbox.Checkbox;
 import com.vaadin.flow.component.contextmenu.ContextMenu;
 import com.vaadin.flow.component.datepicker.DatePicker;
+import com.vaadin.flow.component.dependency.NpmPackage;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.Grid.Column;
@@ -41,6 +45,7 @@ import com.vaadin.flow.component.textfield.NumberField;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.component.timepicker.TimePicker;
 import com.vaadin.flow.data.binder.Binder;
+import com.vaadin.flow.data.binder.HasItemsAndComponents.ItemComponent;
 import com.vaadin.flow.data.provider.ListDataProvider;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.data.renderer.TemplateRenderer;
@@ -72,7 +77,11 @@ public class GridView extends SplitLayout  {
         expensesGrid = new Grid<>();
         limit = createLimitTextField();
 		HorizontalLayout tools = new HorizontalLayout();
-        tools.add(limit);
+		Button print = new Button("Print");
+		print.addClickListener(event -> {
+			this.getElement().executeJs("window.print();");
+		});
+        tools.add(print,limit);
 
         HorizontalLayout buttons = createToolButtons(content);
 
@@ -170,6 +179,24 @@ public class GridView extends SplitLayout  {
     
     private void initalizeAndPopulateGrid(Grid<MonthlyExpense> grid) {
     	grid.addClassName("my-grid");
+		grid.addColumn(new ComponentRenderer<Radio,MonthlyExpense>(expense ->  {
+			Radio check = new Radio();
+			check.setValue(grid.asSingleSelect().getValue() == expense);
+			check.addClickListener(event -> {
+//			check.addValueChangeListener(event -> {
+				if (event.isFromClient()) {
+					System.out.println("Check box clicked");
+//					expense.setChecked(check.getValue());
+				}
+				if (grid.getSelectedItems().contains(expense)) {
+					grid.deselect(expense);
+				} else {
+					grid.select(expense);
+				}
+			});
+			return check;
+			
+		})).setWidth("50px").setFlexGrow(0).setKey("select").setHeader("Select");
     	grid.addColumn(TemplateRenderer.<MonthlyExpense>of("<div style$=\"[[item.styles]]\">[[item.expenses]]</div>")
     			.withProperty("styles", MonthlyExpense::getStyles)
     			.withProperty("expenses", MonthlyExpense::getYear)
@@ -198,23 +225,13 @@ public class GridView extends SplitLayout  {
         binder.forField(numberField).bind(MonthlyExpense::getExpenses,MonthlyExpense::setExpenses);
         grid.getEditor().setBinder(binder);
         grid.focus();
-		grid.addColumn(new ComponentRenderer<Checkbox,MonthlyExpense>(expense ->  {
-			Checkbox check = new Checkbox();
-			check.setValue(expense.isChecked());
-			check.addValueChangeListener(event -> {
-				if (event.isFromClient()) {
-					System.out.println("Check box clicked");
-					expense.setChecked(check.getValue());
-				}
-				if (grid.getSelectedItems().contains(expense)) {
-					grid.deselect(expense);
-				} else {
-					grid.select(expense);
-				}
-			});
-			return check;
-			
-		})).setWidth("50px").setFlexGrow(0).setKey("select").setHeader("Select");
+        
+		grid.asSingleSelect().addValueChangeListener(event -> {
+			if (!grid.getEditor().isOpen()) {
+				System.out.println("Editor open");
+				grid.getDataProvider().refreshAll();
+			}
+		});
         grid.getEditor().addCloseListener(event -> {
         	System.out.println(event.getItem().getExpenses());
         });
@@ -242,13 +259,12 @@ public class GridView extends SplitLayout  {
         grid.addThemeVariants(GridVariant.LUMO_NO_ROW_BORDERS);
         addColumnSelectorMenu(grid);
 
-        grid.setItemDetailsRenderer(
-                TemplateRenderer.<MonthlyExpense>of("<div style=\"border: 1px solid gray; padding: 10px; width: 100%; box-sizing: border-box;\" inner-h-t-m-l=\"[[item.html]]\"></div>")
-                        .withProperty("html", o ->
-                                Stream.of(2, 3, 4, 5, 7, 8, 9).map(i -> "Value " + i + ": " + o.getYear()).collect(Collectors.joining("<br>"))
-                        )
-//                        .withEventHandler("handleClick", o -> grid.getDataProvider().refreshItem(o))
-        );
+//        grid.setItemDetailsRenderer(
+//                TemplateRenderer.<MonthlyExpense>of("<div style=\"border: 1px solid gray; padding: 10px; width: 100%; box-sizing: border-box;\" inner-h-t-m-l=\"[[item.html]]\"></div>")
+//                        .withProperty("html", o ->
+//                                Stream.of(2, 3, 4, 5, 7, 8, 9).map(i -> "Value " + i + ": " + o.getYear()).collect(Collectors.joining("<br>"))
+//                        )
+//        );
         grid.getElement().executeJs("return this.getBoundingClientRect().width;").then(String.class, value -> System.out.println(value));
         grid.getElement().executeJs("return this.getBoundingClientRect().height;").then(String.class, value -> System.out.println(value));
     }
@@ -369,4 +385,27 @@ public class GridView extends SplitLayout  {
         return Integer.parseInt(limit.getValue());
     }
 
+    @NpmPackage(value = "@vaadin/vaadin-radio-button", version = "1.2.4")
+    class Radio<T> extends GeneratedVaadinRadioButton<Radio<T>>
+            implements ItemComponent<T>, HasComponents {
+ 	
+        Radio() {
+        }
+
+        public void setValue(boolean value) {
+        	getElement().setProperty("checked", value);
+        }
+
+        public boolean getValue(boolean value) {
+        	return getElement().getProperty("checked").equals("true");
+        }
+        
+        
+        @Override
+        public T getItem() {
+            return null;
+        }
+
+    }
+    
 }

@@ -1,0 +1,9 @@
+:host([theme~="button-spread"]) [part="group-field"]  {
+    display: flex;
+    flex-direction: row;
+    align-content: space-between;
+}
+
+:host([theme~="button-spread"]) ::slotted(vaadin-radio-button) {
+	flex-grow: 1;
+}

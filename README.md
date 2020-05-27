@@ -18,7 +18,7 @@ mvn jetty:run
 
 Production mode
 
-mvn jetty:run-exploded -Pproduction
+mvn jetty:run -Pproduction
 
 ## Open project in Browser
 
@@ -26,12 +26,22 @@ http://localhost:8080/myapp
 
 ## List of demos
 
+### Login
+
+- Store intended route to Session and use later to route to right view after login
+
+### InitListener
+
+- Use global before enter event for login purposes
+- Setup custom error handler
+
 ### MainLayout
 
 - Configure context root to be "myapp"
 - AppLayout with key shortcuts
 - Get browser window width
 - Find host address
+- PageConfigurator example
 
 ### AbsoluteLayoutView
 
@@ -54,6 +64,7 @@ http://localhost:8080/myapp
 
 ### GridView
 
+- Custom select column for single select
 - Grid context menu
 - ContextMenu to jump to years
 - ContextMenu to filter by month
@@ -82,8 +93,3 @@ http://localhost:8080/myapp
 
 - Some theme variant examples
 
-### Local production build
-
-- Yarn and node loaded by maven, see pom.xml
-- vaadin-maven-plugin configured to use those instead of loading yarn from GitHub
-- Update correct paths to yarn.cmd in project root
