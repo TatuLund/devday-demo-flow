@@ -22,6 +22,7 @@ import com.vaadin.flow.component.Html;
 import com.vaadin.flow.component.Text;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.checkbox.Checkbox;
 import com.vaadin.flow.component.contextmenu.ContextMenu;
 import com.vaadin.flow.component.datepicker.DatePicker;
@@ -89,8 +90,17 @@ public class GridView extends SplitLayout  {
    		tools.add(buttons);
         content.add(tools);
         
-        content.add(expensesGrid);
-        content.expand(expensesGrid);
+        Button columnButton = createColumnButton(content);
+        
+        Div div = new Div();
+        div.setSizeFull();
+        expensesGrid.setSizeFull();
+        div.add(expensesGrid,columnButton);
+        columnButton.getStyle().set("position", "absolute");
+        columnButton.getStyle().set("top","96px");
+        columnButton.getStyle().set("right","30px");
+        content.add(div);        
+        content.expand(div);
         tools.getElement().callJsFunction("scrollIntoView");
         
         this.setSizeFull();
@@ -105,13 +115,7 @@ public class GridView extends SplitLayout  {
 	private HorizontalLayout createToolButtons(VerticalLayout content) {
 		Span indexLabel = new Span("2000");
 
-        // Create button and Popup (later populated by column selector)
-        Button popButton = new Button("Columns");
-        popButton.setId("columnsbutton");
-        popup = new Popup();
-        popup.setFor("columnsbutton");
-        content.add(popup);
-        popButton.getElement().addEventListener("mouseover",  event -> popup.setOpened(true));
+//        createColumnButton(content);
         
         // Buttons to add/decrease the year
         Button upBtn = new Button();
@@ -135,8 +139,21 @@ public class GridView extends SplitLayout  {
    		indexLabel.addClickListener(event ->{
         	expensesGrid.scrollToIndex(index); // scrollTo(expensesGrid,index);
    		});
-		buttons.add(indexLabel,upBtn,downBtn,popButton);
+		buttons.add(indexLabel,upBtn,downBtn);
 		return buttons;
+	}
+
+	private Button createColumnButton(VerticalLayout content) {
+		// Create button and Popup (later populated by column selector)
+        Button popButton = new Button();
+        popButton.setIcon(VaadinIcon.MENU.create());
+        popButton.setId("columnsbutton");
+        popup = new Popup();
+        popup.setFor("columnsbutton");
+        content.add(popup);
+        popButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+        popButton.getElement().addEventListener("mouseover",  event -> popup.setOpened(true));
+        return popButton;
 	}
 
 	private FormLayout createForm() {
@@ -200,13 +217,13 @@ public class GridView extends SplitLayout  {
     	grid.addColumn(TemplateRenderer.<MonthlyExpense>of("<div style$=\"[[item.styles]]\">[[item.expenses]]</div>")
     			.withProperty("styles", MonthlyExpense::getStyles)
     			.withProperty("expenses", MonthlyExpense::getYear)
-    	).setAutoWidth(true).setHeader("Year").setKey("year").setId("year-column");
+    	).setSortable(true).setAutoWidth(true).setHeader("Year").setKey("year").setId("year-column");
     	addYearSelectorMenuToColumnHeader(grid);
     	GridContextMenu<MonthlyExpense> menu = new GridContextMenu<>(grid);
     	menu.setOpenOnClick(true);
     	populateGridContextMenu(grid,menu);
 //    	menu.getElement().setProperty("selector", "[part~=\"body-cell\"]");
-        grid.addColumn(MonthlyExpense::getMonth).setHeader("Month").setKey("month").setId("month-column");
+        grid.addColumn(MonthlyExpense::getMonth).setSortable(true).setHeader("Month").setKey("month").setId("month-column");
     	addMonthFilterMenuToColumnHeader(grid); 
         NumberField numberField = new NumberField();
         numberField.setWidth("100%");
@@ -218,6 +235,7 @@ public class GridView extends SplitLayout  {
         grid.addItemDoubleClickListener(event -> {
         	grid.getEditor().editItem(event.getItem());        	
         });
+        grid.select(null);
         grid.addItemClickListener(event -> {
         	if (grid.getEditor().isOpen()) grid.getEditor().closeEditor();
         });

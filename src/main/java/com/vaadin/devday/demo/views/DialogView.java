@@ -5,13 +5,16 @@ import java.time.LocalTime;
 
 import com.vaadin.componentfactory.EnhancedRichTextEditor;
 import com.vaadin.devday.demo.MainLayout;
+import com.vaadin.flow.component.Html;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.datepicker.DatePicker;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.formlayout.FormLayout;
+import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.html.Hr;
+import com.vaadin.flow.component.html.Pre;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.notification.Notification.Position;
 import com.vaadin.flow.component.notification.NotificationVariant;
@@ -135,9 +138,35 @@ public class DialogView extends VerticalLayout {
     			dialog.open();
     		}
     	});
-		EnhancedRichTextEditor edit = new EnhancedRichTextEditor();
+		MyRTE edit = new MyRTE();
 		edit.setWidth("500px");
-		edit.setHeight("200px");    	
-    	add(button,edit);
+		edit.setHeight("200px");
+		Html html = new Html("<div></div>");
+		Div div = new Div(html);
+		edit.addValueChangeListener(event -> {
+			div.removeAll();
+			String htmlValue = edit.getHtmlValue();
+//			String value = edit.getValue();			
+//			String newValue = htmlValue.replace("\t","&nbsp;&nbsp;&nbsp;&nbsp;");
+			Html h = new Html("<div>"+htmlValue+"</div>");
+			Pre pre = new Pre(htmlValue);
+			div.add(h,pre);
+		});
+    	add(button,edit,div);
+    }
+    
+    public class MyRTE extends EnhancedRichTextEditor {
+    	@Override
+    	public String getHtmlValue() {
+    		return sanitize(this.getHtmlValueString().replace("\t","&nbsp;&nbsp;&nbsp;&nbsp;"));
+    	}
+        String sanitize(String html) {
+            return org.jsoup.Jsoup.clean(html,
+                    org.jsoup.safety.Whitelist.basic()
+                            .addTags("img", "h1", "h2", "h3", "s")
+                            .addAttributes("img", "align", "alt", "height", "src", "title", "width")
+                            .addAttributes(":all", "style")
+                            .addProtocols("img", "src", "data"));
+        }
     }
 }

@@ -1,6 +1,7 @@
 package com.vaadin.devday.demo.views;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 import com.vaadin.devday.demo.MainLayout;
@@ -25,7 +26,9 @@ import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.data.binder.BindingValidationStatus.Status;
+import com.vaadin.flow.data.binder.Validator;
 import com.vaadin.flow.data.converter.StringToBigDecimalConverter;
+import com.vaadin.flow.data.provider.ListDataProvider;
 import com.vaadin.flow.data.validator.EmailValidator;
 import com.vaadin.flow.data.validator.StringLengthValidator;
 import com.vaadin.flow.data.value.ValueChangeMode;
@@ -128,7 +131,23 @@ public class FormLayoutView extends VerticalLayout implements BeforeLeaveObserve
         formLayout.getStyle().set("border", "white 1px solid");
         formLayout.getStyle().set("border-radius", "5px");
         formLayout.add("Caption");
-        title.setItems("Mr","Mrs","Miss");
+        List<String> items = new ArrayList<>(); 
+        items.add("Mr");
+        items.add("Mrs");
+        items.add("Miss");
+        title.setItems(items);
+        title.setAllowCustomValue(true);
+        title.addCustomValueSetListener(event -> {
+        	String newValue = event.getDetail();
+        	if (!newValue.isEmpty() && newValue.length() < 5) {
+        		ListDataProvider<String> ldp = (ListDataProvider<String>) title.getDataProvider();
+        		ldp.getItems().add(newValue);
+        		title.setValue(newValue);
+        		ldp.refreshAll();
+        	} else {
+        		Notification.show("Use shorter title");
+        	}
+        });
         title.setWidth("100px");
 		title.getElement().setAttribute("theme", "underline titlefont widepopup");
 		title.addValueChangeListener(event -> {
@@ -174,9 +193,12 @@ public class FormLayoutView extends VerticalLayout implements BeforeLeaveObserve
         repeatPassword.setWidth("100%");
         formLayout.addFormItem(repeatPassword, "Repeat Password");
         
+        // https://github.com/vaadin/vaadin-form-layout-flow/issues/59
         Person person = new Person();
         binder = new Binder<>(Person.class);
-        // https://github.com/vaadin/vaadin-form-layout-flow/issues/59
+        binder.forField(title)
+        	.withValidator(new StringLengthValidator("Title can't be more than 5 chars",1,5))
+        	.bind("title");
         binder.forField(firstName)
     	.asRequired()
         	.withValidator(new StringLengthValidator("Min 4, Max 20 chars",4,20))
