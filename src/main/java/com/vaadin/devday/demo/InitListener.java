@@ -4,11 +4,18 @@ import com.vaadin.devday.demo.views.LoginView;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.confirmdialog.ConfirmDialog;
 import com.vaadin.flow.component.html.Pre;
+import com.vaadin.flow.component.notification.Notification;
+import com.vaadin.flow.component.notification.Notification.Position;
+import com.vaadin.flow.server.RequestHandler;
 import com.vaadin.flow.server.ServiceInitEvent;
+import com.vaadin.flow.server.VaadinRequest;
+import com.vaadin.flow.server.VaadinResponse;
 import com.vaadin.flow.server.VaadinServiceInitListener;
 import com.vaadin.flow.server.VaadinSession;
 
+import java.io.IOException;
 import java.time.Instant;
+import java.util.Collection;
 
 public class InitListener implements VaadinServiceInitListener {
 
@@ -17,6 +24,9 @@ public class InitListener implements VaadinServiceInitListener {
     	System.out.println("Service init");
         serviceInitEvent.getSource().addUIInitListener(event -> {
         	UI ui = event.getUI();
+        	if (ui.getSession().getUIs().size() > 1) {
+        		Notification.show("You have this application running on antoher tab",2000,Position.MIDDLE);
+        	}
         	System.out.println("New UI instantiated. UI id # " + ui.getUIId() + " " + Instant.now () + " " + ui.toString());
         	ui.addBeforeEnterListener(beforeEvent -> {
         		Boolean loggedIn = (Boolean) VaadinSession.getCurrent().getAttribute("loggedIn");
@@ -32,6 +42,7 @@ public class InitListener implements VaadinServiceInitListener {
         	});
         });
         serviceInitEvent.getSource().addSessionInitListener(event -> {
+        	event.getSession().getSession().setMaxInactiveInterval(600);
         	System.out.println("Session init");
         	VaadinSession session = event.getSession();
     		session.setErrorHandler(error -> {

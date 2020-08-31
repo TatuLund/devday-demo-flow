@@ -1,5 +1,6 @@
 package com.vaadin.devday.demo;
 
+import java.io.File;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
@@ -54,6 +55,7 @@ import com.vaadin.flow.server.SystemMessages;
 import com.vaadin.flow.server.SystemMessagesInfo;
 import com.vaadin.flow.server.SystemMessagesProvider;
 import com.vaadin.flow.server.VaadinServlet;
+import com.vaadin.flow.server.VaadinServletConfiguration;
 import com.vaadin.flow.server.VaadinSession;
 import com.vaadin.flow.theme.Theme;
 import com.vaadin.flow.theme.lumo.Lumo;
@@ -149,7 +151,6 @@ public class MainLayout extends AppLayout implements RouterLayout, AfterNavigati
         		createLogout()
         		
         		);
-        	
         childWrapper.setSizeFull();
         setContent(childWrapper);
     	Shortcuts.addShortcutListener(this, () -> getUI().ifPresent(ui -> ui.navigate(AccordionView.ROUTE)), Key.F1);
@@ -164,9 +165,13 @@ public class MainLayout extends AppLayout implements RouterLayout, AfterNavigati
     	Shortcuts.addShortcutListener(this, () -> getUI().ifPresent(ui -> ui.navigate("")), Key.F12);
     	
     	System.out.println(UI.getCurrent().getSession().getBrowser().getAddress());
+    	final File f = new File(MainLayout.class.getProtectionDomain().getCodeSource().getLocation().getPath());
+    	System.out.println(MainLayout.class.getProtectionDomain().getCodeSource().getLocation().getPath());
+    	System.out.println(MainLayout.class.getClassLoader());
+    	
 	}
 
-	public Tabs hello() {
+	public Tabs getMenu() {
 		System.out.println("Hello");
 		return menu;
 	}
@@ -221,7 +226,6 @@ public class MainLayout extends AppLayout implements RouterLayout, AfterNavigati
 			System.out.println("Current url: "+fullUrl);
 			System.out.println("Current url: "+url);
 			System.out.println("Context root relative path: "+UI.getCurrent().getInternals().getContextRootRelativePath());
-			
 		});
 	}
 
@@ -238,6 +242,7 @@ public class MainLayout extends AppLayout implements RouterLayout, AfterNavigati
 
 
 	// Mapping servlet to other context, note the frontend mapping
+	@VaadinServletConfiguration(closeIdleSessions = true, heartbeatInterval = 120, productionMode = false)
 	@WebServlet(urlPatterns = {"/myapp/*","/frontend/*"}, asyncSupported = true, initParams = {
 			@WebInitParam(name = "org.atmosphere.cpr.AtmosphereConfig.getInitParameter", value = "true"),
 			@WebInitParam(name = "org.atmosphere.websocket.maxIdleTime", value = "45000")
@@ -246,6 +251,7 @@ public class MainLayout extends AppLayout implements RouterLayout, AfterNavigati
 	    @Override
 	    protected void servletInitialized() throws ServletException {
 	        super.servletInitialized();
+
 	        getService().setSystemMessagesProvider(new SystemMessagesProvider() {
 				@Override
 				public SystemMessages getSystemMessages(SystemMessagesInfo systemMessagesInfo) {

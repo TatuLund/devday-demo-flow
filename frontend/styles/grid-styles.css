@@ -20,3 +20,7 @@
 .green-grid-cell {
     color: var(--lumo-success-text-color);
 }
+
+:host([theme~="my-workaround-theme"]) [part~="cell"][first-column] ::slotted(vaadin-grid-cell-content) {
+    text-overflow: clip;
+}
