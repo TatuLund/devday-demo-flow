@@ -14,6 +14,7 @@ import com.vaadin.flow.server.InitialPageSettings;
 import com.vaadin.flow.server.VaadinSession;
 import com.vaadin.flow.server.InitialPageSettings.WrapMode;
 import com.vaadin.flow.server.PageConfigurator;
+import com.vaadin.flow.server.VaadinService;
 import com.vaadin.flow.theme.Theme;
 import com.vaadin.flow.theme.lumo.Lumo;
 
@@ -30,8 +31,9 @@ public class LoginView extends VerticalLayout implements PageConfigurator {
 		LoginForm form = new LoginForm();
 		form.addLoginListener(event -> {
 			if (event.getUsername().equals("user") && event.getPassword().equals("user")) {
-				VaadinSession.getCurrent().setAttribute("loggedIn", true);
 				String route = (String) VaadinSession.getCurrent().getAttribute("intendedRoute");
+				VaadinService.reinitializeSession(VaadinService.getCurrentRequest());
+				VaadinSession.getCurrent().setAttribute("loggedIn", true);
 				if (route != null && !route.equals(LoginView.ROUTE)) {
 					System.out.println("Navigating back to: "+route);
 					UI.getCurrent().navigate(route);

@@ -15,7 +15,7 @@ public interface HasTabsAccessor {
 			Component p = parent.get();
 			if (p instanceof MainLayout) {
 				MainLayout main = (MainLayout) p;
-				menu = main.hello();
+				menu = main.getMenu();
 			}			
 			parent = p.getParent();
 		}

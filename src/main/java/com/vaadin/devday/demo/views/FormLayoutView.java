@@ -26,7 +26,6 @@ import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.data.binder.BindingValidationStatus.Status;
-import com.vaadin.flow.data.binder.Validator;
 import com.vaadin.flow.data.converter.StringToBigDecimalConverter;
 import com.vaadin.flow.data.provider.ListDataProvider;
 import com.vaadin.flow.data.validator.EmailValidator;
@@ -198,7 +197,7 @@ public class FormLayoutView extends VerticalLayout implements BeforeLeaveObserve
         binder = new Binder<>(Person.class);
         binder.forField(title)
         	.withValidator(new StringLengthValidator("Title can't be more than 5 chars",1,5))
-        	.bind("title");
+        	.bind(Person::getTitle, Person::setTitle);
         binder.forField(firstName)
     	.asRequired()
         	.withValidator(new StringLengthValidator("Min 4, Max 20 chars",4,20))
@@ -291,5 +290,4 @@ public class FormLayoutView extends VerticalLayout implements BeforeLeaveObserve
 		    	confirmDialog.open();
 		    }		
 	}
-
 }

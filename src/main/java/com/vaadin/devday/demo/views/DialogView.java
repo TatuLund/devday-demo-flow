@@ -2,15 +2,21 @@ package com.vaadin.devday.demo.views;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.stream.IntStream;
 
 import com.vaadin.componentfactory.EnhancedRichTextEditor;
 import com.vaadin.devday.demo.MainLayout;
+import com.vaadin.flow.component.HasValue;
 import com.vaadin.flow.component.Html;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
+import com.vaadin.flow.component.confirmdialog.ConfirmDialog;
 import com.vaadin.flow.component.datepicker.DatePicker;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.formlayout.FormLayout;
+import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.component.grid.HeaderRow;
+import com.vaadin.flow.component.gridpro.GridPro;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.html.Hr;
@@ -19,7 +25,9 @@ import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.notification.Notification.Position;
 import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
+import com.vaadin.flow.component.orderedlayout.Scroller;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.component.select.Select;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.component.timepicker.TimePicker;
 import com.vaadin.flow.data.binder.Binder;
@@ -131,6 +139,8 @@ public class DialogView extends VerticalLayout {
     	setSizeFull(); 
 		getStyle().set("background", "var(--lumo-tint-40pct)");
     	MyDialog dialog = new MyDialog();
+    	dialog.setResizable(true);
+    	dialog.setDraggable(true);
 //    	Shortcuts.addShortcutListener(dialog, () -> dialog.close(), Key.BACKSPACE);
     	Button button = new Button("Open Dialog");
     	button.addClickListener(event -> {
@@ -153,7 +163,44 @@ public class DialogView extends VerticalLayout {
 			div.add(h,pre);
 		});
     	add(button,edit,div);
+        Button gridTest = new Button("Grid");
+        gridTest.addClickListener(buttonClickEvent -> {
+        	Dialog gridDialog = new Dialog();
+			gridDialog.setWidth("1500px");
+			gridDialog.setHeight("750px");
+            gridDialog.open();
+            gridDialog.add("Opening ...");
+            setupGrid(gridDialog);
+        });
+        add(gridTest);
+        Html list = new Html("<ul>\r\n" + 
+        		"  <li>Coffee</li>\r\n" + 
+        		"  <li>Tea</li>\r\n" + 
+        		"  <li>Milk</li>\r\n" + 
+        		"</ul>");
+        add(list);
     }
+
+	private void setupGrid(Dialog gridDialog) {
+		GridPro<Object> grid = new GridPro<>();
+		grid.appendHeaderRow();
+		grid.addThemeNames("my-workaround-theme");
+		final HeaderRow row = grid.prependHeaderRow();
+		final Grid.Column<Object> col1 = grid.addColumn(x -> "aaaaaaaaaaaaa").setFrozen(true).setHeader("AAA");
+		final Grid.Column<Object> col2 = grid.addColumn(x -> "bbbbbbbbbbbbb").setFrozen(true).setHeader("BBB");
+		final Grid.Column<Object> col3 = grid.addColumn(x -> "ccccccccccccc").setFrozen(true).setHeader("CCC");
+		row.join(col1, col2, col3).setText("Joined");
+		for (int i = 0; i < 30; i++) {
+		    final int ii = i;
+		    grid.addColumn(x -> "aaaaaaaaaaaaa" + ii).setHeader("AAA" + i);
+		}
+		grid.setItems(IntStream.range(0, 100).mapToObj(i -> i));
+		grid.setSelectionMode(Grid.SelectionMode.MULTI);
+		grid.setSizeFull();
+		gridDialog.removeAll();
+		gridDialog.add(grid);
+		
+	}
     
     public class MyRTE extends EnhancedRichTextEditor {
     	@Override

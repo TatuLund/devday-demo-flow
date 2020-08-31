@@ -8,17 +8,13 @@ import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.theme.lumo.Lumo;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import com.vaadin.componentfactory.Popup;
 import com.vaadin.devday.demo.MainLayout;
 import com.vaadin.flow.component.ClientCallable;
 import com.vaadin.flow.component.HasComponents;
-import com.vaadin.flow.component.Html;
 import com.vaadin.flow.component.Text;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
@@ -196,8 +192,8 @@ public class GridView extends SplitLayout  {
     
     private void initalizeAndPopulateGrid(Grid<MonthlyExpense> grid) {
     	grid.addClassName("my-grid");
-		grid.addColumn(new ComponentRenderer<Radio,MonthlyExpense>(expense ->  {
-			Radio check = new Radio();
+		grid.addColumn(new ComponentRenderer<Checkbox,MonthlyExpense>(expense ->  {
+			Checkbox check = new Checkbox();
 			check.setValue(grid.asSingleSelect().getValue() == expense);
 			check.addClickListener(event -> {
 //			check.addValueChangeListener(event -> {

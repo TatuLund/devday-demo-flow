@@ -16,6 +16,7 @@ import com.vaadin.flow.component.charts.model.HorizontalAlign;
 import com.vaadin.flow.component.charts.model.LayoutDirection;
 import com.vaadin.flow.component.charts.model.Legend;
 import com.vaadin.flow.component.charts.model.ListSeries;
+import com.vaadin.flow.component.charts.model.PlotLine;
 import com.vaadin.flow.component.charts.model.PlotOptionsBubble;
 import com.vaadin.flow.component.charts.model.PlotOptionsColumn;
 import com.vaadin.flow.component.charts.model.PlotOptionsPie;
@@ -81,6 +82,9 @@ public class ChartUtil {
         PlotOptionsColumn optionsNY = new PlotOptionsColumn();
         optionsNY.setCrisp(true);
         newYork.setPlotOptions(optionsNY);
+        PlotLine plotLine = new PlotLine();
+        plotLine.setValue(40);
+        conf.getyAxis().addPlotLine(plotLine);
         conf.addSeries(newYork);
         conf.addSeries(new ListSeries("London", 48.9, 38.8, 39.3, 41.4, 47.0,
                 48.3, 59.0, 59.6, 52.4, 65.2, 59.3, 51.2));
@@ -129,6 +133,9 @@ public class ChartUtil {
         conf.addSeries(dataSeries);
 
         XAxis axis = new XAxis();
+        PlotLine plotLine = new PlotLine();
+        plotLine.setValue(50);
+        axis.addPlotLine(plotLine);
         conf.addxAxis(axis);
         
         DataSeries dataSeries2 = new DataSeries("Drill down items");
