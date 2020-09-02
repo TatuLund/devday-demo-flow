@@ -194,14 +194,13 @@ public class GridView extends SplitLayout  {
     
     private void initalizeAndPopulateGrid(Grid<MonthlyExpense> grid) {
     	grid.addClassName("my-grid");
-		grid.addColumn(new ComponentRenderer<Checkbox,MonthlyExpense>(expense ->  {
-			Checkbox check = new Checkbox();
+		grid.addColumn(new ComponentRenderer<Radio,MonthlyExpense>(expense ->  {
+			Radio check = new Radio();
 			check.setValue(grid.asSingleSelect().getValue() == expense);
 			check.addClickListener(event -> {
-//			check.addValueChangeListener(event -> {
 				if (event.isFromClient()) {
 					System.out.println("Check box clicked");
-//					expense.setChecked(check.getValue());
+					expense.setChecked(check.getValue());
 				}
 				if (grid.getSelectedItems().contains(expense)) {
 					grid.deselect(expense);
@@ -412,7 +411,7 @@ public class GridView extends SplitLayout  {
         	getElement().setProperty("checked", value);
         }
 
-        public boolean getValue(boolean value) {
+        public boolean getValue() {
         	return getElement().getProperty("checked").equals("true");
         }
         
