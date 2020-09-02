@@ -34,6 +34,7 @@ http://localhost:8080/myapp
 
 - Use global before enter event for login purposes
 - Setup custom error handler
+- Give notification if app is open on another tab
 
 ### MainLayout
 
@@ -42,6 +43,8 @@ http://localhost:8080/myapp
 - Get browser window width
 - Find host address
 - PageConfigurator example
+- Detect Browser window closing by listening "beforeUnload" with JavaScript and @ClientCallable callback
+- Setup CustomizedSystemMessages
 
 ### AbsoluteLayoutView
 
@@ -61,6 +64,8 @@ http://localhost:8080/myapp
 
 - Form and binding with Bean 
 - Validators
+- Access main layout menu
+- BeforeLeaveObserver
 
 ### GridView
 
@@ -68,13 +73,14 @@ http://localhost:8080/myapp
 - Grid context menu
 - ContextMenu to jump to years
 - ContextMenu to filter by month
-- Scroll to workaround (JavaScript call)
 - Dynamic cell styling with TemplateRenderer
 - Cell styling with setClassNameGenerator
 - ComponentRenderer example
 - Popup to hide columns
 - CheckBox styling in Popup
 - Injecting custom property to text field to programmatically change color
+- Setup client side event listener with @ClientCallable callback
+- Using single RadioButton element from the RadioButtonGroup
 
 ### UploadView
 
@@ -89,7 +95,21 @@ http://localhost:8080/myapp
 - Chart re-flow workaround by div wrapping
 - Charts customization and styling to fit dark theme
 
+### ChartUtil
+
+- Chart drill-down
+- Chart plotlines
+- Chart tooltip formatter with conditional JavaScript logic 
+- Chart zooming / panning
+
 ### ThemeVariantsView
 
 - Some theme variant examples
 
+### GridProView
+
+- Workaround issue clicking save button when editor is open
+
+### TreeGridView
+
+- Selected parents subtree highlighting with class name generator

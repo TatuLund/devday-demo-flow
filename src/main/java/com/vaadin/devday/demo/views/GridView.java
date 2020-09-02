@@ -181,6 +181,8 @@ public class GridView extends SplitLayout  {
         return limit;
     }
 
+    // Not needed anymore as API is added in never Vaadin 14 versions
+    @Deprecated
     public static void scrollTo(Grid<?> grid, int index) {
         ListDataProvider<MonthlyExpense> ldp =  (ListDataProvider) grid.getDataProvider();
         if (ldp.getFilter() == null) UI.getCurrent().getPage().executeJavaScript("$0._scrollToIndex(" + index + ")", grid.getElement());
@@ -299,7 +301,7 @@ public class GridView extends SplitLayout  {
         	popDiv.add(check);
         }
         popup.add(popDiv);
-        popup.getElement().executeJs("this.$.popupOverlay.addEventListener('vaadin-overlay-close', () => $0.$server.popupClosed())",getElement());		
+        popup.getElement().executeJs("this.$.popupOverlay.addEventListener('vaadin-overlay-close', () => $0.$server.popupClosed())",getElement());
 	}
 
 	@ClientCallable
