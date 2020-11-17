@@ -1,6 +1,5 @@
 package com.vaadin.devday.demo.views;
 
-
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
@@ -18,11 +17,11 @@ import com.vaadin.flow.component.treegrid.TreeGrid;
 @Route(value = TreeGridView.ROUTE, layout = MainLayout.class)
 @PageTitle(TreeGridView.TITLE)
 public class TreeGridView extends VerticalLayout {
-	public static final String ROUTE = "treegrid";
-	public static final String TITLE = "TreeGrid";
+    public static final String ROUTE = "treegrid";
+    public static final String TITLE = "TreeGrid";
 
     public TreeGridView() {
-    	this.setSizeFull();
+        this.setSizeFull();
         createBasicTreeGridUsage();
     }
 
@@ -50,21 +49,25 @@ public class TreeGridView extends VerticalLayout {
                         + "\n" + message.getValue()));
 
         grid.asSingleSelect().addValueChangeListener(event -> {
-        	if (event.getValue() != null) System.out.println(event.getValue().getName()+" selected");
-        	grid.getDataProvider().refreshAll();
+            if (event.getValue() != null)
+                System.out.println(event.getValue().getName() + " selected");
+            grid.getDataProvider().refreshAll();
         });
-        
+
         grid.setClassNameGenerator(department -> {
-        	if (grid.asSingleSelect().getValue() != null && grid.asSingleSelect().getValue().equals(department.getParent())) {
-        		System.out.println(department.getName()+" has selected parent");
-        		return "parent-selected";
-        	}
-        	else return null;
-        	
+            if (grid.asSingleSelect().getValue() != null
+                    && grid.asSingleSelect().getValue()
+                            .equals(department.getParent())) {
+                System.out
+                        .println(department.getName() + " has selected parent");
+                return "parent-selected";
+            } else
+                return null;
+
         });
         // end-source-example
         grid.setId("treegridbasic");
-		grid.setHeightByRows(true);
+        grid.setHeightByRows(true);
         add(withTreeGridToggleButtons(
                 departmentData.getRootDepartments().get(0), grid, message));
     }

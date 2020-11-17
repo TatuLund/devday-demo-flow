@@ -13,12 +13,12 @@ public class VaadinBoardView extends VerticalLayout {
     public static final String ROUTE = "board";
     public static final String TITLE = "Board";
     Board board = new Board();
-	private Component pieChart1;
-	private Component pieChart2;
-	private Component columnChart;
-	private Component bubbleChart;
-    
-    public VaadinBoardView(){
+    private Component pieChart1;
+    private Component pieChart2;
+    private Component columnChart;
+    private Component bubbleChart;
+
+    public VaadinBoardView() {
         setSizeFull();
         pieChart1 = ChartUtil.getPieChart("2010");
         pieChart2 = ChartUtil.getPieChart("2018");

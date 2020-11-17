@@ -37,7 +37,7 @@ public class CrudView extends VerticalLayout {
     public static final String TITLE = "Crud";
 
     public CrudView() {
-    	setSizeFull();
+        setSizeFull();
         Crud<Person> crud = new Crud<>(Person.class, createPersonEditor());
         PersonDataProvider dataProvider = new PersonDataProvider();
 
@@ -46,11 +46,13 @@ public class CrudView extends VerticalLayout {
         // Use cancelEdit in PreSaveEvent
         // PreSaveEvent is dispatched before editor writes the bean
         crud.addPreSaveListener(e -> {
-        	BinderCrudEditor<Person> crudEditor = (BinderCrudEditor<Person>) crud.getEditor();
-        	TextField textField = (TextField) crudEditor.getBinder().getFields().findFirst().get();
-        	if (textField.getValue().equals("noname")) {
-        		crud.cancelSave();
-	        }
+            BinderCrudEditor<Person> crudEditor = (BinderCrudEditor<Person>) crud
+                    .getEditor();
+            TextField textField = (TextField) crudEditor.getBinder().getFields()
+                    .findFirst().get();
+            if (textField.getValue().equals("noname")) {
+                crud.cancelSave();
+            }
         });
         crud.addSaveListener(e -> {
             dataProvider.persist(e.getItem());
@@ -59,15 +61,16 @@ public class CrudView extends VerticalLayout {
 
         // Prefill new item
         crud.addNewListener(e -> {
-        	e.getItem().setFirstName("noname");
-        	crud.getEditor().setItem(e.getItem());
+            e.getItem().setFirstName("noname");
+            crud.getEditor().setItem(e.getItem());
         });
         crud.getGrid().removeColumnByKey("id");
         crud.addThemeVariants(CrudVariant.NO_BORDER);
 
         // Toggle display of toolbar
         Button hideToolbar = new Button("Hide toolbar");
-        hideToolbar.addClickListener(buttonClickEvent -> crud.setToolbarVisible(!crud.isToolbarVisible()));
+        hideToolbar.addClickListener(buttonClickEvent -> crud
+                .setToolbarVisible(!crud.isToolbarVisible()));
 
         // Set the whole Grid and Editor to be read only, in this mode
         // dialog is also not editable and show only close button
@@ -83,16 +86,17 @@ public class CrudView extends VerticalLayout {
             crud.getDelete().setText("Restore");
             crud.getCancel().setText("Quit");
             crud.getSave().getElement().setAttribute("Style", "display: none;");
-            crud.getCancel().addClickListener(clickEvent -> crud.setToolbarVisible(!crud.isToolbarVisible()));
+            crud.getCancel().addClickListener(clickEvent -> crud
+                    .setToolbarVisible(!crud.isToolbarVisible()));
         });
-        
+
         // Remove edit column and open editor by click listener
         Button changeEditorOpening = new Button("Change Editor Opening");
         changeEditorOpening.addClickListener(buttonClickEvent -> {
-        	crud.setEditOnClick(!crud.isEditOnClick());
+            crud.setEditOnClick(!crud.isEditOnClick());
         });
 
-        // There are getters for the buttons, so that they can hidden 
+        // There are getters for the buttons, so that they can hidden
         // individually
         Button disableDelete = new Button("Disable Delete");
         disableDelete.addClickListener(buttonClickEvent -> {
@@ -100,34 +104,39 @@ public class CrudView extends VerticalLayout {
                 crud.getDelete().setVisible(false);
             });
         });
-	    // end-source-example
-        add(crud, hideToolbar, readOnly, changeEditorButtons,changeEditorOpening,disableDelete);
+        // end-source-example
+        add(crud, hideToolbar, readOnly, changeEditorButtons,
+                changeEditorOpening, disableDelete);
     }
 
     private CrudEditor<Person> createPersonEditor() {
         Binder<Person> binder = new Binder<>(Person.class);
-    	
+
         TextField firstName = new TextField("First name");
         TextField lastName = new TextField("Last name");
 
         FormLayout form = new FormLayout(firstName, lastName);
 
-        binder.forField(firstName).asRequired().bind(Person::getFirstName, Person::setFirstName);
-        binder.forField(lastName).bind(Person::getLastName, Person::setLastName);
+        binder.forField(firstName).asRequired().bind(Person::getFirstName,
+                Person::setFirstName);
+        binder.forField(lastName).bind(Person::getLastName,
+                Person::setLastName);
 
         return new BinderCrudEditor<>(binder, form);
-    }    
+    }
 
     // Dummy database
-    private static final String[] FIRSTS = {"James", "Mary", "John", "Patricia", "Robert", "Jennifer"};
-    private static final String[] LASTS = {"Smith", "Johnson", "Williams", "Brown"};
+    private static final String[] FIRSTS = { "James", "Mary", "John",
+            "Patricia", "Robert", "Jennifer" };
+    private static final String[] LASTS = { "Smith", "Johnson", "Williams",
+            "Brown" };
 
     private static List<Person> createPersonList() {
         return IntStream
-                .rangeClosed(1, 50)
-                .mapToObj(i -> new Person(i, FIRSTS[i % FIRSTS.length], LASTS[i % LASTS.length]))
+                .rangeClosed(1, 50).mapToObj(i -> new Person(i,
+                        FIRSTS[i % FIRSTS.length], LASTS[i % LASTS.length]))
                 .collect(toList());
-    }    
+    }
 
     public static class Person implements Cloneable {
         private Integer id;
@@ -135,8 +144,8 @@ public class CrudView extends VerticalLayout {
         private String lastName = "";
 
         /**
-         * No-arg constructor required by Crud to be able to instantiate a new bean
-         * when the new item button is clicked.
+         * No-arg constructor required by Crud to be able to instantiate a new
+         * bean when the new item button is clicked.
          */
         public Person() {
         }
@@ -174,7 +183,7 @@ public class CrudView extends VerticalLayout {
         @Override
         public Person clone() {
             try {
-                return (Person)super.clone();
+                return (Person) super.clone();
             } catch (CloneNotSupportedException e) {
                 return null;
             }
@@ -182,7 +191,8 @@ public class CrudView extends VerticalLayout {
     }
 
     // Person data provider
-    public static class PersonDataProvider extends AbstractBackEndDataProvider<Person, CrudFilter> {
+    public static class PersonDataProvider
+            extends AbstractBackEndDataProvider<Person, CrudFilter> {
 
         // A real app should hook up something like JPA
         final List<Person> DATABASE = createPersonList();
@@ -190,15 +200,15 @@ public class CrudView extends VerticalLayout {
         private Consumer<Long> sizeChangeListener;
 
         @Override
-        protected Stream<Person> fetchFromBackEnd(Query<Person, CrudFilter> query) {
+        protected Stream<Person> fetchFromBackEnd(
+                Query<Person, CrudFilter> query) {
             int offset = query.getOffset();
             int limit = query.getLimit();
 
             Stream<Person> stream = DATABASE.stream();
 
             if (query.getFilter().isPresent()) {
-                stream = stream
-                        .filter(predicate(query.getFilter().get()))
+                stream = stream.filter(predicate(query.getFilter().get()))
                         .sorted(comparator(query.getFilter().get()));
             }
 
@@ -229,15 +239,14 @@ public class CrudView extends VerticalLayout {
                     .map(constraint -> (Predicate<Person>) person -> {
                         try {
                             Object value = valueOf(constraint.getKey(), person);
-                            return value != null && value.toString().toLowerCase()
-                                    .contains(constraint.getValue().toLowerCase());
+                            return value != null && value.toString()
+                                    .toLowerCase().contains(constraint
+                                            .getValue().toLowerCase());
                         } catch (Exception e) {
                             e.printStackTrace();
                             return false;
                         }
-                    })
-                    .reduce(Predicate::and)
-                    .orElse(e -> true);
+                    }).reduce(Predicate::and).orElse(e -> true);
         }
 
         private static Comparator<Person> comparator(CrudFilter filter) {
@@ -245,11 +254,12 @@ public class CrudView extends VerticalLayout {
             return filter.getSortOrders().entrySet().stream()
                     .map(sortClause -> {
                         try {
-                            Comparator<Person> comparator
-                                    = Comparator.comparing(person ->
-                                    (Comparable) valueOf(sortClause.getKey(), person));
+                            Comparator<Person> comparator = Comparator
+                                    .comparing(person -> (Comparable) valueOf(
+                                            sortClause.getKey(), person));
 
-                            if (sortClause.getValue() == SortDirection.DESCENDING) {
+                            if (sortClause
+                                    .getValue() == SortDirection.DESCENDING) {
                                 comparator = comparator.reversed();
                             }
 
@@ -257,9 +267,7 @@ public class CrudView extends VerticalLayout {
                         } catch (Exception ex) {
                             return (Comparator<Person>) (o1, o2) -> 0;
                         }
-                    })
-                    .reduce(Comparator::thenComparing)
-                    .orElse((o1, o2) -> 0);
+                    }).reduce(Comparator::thenComparing).orElse((o1, o2) -> 0);
         }
 
         private static Object valueOf(String fieldName, Person person) {
@@ -274,11 +282,8 @@ public class CrudView extends VerticalLayout {
 
         void persist(Person item) {
             if (item.getId() == null) {
-                item.setId(DATABASE
-                        .stream()
-                        .map(Person::getId)
-                        .max(naturalOrder())
-                        .orElse(0) + 1);
+                item.setId(DATABASE.stream().map(Person::getId)
+                        .max(naturalOrder()).orElse(0) + 1);
             }
 
             final Optional<Person> existingItem = find(item.getId());
@@ -292,9 +297,7 @@ public class CrudView extends VerticalLayout {
         }
 
         Optional<Person> find(Integer id) {
-            return DATABASE
-                    .stream()
-                    .filter(entity -> entity.getId().equals(id))
+            return DATABASE.stream().filter(entity -> entity.getId().equals(id))
                     .findFirst();
         }
 
@@ -304,4 +307,3 @@ public class CrudView extends VerticalLayout {
     }
 
 }
-

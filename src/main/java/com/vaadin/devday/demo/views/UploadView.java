@@ -38,39 +38,48 @@ import elemental.json.JsonArray;
 public class UploadView extends VerticalLayout {
     public static final String ROUTE = "upload";
     public static final String TITLE = "Upload";
-    
+
     public UploadView() {
         Div output = new Div();
-        
-    	MultiFileMemoryBuffer buffer = new MultiFileMemoryBuffer();
-    	// Button is removed with style module, see styles.html
-    	Upload upload = new Upload(buffer);
-    	upload.setSizeFull();
-    	upload.addStartedListener(event -> {
-    		upload.getElement().getPropertyNames().forEach(prop -> System.out.println(prop+" "+upload.getElement().getProperty(prop)));
-    	});
-    	upload.addFileRejectedListener(event -> {
-    		Notification.show(event.getErrorMessage());
-    	});
-    	upload.setAcceptedFileTypes("image/jpeg");
-    	
-    	upload.addSucceededListener(event -> {
-    	    Component component = createComponent(event.getMIMEType(),
-    	            event.getFileName(),
-    	            buffer.getInputStream(event.getFileName()));
-    	    showOutput(event.getFileName(), component, output);
-        	remove(upload);
-    	}); 
-    	
-    	upload.addFailedListener(event -> {
-    		Notification.show("Failed to load file: "+event.getFileName()).addThemeVariants(NotificationVariant.LUMO_ERROR);
-    		upload.getElement().setPropertyJson("files", Json.createArray());
-    	});
 
-    	add(upload,output);
+        MultiFileMemoryBuffer buffer = new MultiFileMemoryBuffer();
+        // Button is removed with style module, see styles.html
+        Upload upload = new Upload(buffer);
+        upload.setSizeFull();
+        upload.addStartedListener(event -> {
+            upload.getElement().getPropertyNames()
+                    .forEach(prop -> System.out.println(prop + " "
+                            + upload.getElement().getProperty(prop)));
+        });
+        upload.addFileRejectedListener(event -> {
+            Notification.show(event.getErrorMessage());
+        });
+        upload.setAcceptedFileTypes("image/jpeg");
+        upload.setAutoUpload(false);
+
+        upload.addSucceededListener(event -> {
+            Component component = createComponent(event.getMIMEType(),
+                    event.getFileName(),
+                    buffer.getInputStream(event.getFileName()));
+            showOutput(event.getFileName(), component, output);
+            remove(upload);
+        });
+
+        upload.getElement().addEventListener("file-abort", event1 -> {
+            String files = upload.getElement().getProperty("files");
+            Notification.show(files);
+            System.out.println(files);
+        });
+
+        // upload.addFailedListener(event -> {
+        // Notification.show("Failed to load file:
+        // "+event.getFileName()).addThemeVariants(NotificationVariant.LUMO_ERROR);
+        //// upload.getElement().setPropertyJson("files", Json.createArray());
+        // });
+
+        add(upload, output);
     }
 
-    
     private Component createComponent(String mimeType, String fileName,
             InputStream stream) {
         if (mimeType.startsWith("text")) {
@@ -115,7 +124,7 @@ public class UploadView extends VerticalLayout {
         content.setText(text);
         return new Div();
     }
-    
+
     private void showOutput(String text, Component content,
             HasComponents outputContainer) {
         HtmlComponent p = new HtmlComponent(Tag.P);

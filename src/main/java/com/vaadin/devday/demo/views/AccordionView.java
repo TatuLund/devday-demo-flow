@@ -33,7 +33,7 @@ public class AccordionView extends VerticalLayout {
     public static final String ROUTE = "accordion";
     public static final String TITLE = "Accordion";
 
-    public AccordionView(){
+    public AccordionView() {
         setSizeFull();
         ProgressBar progressBar = new ProgressBar();
         progressBar.setIndeterminate(false);
@@ -41,22 +41,22 @@ public class AccordionView extends VerticalLayout {
         progressBar.setMin(0);
         progressBar.setValue(25);
 
-        BiConsumer<OpenedChangeEvent, Integer> activateProgress
-        = (event, progress) -> {
+        BiConsumer<OpenedChangeEvent, Integer> activateProgress = (event,
+                progress) -> {
 
-        	Style style = event.getSource().getSummary().getElement().getStyle();
-        	if (event.isOpened()) {
-        		style.set("color", "var(--lumo-primary-color)");
-        		progressBar.setValue(progress);
-        	} else {
-        		style.remove("color");
-        	}
+            Style style = event.getSource().getSummary().getElement()
+                    .getStyle();
+            if (event.isOpened()) {
+                style.set("color", "var(--lumo-primary-color)");
+                progressBar.setValue(progress);
+            } else {
+                style.remove("color");
+            }
         };
 
-
-        
         // SUMMARY FACTORY
-        BiFunction<Integer, String, Component> summaryFactory = (index, title) -> {
+        BiFunction<Integer, String, Component> summaryFactory = (index,
+                title) -> {
             Div summary = new Div();
 
             Div indexDiv = new Div();
@@ -79,10 +79,8 @@ public class AccordionView extends VerticalLayout {
             return summary;
         };
 
-
         // BEGIN ACCORDION
         Accordion accordion = new Accordion();
-
 
         // ACCOUNT INFORMATION
         AccordionPanel accountInfo = new AccordionPanel();
@@ -100,11 +98,9 @@ public class AccordionView extends VerticalLayout {
         handleField.setLabel("Handle");
         accountForm.add(handleField);
 
-
         PasswordField passwordField = new PasswordField();
         passwordField.setLabel("Password");
         accountForm.add(passwordField);
-
 
         PasswordField confirmPasswordField = new PasswordField();
         confirmPasswordField.setLabel("Confirm password");
@@ -112,7 +108,6 @@ public class AccordionView extends VerticalLayout {
 
         accountInfo.setContent(accountForm);
         accordion.add(accountInfo);
-
 
         // PROFILE INFORMATION
         AccordionPanel profileInfo = new AccordionPanel();
@@ -131,10 +126,10 @@ public class AccordionView extends VerticalLayout {
         profileInfo.setContent(profileInfoForm);
         accordion.add(profileInfo);
 
-
         // TOPICS OF INTEREST
         AccordionPanel topicsOfInterest = new AccordionPanel();
-        topicsOfInterest.setSummary(summaryFactory.apply(3, "Topics of interest"));
+        topicsOfInterest
+                .setSummary(summaryFactory.apply(3, "Topics of interest"));
         topicsOfInterest.addOpenedChangeListener(
                 event -> activateProgress.accept(event, 75));
 
@@ -151,7 +146,6 @@ public class AccordionView extends VerticalLayout {
         topicsOfInterest.setContent(topicsForm);
         accordion.add(topicsOfInterest);
 
-
         // TERMS AND CONDITIONS
         AccordionPanel conditions = new AccordionPanel();
         conditions.setSummary(summaryFactory.apply(4, "Terms and conditions"));
@@ -159,9 +153,9 @@ public class AccordionView extends VerticalLayout {
                 event -> activateProgress.accept(event, 100));
 
         Paragraph paragraph = new Paragraph();
-        paragraph.setText("After all has been said and done, I agree that " +
-                "my data shall be safely stored for the sole purpose of " +
-                "my ultimate enjoyment.");
+        paragraph.setText("After all has been said and done, I agree that "
+                + "my data shall be safely stored for the sole purpose of "
+                + "my ultimate enjoyment.");
 
         Button submit = new Button("Sign up");
         submit.setEnabled(false);
@@ -180,10 +174,10 @@ public class AccordionView extends VerticalLayout {
 
         conditions.setContent(termsDetails);
         accordion.add(conditions);
-        
+
         accordion.setWidth("100%");
         add(accordion);
         add(progressBar);
     }
 
- }
+}
