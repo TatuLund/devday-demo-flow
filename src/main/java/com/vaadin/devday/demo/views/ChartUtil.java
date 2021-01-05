@@ -1,9 +1,14 @@
 package com.vaadin.devday.demo.views;
 
+import java.awt.Color;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Random;
 
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.charts.Chart;
+import com.vaadin.flow.component.charts.ChartOptions;
 import com.vaadin.flow.component.charts.model.AxisType;
 import com.vaadin.flow.component.charts.model.ChartType;
 import com.vaadin.flow.component.charts.model.Configuration;
@@ -13,6 +18,7 @@ import com.vaadin.flow.component.charts.model.DataSeries;
 import com.vaadin.flow.component.charts.model.DataSeriesItem;
 import com.vaadin.flow.component.charts.model.DataSeriesItem3d;
 import com.vaadin.flow.component.charts.model.HorizontalAlign;
+import com.vaadin.flow.component.charts.model.Lang;
 import com.vaadin.flow.component.charts.model.LayoutDirection;
 import com.vaadin.flow.component.charts.model.Legend;
 import com.vaadin.flow.component.charts.model.ListSeries;
@@ -24,10 +30,21 @@ import com.vaadin.flow.component.charts.model.Tooltip;
 import com.vaadin.flow.component.charts.model.VerticalAlign;
 import com.vaadin.flow.component.charts.model.XAxis;
 import com.vaadin.flow.component.charts.model.YAxis;
+import com.vaadin.flow.component.charts.model.style.SolidColor;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.textfield.NumberField;
 
 public class ChartUtil {
+    private static String color0 = "#E6C317";
+    private static String color1 = "#7997F2";
+    private static String color2 = "#C2F261";
+    private static String color3 = "#D96C57";
+    private static String color4 = "#5C81CC";
+    private static String color5 = "#39BF87";
+    private static String color6 = "#E695AC";
+    private static String color7 = "#75D0FF";
+    private static String color8 = "#904FB0";
+    private static String color9 = "#A6EDD9";
 
     public static Div getColumnChart() {
         // Wrap Chart in Div, otherwise it wont reflow in Board
@@ -35,7 +52,6 @@ public class ChartUtil {
         div.setSizeFull();
         Chart chart = new Chart(ChartType.COLUMN);
         chart.setSizeFull();
-        chart.setTimeline(true);
 
         Configuration conf = chart.getConfiguration();
 
@@ -43,10 +59,8 @@ public class ChartUtil {
         conf.setSubTitle("Source: WorldClimate.com");
 
         XAxis x = new XAxis();
-        // x.setCategories("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul",
-        // "Aug",
-        // "Sep", "Oct", "Nov", "Dec");
-        x.setType(AxisType.DATETIME);
+        x.setCategories("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug",
+                "Sep", "Oct", "Nov", "Dec");
         conf.addxAxis(x);
 
         YAxis y = new YAxis();
@@ -67,22 +81,25 @@ public class ChartUtil {
         PlotOptionsColumn plot = new PlotOptionsColumn();
         plot.setPointPadding(0.2);
         plot.setShowInLegend(true);
+
         conf.setPlotOptions(plot);
 
         ListSeries tokyo = new ListSeries("Tokyo", 49.9, 71.5, 106.4, 129.2,
                 144.0, 176.0, 135.6, 148.5, 216.4, 194.1, 95.6, 54.4);
         conf.addSeries(tokyo);
         PlotOptionsColumn options = new PlotOptionsColumn();
-        options.setColorIndex(6);
+//        options.setColorIndex(6);
         options.setBorderRadius(4.0);
         DataLabels labels = new DataLabels();
         labels.setEnabled(true);
         options.setDataLabels(labels);
         tokyo.setPlotOptions(options);
+        options.setColor(new SolidColor(color6));
         ListSeries newYork = new ListSeries("New York", 83.6, 78.8, 98.5, 93.4,
                 106.0, 84.5, 105.0, 104.3, 91.2, 83.5, 106.6, 92.3);
         PlotOptionsColumn optionsNY = new PlotOptionsColumn();
         optionsNY.setCrisp(true);
+        optionsNY.setColor(new SolidColor(color1));
         newYork.setPlotOptions(optionsNY);
         PlotLine plotLine = new PlotLine();
         plotLine.setValue(40);
@@ -109,7 +126,10 @@ public class ChartUtil {
         // " ]\r\n" +
         // " }\r\n" +
         // "});");
-
+        Lang lang = new Lang();
+        String[] months = {"Jan","Fév","Mar","Avr","Mai","Jui","Jul","Aoû","Sep","Oct","Nov","Déc"}; 
+        lang.setShortMonths(months);
+        ChartOptions.get().setLang(lang);
         return div;
     }
 
@@ -153,23 +173,19 @@ public class ChartUtil {
         // not
         // working due bugs in Charts, I have added bug reports in tracker
         // List<DataSeries> drills = new ArrayList<>();
-        // drills.add(createDataSeries2("sub_1",3));
-        // drills.add(createDataSeries2("sub_2",4));
-        // drills.add(createDataSeries2("sub_3",5));
-        // dataSeries2.addItemWithDrilldown(item(13, 30, 10, 6,
-        // "drill"),drills.get(0));
-        // dataSeries2.addItemWithDrilldown(item(23, 20, -10, 6,
-        // "drill"),drills.get(1));
-        // dataSeries2.addItemWithDrilldown(item(23, 40, 10, 6,
-        // "drill"),drills.get(2));
-        opts = new PlotOptionsBubble();
+        // drills.add(createDataSeries2("sub_1", 3));
+        // drills.add(createDataSeries2("sub_2", 4));
+        // drills.add(createDataSeries2("sub_3", 5));
+        // dataSeries2.addItemWithDrilldown(item(13, 30, 10, 6, "drill"),
+        // drills.get(0));
+        // dataSeries2.addItemWithDrilldown(item(23, 20, -10, 6, "drill"),
+        // drills.get(1));
+        // dataSeries2.addItemWithDrilldown(item(23, 40, 10, 6, "drill"),
+        // drills.get(2));
+        // opts = new PlotOptionsBubble();
         opts.setDisplayNegative(false);
         dataSeries2.setPlotOptions(opts);
         conf.addSeries(dataSeries2);
-        div.getElement().executeJs(
-                "return getComputedStyle(document.querySelector('p'), ':before').getPropertyValue('content')")
-                .then(value -> {
-                });
 
         NumberField min = new NumberField();
         min.setHasControls(true);
@@ -199,15 +215,20 @@ public class ChartUtil {
             }
         });
 
-        chart.addDrilldownListener(event -> {
-            // String drillDown = event.getDrilldown();
-            // for (DataSeries drill : drills) {
-            // if (drill.getId().equals(drillDown)) {
-            // updateDataSeries(drill,drill.getId(),3);
-            // drill.updateSeries();
-            // }
-            // }
+        chart.setDrilldownCallback(event -> {
+            DataSeriesItem item = event.getItem();
+            return updateDataSeries(item.getId(), 3);
         });
+
+        // chart.addDrilldownListener(event -> {
+        // String drillDown = event.getDrilldown();
+        // for (DataSeries drill : drills) {
+        // if (drill.getId().equals(drillDown)) {
+        // updateDataSeries(drill, drill.getId(), 3);
+        // drill.updateSeries();
+        // }
+        // }
+        // });
 
         return div;
     }
@@ -246,9 +267,8 @@ public class ChartUtil {
         return dataSeries;
     }
 
-    private static void updateDataSeries(DataSeries dataSeries, String id,
-            int colorIndex) {
-        dataSeries.clear();
+    private static DataSeries updateDataSeries(String id, int colorIndex) {
+        DataSeries dataSeries = new DataSeries();
         System.out.println("Updating series " + id);
         Random rand = new Random();
         for (int i = 0; i < 15; i++) {
@@ -258,6 +278,7 @@ public class ChartUtil {
         }
         dataSeries.addItemWithDrilldown(item(23, 40, 10, 6),
                 createDataSeries("sub_" + id, 5));
+        return dataSeries;
     }
 
     public static DataSeriesItem item(int x, int y, int z, int colorIndex) {
@@ -276,12 +297,15 @@ public class ChartUtil {
         dataSeriesItem.setX(x);
         dataSeriesItem.setY(y);
         dataSeriesItem.setZ(z);
-        dataSeriesItem.setColorIndex(colorIndex);
+        dataSeriesItem.setColor(new SolidColor("color"+colorIndex));
         DataLabels labels = new DataLabels();
         labels.setEnabled(true);
         dataSeriesItem.setDataLabels(labels);
-        if (index > -1)
+        if (index > -1) {
             dataSeriesItem.setName("Item " + index);
+        } else {
+            dataSeriesItem.setName("Main");
+        }
         return dataSeriesItem;
     }
 
@@ -304,6 +328,7 @@ public class ChartUtil {
         PlotOptionsPie plotOptions = new PlotOptionsPie();
         plotOptions.setCursor(Cursor.POINTER);
         plotOptions.setInnerSize("60%");
+        plotOptions.setColors(new SolidColor(color0),new SolidColor(color1),new SolidColor(color2),new SolidColor(color3),new SolidColor(color4),new SolidColor(color5),new SolidColor(color6));
         conf.setPlotOptions(plotOptions);
 
         if ("2010".equals(year)) {
