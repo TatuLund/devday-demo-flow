@@ -10,23 +10,19 @@ import com.vaadin.flow.router.Route;
 import com.vaadin.flow.theme.lumo.Lumo;
 
 import java.util.ArrayList;
-import java.util.Base64;
 import java.util.List;
 
 import com.vaadin.componentfactory.Popup;
 import com.vaadin.devday.demo.MainLayout;
-import com.vaadin.flow.component.AttachEvent;
-import com.vaadin.flow.component.ClientCallable;
-import com.vaadin.flow.component.ComponentUtil;
 import com.vaadin.flow.component.HasComponents;
 import com.vaadin.flow.component.Text;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.checkbox.Checkbox;
+import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.contextmenu.ContextMenu;
 import com.vaadin.flow.component.datepicker.DatePicker;
-import com.vaadin.flow.component.dependency.NpmPackage;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.Grid.Column;
@@ -101,7 +97,6 @@ public class GridView extends SplitLayout {
         columnButton.getStyle().set("right", "30px");
         content.add(div);
         content.expand(div);
-        tools.getElement().callJsFunction("scrollIntoView");
 
         this.setSizeFull();
         this.setOrientation(Orientation.VERTICAL);
@@ -154,8 +149,9 @@ public class GridView extends SplitLayout {
         popup.setFor("columnsbutton");
         content.add(popup);
         popButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
-        popButton.getElement().addEventListener("mouseover",
-                event -> popup.setOpened(true));
+        popButton.addClickListener(event -> popup.setOpened(true));
+//        popButton.getElement().addEventListener("mouseover",
+//                event -> popup.setOpened(true));
         return popButton;
     }
 
@@ -204,19 +200,6 @@ public class GridView extends SplitLayout {
         return "background:white";
     }
 
-    private static String TRANSPARENT_GIF_1PX = "data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACwAAAAAAQABAAACAkQBADs=";
-
-    private String getImageAsBase64(byte[] string) {
-        String mimeType = "image/png";
-        String htmlValue = null;
-        if (string == null)
-            htmlValue = TRANSPARENT_GIF_1PX;
-        else
-            htmlValue = "data:" + mimeType + ";base64,"
-                    + Base64.getEncoder().encodeToString(string);
-        return htmlValue;
-    }
-
     private void initalizeAndPopulateGrid(Grid<MonthlyExpense> grid) {
         grid.addClassName("my-grid");
         grid.addColumn(new ComponentRenderer<Radio, MonthlyExpense>(expense -> {
@@ -237,11 +220,6 @@ public class GridView extends SplitLayout {
 
         })).setWidth("50px").setFlexGrow(0).setKey("select")
                 .setHeader("Select");
-        // grid.addColumn(TemplateRenderer.<MonthlyExpense> of(
-        // "<div><img style='height: 80px; width: 80px;'
-        // src='[[item.imagedata]]'/></div>")
-        // .withProperty("imagedata",
-        // item -> getImageAsBase64(item.getImage())));
         grid.addColumn(TemplateRenderer.<MonthlyExpense> of(
                 "<div style$=\"[[item.styles]]\">[[item.expenses]]</div>")
                 .withProperty("styles", MonthlyExpense::getStyles)
@@ -250,7 +228,7 @@ public class GridView extends SplitLayout {
                 .setKey("year").setId("year-column");
         addYearSelectorMenuToColumnHeader(grid);
         GridContextMenu<MonthlyExpense> menu = new GridContextMenu<>(grid);
-        menu.setOpenOnClick(true);
+        // menu.setOpenOnClick(true);
         populateGridContextMenu(grid, menu);
         // menu.getElement().setProperty("selector", "[part~=\"body-cell\"]");
         grid.addColumn(MonthlyExpense::getMonth).setSortable(true)
@@ -270,16 +248,37 @@ public class GridView extends SplitLayout {
                                 : "green-grid-cell")
                 .setEditorComponent(numberField);
         grid.addComponentColumn(expense -> {
-           Select<String> select = new Select<>();
-           select.setPlaceholder("Actions");
-           select.setItems("View", "Edit", "Audit Trail");
-           select.addValueChangeListener(event -> {
-              if (event.getValue().equals("Edit")) {
-                  grid.getEditor().editItem(expense);
-              }
-           });
-           return select; 
-        });
+            ComboBox<String> select = new ComboBox<>();
+            select.setPlaceholder("Status");
+            PrefixSuffixUtil.setPrefixComponent(select, VaadinIcon.ALARM.create());
+            select.setItems("Open", "Ready", "Audited");
+            select.setValue(expense.getStatus());
+            select.addValueChangeListener(event -> {
+                if (event.isFromClient()) {
+                    expense.setStatus(event.getValue());
+                    grid.getDataProvider().refreshItem(expense);
+                }
+            });
+            return select;
+        }).setKey("status").setHeader("Status");
+        grid.addComponentColumn(expense -> {
+            Select<String> select = new Select<>();
+            select.setPlaceholder("Actions");
+            PrefixSuffixUtil.setPrefixComponent(select, VaadinIcon.EURO.create());
+            if (expense.getStatus().equals("Open")) {
+                select.setItems("View", "Edit", "Delete");
+            } else if (expense.getStatus().equals("Ready")) {
+                select.setItems("View", "Delete");
+            } else if (expense.getStatus().equals("Audited")) {
+                select.setItems("Audit Trail", "Delete");
+            }
+            select.addValueChangeListener(event -> {
+                if (event.getValue().equals("Edit")) {
+                    grid.getEditor().editItem(expense);
+                }
+            });
+            return select;
+        }).setKey("actions").setHeader("Actions");
         grid.addItemDoubleClickListener(event -> {
             grid.getEditor().editItem(event.getItem());
         });
@@ -365,20 +364,14 @@ public class GridView extends SplitLayout {
             popDiv.add(check);
         }
         popup.add(popDiv);
-        // PopupOpenChangedEvent was added to Popup v2.2.0
-        // popup.getElement().executeJs("this.$.popupOverlay.addEventListener('vaadin-overlay-close',
-        // () => $0.$server.popupClosed())",getElement());
+//         PopupOpenChangedEvent was added to Popup v2.2.0
+//         popup.getElement().executeJs("this.$.popupOverlay.addEventListener('vaadin-overlay-close',() => $0.$server.popupClosed())",getElement());
         popup.addPopupOpenChangedEventListener(event -> {
             if (event.isOpened()) {
                 System.out.println("Popup closed");
             }
         });
     }
-
-    // @ClientCallable
-    // public void popupClosed() {
-    // System.out.println("Popup closed");
-    // }
 
     private void populateGridContextMenu(Grid<MonthlyExpense> grid,
             GridContextMenu<MonthlyExpense> menu) {
@@ -479,13 +472,6 @@ public class GridView extends SplitLayout {
         return data;
     }
 
-    public void onAttach(AttachEvent event) {
-        expensesGrid.getElement().executeJs(
-                "this.getElementsByTagName(\"vaadin-grid-flow-selection-column\")[0].hidden = true;");
-        // expensesGrid.getElement().executeJs("document.querySelectorAll(\"vaadin-grid.my-grid\")[0].getElementsByTagName(\"vaadin-grid-flow-selection-column\")[0].hidden
-        // = true;");
-    }
-
     // Randomize a value between 300 and 800
     private Double getExpenses() {
         return Math.floor((Math.random() * 1000) % 500 + 300);
@@ -518,5 +504,4 @@ public class GridView extends SplitLayout {
         }
 
     }
-
 }
