@@ -5,6 +5,7 @@ import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.board.Board;
 import com.vaadin.flow.component.board.Row;
 import com.vaadin.flow.component.charts.Chart;
+import com.vaadin.flow.component.charts.ChartOptions;
 import com.vaadin.flow.component.charts.model.ChartType;
 import com.vaadin.flow.component.charts.model.Configuration;
 import com.vaadin.flow.component.charts.model.DataSeries;
@@ -22,6 +23,7 @@ import com.vaadin.flow.component.charts.model.YAxis;
 import com.vaadin.flow.component.charts.model.style.SolidColor;
 import com.vaadin.flow.component.charts.model.style.Style;
 import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
@@ -42,11 +44,12 @@ public class SalesDashboardView extends VerticalLayout {
     private final String PURPLE = "#685CB0";
 
     public SalesDashboardView() {
-        Board board = new Board();
+        VerticalLayout board = new VerticalLayout();
         board.setClassName("sales-dashboard-demo-area");
 
         // First row
-        board.addRow(
+        HorizontalLayout row1 = new HorizontalLayout();
+        row1.add(
                 createColumnChart("Total Revenue / 1 k$", BLUE, 63, 51, 70, 83,
                         87, 37),
                 createColumnChart("Billed / 1k$", GREEN, 63, 68, 67, 65, 83,
@@ -55,10 +58,12 @@ public class SalesDashboardView extends VerticalLayout {
                         37),
                 createColumnChart("Refunded / 1k$", GREEN, 13, 9, 51, 62, 8,
                         8));
+        row1.setJustifyContentMode(JustifyContentMode.EVENLY);
 
         // Second row
-        Row lineChartsInnerRow = new Row();
-        lineChartsInnerRow.add(
+//        Row lineChartsInnerRow = new Row();
+        HorizontalLayout row2 = new HorizontalLayout();
+        row2.add(
                 createLineChart("Customers", "↑501", BLUE, 29.9, 71.5, 106.4,
                         80.2, 83.0, 95.0, 92.6, 112.5, 146.4, 183.1, 201.6,
                         220.4),
@@ -70,14 +75,17 @@ public class SalesDashboardView extends VerticalLayout {
         Div midColumnChart = createMidColumnChart();
         midColumnChart.setClassName("mid-line-main-chart");
 
-        Row secondLine = board.addRow(midColumnChart, lineChartsInnerRow);
-        secondLine.addClassName("mid-line-charts-row");
-
-        secondLine.setComponentSpan(midColumnChart, 3);
+//        Row secondLine = board.addRow(midColumnChart, lineChartsInnerRow);
+        HorizontalLayout row3 = new HorizontalLayout();
+        row3.add(midColumnChart, row2);
+//        secondLine.addClassName("mid-line-charts-row");
+//
+//        secondLine.setComponentSpan(midColumnChart, 3);
 
         // Third row
-        board.addRow(createFunnelChart(), createPieChart());
-
+        HorizontalLayout row4 = new HorizontalLayout();
+        row4.add(createFunnelChart(), createPieChart());
+        board.add(row1,row3,row4);
         add(board);
         setMargin(false);
         setSpacing(false);
@@ -91,7 +99,8 @@ public class SalesDashboardView extends VerticalLayout {
         Configuration configuration = chart.getConfiguration();
 
         configuration.getChart().setType(ChartType.COLUMN);
-        configuration.getChart().setStyledMode(true);
+        configuration.getChart().setStyledMode(false);
+
         DataSeries dataSeries = new DataSeries("Short");
         dataSeries.setData(values);
         configuration.setSeries(dataSeries);
@@ -141,6 +150,7 @@ public class SalesDashboardView extends VerticalLayout {
 
         Configuration configuration = chart.getConfiguration();
         configuration.getChart().setType(ChartType.COLUMN);
+        configuration.getChart().setStyledMode(false);
 
         PlotOptionsColumn chartOptions = new PlotOptionsColumn();
         chartOptions.setStacking(Stacking.NORMAL);
@@ -208,6 +218,7 @@ public class SalesDashboardView extends VerticalLayout {
         Configuration configuration = chart.getConfiguration();
 
         configuration.getChart().setType(ChartType.LINE);
+        configuration.getChart().setStyledMode(false);
 
         configuration.setTitle(title);
         configuration.setSubTitle(overallValue);
@@ -259,6 +270,7 @@ public class SalesDashboardView extends VerticalLayout {
         Configuration configuration = chart.getConfiguration();
         configuration.getChart().setType(ChartType.FUNNEL);
         configuration.getLegend().setEnabled(true);
+        configuration.getChart().setStyledMode(false);
 
         PlotOptionsFunnel plotOptionsFunnel = new PlotOptionsFunnel();
         plotOptionsFunnel.setColors(new SolidColor(BLUE), new SolidColor(GREEN),
@@ -266,7 +278,7 @@ public class SalesDashboardView extends VerticalLayout {
                 new SolidColor(MAGENTA), new SolidColor(PURPLE));
         plotOptionsFunnel.setNeckWidth("5%");
         plotOptionsFunnel.setNeckHeight("0%");
-        plotOptionsFunnel.setWidth("40%");
+//        plotOptionsFunnel.setWidth("40%");
         plotOptionsFunnel.setBorderWidth(4);
         plotOptionsFunnel.getDataLabels().setFormat("{point.name}: {point.x}");
         configuration.setPlotOptions(plotOptionsFunnel);
@@ -321,6 +333,7 @@ public class SalesDashboardView extends VerticalLayout {
 
         Configuration configuration = chart.getConfiguration();
         configuration.getChart().setType(ChartType.PIE);
+        configuration.getChart().setStyledMode(false);
 
         PlotOptionsPie plotOptionsPie = new PlotOptionsPie();
         plotOptionsPie.setColors(new SolidColor(BLUE), new SolidColor(GREEN),
