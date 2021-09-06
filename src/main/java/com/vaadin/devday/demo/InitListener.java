@@ -7,22 +7,21 @@ import com.vaadin.flow.component.confirmdialog.ConfirmDialog;
 import com.vaadin.flow.component.html.Pre;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.notification.Notification.Position;
-import com.vaadin.flow.server.RequestHandler;
+import com.vaadin.flow.server.CustomizedSystemMessages;
 import com.vaadin.flow.server.ServiceInitEvent;
-import com.vaadin.flow.server.VaadinRequest;
-import com.vaadin.flow.server.VaadinResponse;
 import com.vaadin.flow.server.VaadinServiceInitListener;
 import com.vaadin.flow.server.VaadinSession;
 
-import java.io.IOException;
 import java.time.Instant;
-import java.util.Collection;
+
+import javax.servlet.http.Cookie;
 
 public class InitListener implements VaadinServiceInitListener {
 
     @Override
     public void serviceInit(ServiceInitEvent serviceInitEvent) {
         System.out.println("Service init");
+        serviceInitEvent.getSource().getDeploymentConfiguration().isXsrfProtectionEnabled();        
         serviceInitEvent.getSource().addUIInitListener(event -> {
             UI ui = event.getUI();
             if (ui.getSession().getUIs().size() > 1) {
@@ -47,12 +46,19 @@ public class InitListener implements VaadinServiceInitListener {
                     beforeEvent.forwardTo(MainView.ROUTE);
                 }
             });
+            VaadinSession session = ui.getSession();
+            setErrorHandler(session, ui);
+
         });
         serviceInitEvent.getSource().addSessionInitListener(event -> {
             event.getSession().getSession().setMaxInactiveInterval(600);
             System.out.println("Session init");
-            VaadinSession session = event.getSession();
-            session.setErrorHandler(error -> {
+        });
+    }
+
+    private void setErrorHandler(VaadinSession session, UI ui) {
+        session.setErrorHandler(error -> {
+            ui.access(() -> {
                 ConfirmDialog confirmDialog = new ConfirmDialog("Error",
                         "Internal Error: " + error.getThrowable().getMessage(),
                         "Do Something", confirmFire -> {

@@ -1,15 +1,10 @@
 package com.vaadin.devday.demo.views;
 
-import java.awt.Color;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import java.util.Random;
 
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.charts.Chart;
 import com.vaadin.flow.component.charts.ChartOptions;
-import com.vaadin.flow.component.charts.model.AxisType;
 import com.vaadin.flow.component.charts.model.ChartType;
 import com.vaadin.flow.component.charts.model.Configuration;
 import com.vaadin.flow.component.charts.model.Cursor;
@@ -18,18 +13,24 @@ import com.vaadin.flow.component.charts.model.DataSeries;
 import com.vaadin.flow.component.charts.model.DataSeriesItem;
 import com.vaadin.flow.component.charts.model.DataSeriesItem3d;
 import com.vaadin.flow.component.charts.model.HorizontalAlign;
+import com.vaadin.flow.component.charts.model.Labels;
 import com.vaadin.flow.component.charts.model.Lang;
 import com.vaadin.flow.component.charts.model.LayoutDirection;
 import com.vaadin.flow.component.charts.model.Legend;
 import com.vaadin.flow.component.charts.model.ListSeries;
+import com.vaadin.flow.component.charts.model.Marker;
 import com.vaadin.flow.component.charts.model.PlotLine;
 import com.vaadin.flow.component.charts.model.PlotOptionsBubble;
 import com.vaadin.flow.component.charts.model.PlotOptionsColumn;
+import com.vaadin.flow.component.charts.model.PlotOptionsColumnrange;
+import com.vaadin.flow.component.charts.model.PlotOptionsGauge;
 import com.vaadin.flow.component.charts.model.PlotOptionsPie;
+import com.vaadin.flow.component.charts.model.PlotOptionsSeries;
 import com.vaadin.flow.component.charts.model.Tooltip;
 import com.vaadin.flow.component.charts.model.VerticalAlign;
 import com.vaadin.flow.component.charts.model.XAxis;
 import com.vaadin.flow.component.charts.model.YAxis;
+import com.vaadin.flow.component.charts.model.style.Color;
 import com.vaadin.flow.component.charts.model.style.SolidColor;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.textfield.NumberField;
@@ -52,16 +53,19 @@ public class ChartUtil {
         div.setSizeFull();
         Chart chart = new Chart(ChartType.COLUMN);
         chart.setSizeFull();
-
+        
         Configuration conf = chart.getConfiguration();
 
         conf.setTitle("Monthly Average Rainfall");
         conf.setSubTitle("Source: WorldClimate.com");
 
         XAxis x = new XAxis();
-        x.setCategories("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug",
-                "Sep", "Oct", "Nov", "Dec");
+        x.setCategories("Jan<br>2020", "Feb<br>2020", "Mar<br>2020", "Apr<br>2020", "May<br>2020", "Jun<br>2020", "Jul<br>2020", "Aug<br>2020",
+                "Sep<br>2020", "Oct<br>2020", "Nov<br>2020", "Dec<br>2020");
         conf.addxAxis(x);
+        Labels labs = x.getLabels();
+        labs.setUseHTML(true);
+        x.setLabels(labs);
 
         YAxis y = new YAxis();
         y.setMin(0);
@@ -95,6 +99,7 @@ public class ChartUtil {
         options.setDataLabels(labels);
         tokyo.setPlotOptions(options);
         options.setColor(new SolidColor(color6));
+
         ListSeries newYork = new ListSeries("New York", 83.6, 78.8, 98.5, 93.4,
                 106.0, 84.5, 105.0, 104.3, 91.2, 83.5, 106.6, 92.3);
         PlotOptionsColumn optionsNY = new PlotOptionsColumn();
@@ -109,8 +114,8 @@ public class ChartUtil {
                 48.3, 59.0, 59.6, 52.4, 65.2, 59.3, 51.2));
         conf.addSeries(new ListSeries("Berlin", 42.4, 33.2, 34.5, 39.7, 52.6,
                 75.5, 57.4, 60.4, 47.6, 39.1, 46.8, 51.1));
-
         div.add(chart);
+
         // This is partial workaround for missing setLang(..) method, this won't
         // work in npm mode at all.
         // chart.getElement().executeJs("Highcharts.setOptions({\r\n" +
@@ -127,9 +132,9 @@ public class ChartUtil {
         // " }\r\n" +
         // "});");
         Lang lang = new Lang();
+        ChartOptions.get().setLang(lang);
         String[] months = {"Jan","Fév","Mar","Avr","Mai","Jui","Jul","Aoû","Sep","Oct","Nov","Déc"}; 
         lang.setShortMonths(months);
-        ChartOptions.get().setLang(lang);
         return div;
     }
 
@@ -145,6 +150,7 @@ public class ChartUtil {
         PlotOptionsBubble opts = new PlotOptionsBubble();
         opts.setMaxSize("120");
         opts.setMinSize("3");
+        opts.setColor(SolidColor.CORNFLOWERBLUE);
 
         Tooltip tooltip = new Tooltip();
         tooltip.setValueDecimals(1);
@@ -161,6 +167,8 @@ public class ChartUtil {
         plotLine.setValue(50);
         axis.addPlotLine(plotLine);
         conf.addxAxis(axis);
+        conf.getChart().setStyledMode(false);
+//        conf.getScrollbar().setEnabled(true);
 
         DataSeries dataSeries2 = new DataSeries("Drill down items");
         dataSeries2.addItemWithDrilldown(item(13, 30, 10, 6, "drill"),
@@ -212,12 +220,18 @@ public class ChartUtil {
             if (event.getItem().getId().equals("data")) {
                 min.setValue(event.getxAxisValue() - 10);
                 max.setValue(event.getxAxisValue() + 10);
+//                conf.getScrollbar().setEnabled(true);
             }
         });
 
         chart.setDrilldownCallback(event -> {
             DataSeriesItem item = event.getItem();
             return updateDataSeries(item.getId(), 3);
+        });
+        chart.addChartDrillupAllListener(event -> {
+            min.setValue(0d);
+            max.setValue(100d);            
+//            conf.getScrollbar().setEnabled(false);
         });
 
         // chart.addDrilldownListener(event -> {
@@ -234,7 +248,7 @@ public class ChartUtil {
     }
 
     private static DataSeries createDataSeries(String id, int colorIndex) {
-        DataSeries dataSeries = new DataSeries("Main series");
+        DataSeries dataSeries = new DataSeries("Series "+colorIndex);
         dataSeries.setId(id);
         dataSeries.add(item(9, 81, 13, colorIndex));
         dataSeries.add(item(98, 5, 39, colorIndex));
@@ -297,7 +311,17 @@ public class ChartUtil {
         dataSeriesItem.setX(x);
         dataSeriesItem.setY(y);
         dataSeriesItem.setZ(z);
-        dataSeriesItem.setColor(new SolidColor("color"+colorIndex));
+        if (colorIndex == 6) {
+            dataSeriesItem.setColor(SolidColor.DARKGOLDENROD);
+        } else if (colorIndex == 5) {
+            dataSeriesItem.setColor(SolidColor.CADETBLUE);
+        } else if (colorIndex == 4) {
+            dataSeriesItem.setColor(SolidColor.THISTLE);
+        } else if (colorIndex == 3) {
+                dataSeriesItem.setColor(SolidColor.ORANGERED);
+        } else {
+            dataSeriesItem.setColor(SolidColor.BROWN);
+        }
         DataLabels labels = new DataLabels();
         labels.setEnabled(true);
         dataSeriesItem.setDataLabels(labels);
