@@ -1,8 +1,12 @@
 package com.vaadin.devday.demo.views;
 
+import java.io.Serializable;
+import java.util.LinkedHashMap;
+
 import com.vaadin.devday.demo.MainLayout;
 import com.vaadin.flow.component.AttachEvent;
 import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.Unit;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.splitlayout.SplitLayout;
@@ -55,44 +59,6 @@ public class AbsoluteLayoutView extends SplitLayout {
         return (String) getUI().get().getSession().getAttribute("hostAddress");
     }
 
-    // This is simple version of how you can implement AbsoluteLayout by
-    // extending Div
-    public class AbsoluteLayout extends Div {
 
-        public AbsoluteLayout() {
-            getElement().getStyle().set("position", "relative");
-        }
-
-        public void setTopLeft(Component component, int top, int left) {
-            if (!getChildren().noneMatch(comp -> comp.equals(component))) {
-                component.getElement().getStyle().set("position", "absolute");
-                component.getElement().getStyle().set("top", top + "px");
-                component.getElement().getStyle().set("left", left + "px");
-            }
-        }
-
-        public void setBottomRight(Component component, int top, int left) {
-            if (!getChildren().noneMatch(comp -> comp.equals(component))) {
-                component.getElement().getStyle().set("position", "absolute");
-                component.getElement().getStyle().set("bottom", top + "px");
-                component.getElement().getStyle().set("right", left + "px");
-            }
-        }
-
-        public void addTopLeft(Component component, int top, int left) {
-            add(component);
-            component.getElement().getStyle().set("position", "absolute");
-            component.getElement().getStyle().set("top", top + "px");
-            component.getElement().getStyle().set("left", left + "px");
-        }
-
-        public void addBottomRight(Component component, int top, int left) {
-            add(component);
-            component.getElement().getStyle().set("position", "absolute");
-            component.getElement().getStyle().set("bottom", top + "px");
-            component.getElement().getStyle().set("right", left + "px");
-        }
-
-    }
 
 }
